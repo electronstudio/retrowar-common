@@ -1,0 +1,21 @@
+Third Party Software may impose additional restrictions and it is the
+user's responsibility to ensure that they have met the licensing
+requirements of PhantomJS and the relevant license of the Third Party
+Software they are using.
+
+Files with additional authors/copyrights/licenses:
+
+Asset: cgwg's CRT shader
+File: android/assets/shaders/crt-cgwg-fast.glsl
+Copyright (C) 2010-2011 cgwg, Themaister
+License: GPL V2
+
+Asset: IBXM music player
+Files:
+Copyright: (c)2017 mumart@gmail.com https://github.com/martincameron/micromod
+License: BSD 3-clause license
+
+Asset: Blargg audio library
+Files:
+Copyright: (C) 2003-2007 Shay Green http://www.slack.net/~ant/libs/audio.html
+License: Lesser GPL V2.1

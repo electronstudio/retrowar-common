@@ -1,0 +1,6 @@
+RetroWar Copyright 2016-2018 Richard Smith
+
+The code to the RetroWar-Common library is distributed under the GPL V3.
+
+(Note this does not apply to the other RetroWar packages, which are proprietary
+and all rights reserved.)
