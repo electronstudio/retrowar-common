@@ -16,6 +16,6 @@ Copyright: (c)2017 mumart@gmail.com https://github.com/martincameron/micromod
 License: BSD 3-clause license
 
 Asset: Blargg audio library
-Files:
+Files: src
 Copyright: (C) 2003-2007 Shay Green http://www.slack.net/~ant/libs/audio.html
 License: Lesser GPL V2.1
