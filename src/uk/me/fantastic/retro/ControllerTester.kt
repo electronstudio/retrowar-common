@@ -11,10 +11,9 @@ import uk.me.fantastic.retro.App.Companion.app
 import uk.me.fantastic.retro.screens.GameSession
 
 /**
- * A simple RetroWar game
+ * Displays all connected controllers so we can test if the mappings are correct.
  */
-class ControllerTester(session: GameSession) // Constructor (required)
-// width and height of screen in pixels
+class ControllerTester(session: GameSession)
     : SimpleGame(session, 640f, 480f) {
 
     override fun doLogic(deltaTime: Float) { // Called automatically every frame

@@ -10,6 +10,7 @@ import java.io.File
 import java.io.PrintStream
 import java.time.LocalDateTime
 
+/** Logs everything to a logfile and also sends it to Sentry if Sentry is configred */
 class SentryLogger : Logger {
     override fun error(message: String) {
         println(message)

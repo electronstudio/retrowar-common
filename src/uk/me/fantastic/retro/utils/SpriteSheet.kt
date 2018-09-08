@@ -7,6 +7,10 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.obj
 
+/** A sprite sheet requires two files, an image file and a JSON file containing names and coordinates in the image
+for the sprites.
+ * @param file The JSON file, output by Asperite
+ */
 class SpriteSheet(val file: String) {
 
     private val frames: JsonObject

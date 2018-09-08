@@ -63,11 +63,17 @@ dependencies {
 apply plugin: 'org.jetbrains.dokka'
 
 dokka {
-    outputFormat = 'javadoc'
+    outputFormat = 'html'
     outputDirectory = "$buildDir/javadoc"
     includeNonPublic = false
     skipEmptyPackages = true
     jdkVersion = 8
+
+    externalDocumentationLink {
+        // Root URL of the generated documentation to link with. The trailing slash is required!
+        url = new URL("https://libgdx.badlogicgames.com/ci/nightlies/docs/api/")
+        packageListUrl = new URL("https://libgdx.badlogicgames.com/ci/nightlies/docs/api/package-list")
+    }
 
     packageOptions {
         prefix = "uk.me.fantastic.retro.music"
@@ -86,6 +92,11 @@ dokka {
         prefix = "de.golfgl.gdxgameanalytics"
         suppress = true
     }
+}
+
+task dokkaJavadoc(type: org.jetbrains.dokka.gradle.DokkaTask) {
+    outputFormat = 'javadoc'
+    outputDirectory = "$buildDir/javadoc"
 }
 
 jar {

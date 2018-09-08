@@ -8,6 +8,11 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.math.Vector2
 import uk.me.fantastic.retro.App.Companion.app
 
+/**
+ * A framebuffer object.  Max size is the resolution of the display, but if you set it to smaller size
+ * then only a smaller portion of the framebuffer will actually be used.  That way we can change
+ * the virtual size of the framebuffer on the fly without allocating a new framebuffer object.
+ */
 class ManagedFBO {
     val MAX_WIDTH = Gdx.graphics.displayMode.width
     val MAX_HEIGHT = Gdx.graphics.displayMode.height

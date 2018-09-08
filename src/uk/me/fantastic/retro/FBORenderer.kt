@@ -16,7 +16,6 @@ import uk.me.fantastic.retro.Prefs.BinPref.FPS
 
 /**
  * Renders sprites to a FrameBufferObject and thence to the screen
- * This is the version where I attempt to add new features and probably fuck up how it works
  * Does not support bilinear filtering when smooth motion is enabled
  * Creates new objects every frame, not sure how heavy they are or if they could better be pooled and reused
  */

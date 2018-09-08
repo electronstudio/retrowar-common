@@ -1,0 +1,91 @@
+body, table {
+    padding:50px;
+/*    font:14px/1.5 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif; */
+    color:#555;
+    font-weight:300;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1440px;
+}
+
+h1, h2, h3 {
+    border-top:1px solid rgb(150, 150, 150);
+    background-color: bisque;
+}
+
+.keyword {
+    color:darkred;
+    font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+    font-size:12px;
+}
+
+.symbol {
+    color:darkgreen;
+    font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+    font-size:12px;
+}
+
+.identifier {
+    color: darkblue;
+    font-size:12px;
+    font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+}
+
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    border: 1px solid black;
+}
+
+th, td {
+    text-align:left;
+    vertical-align: top;
+    padding:5px 10px;
+    border: 1px solid black;
+}
+
+dt {
+    color:#444;
+    font-weight:700;
+}
+
+th {
+    color:#444;
+}
+
+img {
+    max-width:100%;
+}
+
+header {
+    width:270px;
+    float:left;
+    position:fixed;
+    background-color: lightblue;
+}
+
+
+section {
+    width:500px;
+    float:right;
+    padding-bottom:50px;
+}
+
+small {
+    font-size:11px;
+}
+
+hr {
+    border:0;
+    background:#e5e5e5;
+    height:1px;
+    margin:0 0 20px;
+}
+
+footer {
+    width:270px;
+    float:left;
+    position:fixed;
+    bottom:50px;
+}

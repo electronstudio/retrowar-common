@@ -24,6 +24,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.I18NBundle
 
+/**
+* Some useful images and fonts you can use rather than loading your own
+ */
 class Resources {
 
     companion object {

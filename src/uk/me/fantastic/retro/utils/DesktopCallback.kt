@@ -5,7 +5,6 @@ import uk.me.fantastic.retro.Callback
 
 /**
  * used to change FPS while app is running without restarting
- * @suppress
  */
 class DesktopCallback : Callback {
 

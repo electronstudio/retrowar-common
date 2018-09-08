@@ -4,6 +4,12 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 
+/**
+ * Stores a number of frames (each a TextureRegion) that make up an animation.
+ * @param delay Time to display each frame in seconds
+ * @param tex The TextureRegions
+ * @param mode Whether to loop at the end of the animation.
+ */
 class AnimatedTexture(
     val delay: Float,
     vararg tex: TextureRegion,

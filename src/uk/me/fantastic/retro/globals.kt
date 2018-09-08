@@ -46,6 +46,9 @@ import kotlin.math.roundToInt
  * Global scope stuff that IntelliJ doesn't like being in the actual files where it is used
  */
 
+/** provides methods to output informative messages and errors
+ * different implementations might show them or send them off
+ * to a server */
 interface Logger {
     fun log(message: String)
     fun log(caller: String, message: String)
@@ -59,6 +62,9 @@ val isMobile = Gdx.app.type == Application.ApplicationType.Android || Gdx.app.ty
 val isLinux: Boolean = osName.contains("Linux") && !isMobile
 val isWindows: Boolean = !isLinux && !isOSX && !isMobile
 
+/* GDX on iOS has very poor garbage collection.  Supply one of these to disable
+* it and do your own GC at appropriate points when delays wont be noticed.
+*/
 interface ManualGC {
     fun enable()
     fun disable()

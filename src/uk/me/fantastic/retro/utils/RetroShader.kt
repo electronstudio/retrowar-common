@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
 import uk.me.fantastic.retro.log
 
-/** Shader format of RetroArch project */
+/** Loads shaders and sets up some vertex attributes format of RetroArch shaders */
 class RetroShader(filename: String) {
 
     var shader: ShaderProgram? = null

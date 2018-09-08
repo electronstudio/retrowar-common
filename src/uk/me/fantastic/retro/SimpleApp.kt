@@ -3,6 +3,10 @@ package uk.me.fantastic.retro
 import com.badlogic.gdx.Gdx
 import uk.me.fantastic.retro.screens.SimpleTitleScreen
 
+/**
+ * Most standalone games will use this as their main GDX or Android Application class
+ * It sets up a simple title screen and menus
+ */
 class SimpleApp(callback: Callback, val name: String, val factory: AbstractGameFactory, logger: Logger, manualGC:
 ManualGC? = null, val advertise: Boolean = false) : App
 (callback, logger, manualGC) {

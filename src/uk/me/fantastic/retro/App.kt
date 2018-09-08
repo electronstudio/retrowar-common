@@ -48,7 +48,7 @@ import kotlin.concurrent.thread
  * Main libgdx common application class.  Created by platform specific launchers.
  * Delegates actual rendering loop to Screens
  *
- * For most games you can use SimpleApp rather than making your own subclass of App.
+ * For most games you can use subclass SimpleApp rather than App directly.
  *
  * @param callback For setting maximum FPS, platform specific
  * @param logger If debug is on then logs are sent here, which may send them to screen, file or
@@ -70,7 +70,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         @JvmStatic
         lateinit var app: App
 
+        /** Where log file is stored */
         val LOG_FILE_PATH: String = System.getProperty("user.home") + File.separator + "retrowar-log.txt"
+        /** Where preferences file is stored */
         val PREF_DIR: String = System.getProperty("user.home") + File.separator + ".prefs"
     }
 
@@ -79,6 +81,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         findIPaddress()
     }
 
+    /** Tries to connect to AWS to get current IP address
+     *  in separate thread so wont slow down launch waiting for result
+     */
     protected fun findIPaddress() {
         thread {
             try {
@@ -104,8 +109,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         client?.initialise()
     }
 
+    /** All the controllers currently connected */
     internal val mappedControllers = ArrayList<MappedController>()
 
+    /** All controllers each wrapped in StatefulController objects, useful for menu input */
     internal val statefulControllers = ArrayList<StatefulController>()
 
     /** Current IP address, if known.  Else "unknown" */
@@ -127,6 +134,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     lateinit var shader: RetroShader
 
+    /** has any key or controller button or mouse recently been hit? */
     fun anyKeyHit(): Boolean {
         return statefulControllers.any { it.isButtonAJustPressed } ||
                 app.mouseJustClicked ||
@@ -134,6 +142,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
                 Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
     }
 
+    /** For testing sandbox permissions, attempts to read property we shouldnt be allowed to read */
     fun testSandbox(): String {
         return (App::class.java.name + ": I shouldnt be able to do this: " + System.getProperty("os" +
                 ".name"))
@@ -148,6 +157,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     val versionString = (App::class.java.`package`.implementationVersion ?: "devel")
 
+    /** Displays a new screen and disposes of the old one */
     fun swapScreenAndDispose(screen: Screen) {
         log("swapscreen")
         val s = app.screen
@@ -167,16 +177,25 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     abstract fun quit()
 
+    /** If player hit a key during game, you dont want that event to then take effect in the menu after the game,
+    * so you call this.
+     */
     fun clearEvents() {
         statefulControllers.forEach { it.clearEvents() }
         mouseJustClicked // eat the event if there is a click already waiting
     }
 
+    /** Prefs can have behviour attached, like setting the screen resolution.
+     * This triggers it for all of them, if they have it.
+     */
     protected fun initialisePrefs() {
         BinPref.values().forEach(BinPref::apply)
         Prefs.MultiChoicePref.LIMIT_FPS.apply()
     }
 
+    /**
+     * Populates mappedControllers
+     */
     protected fun initialiseControllers() {
         println("Detected ${Controllers.getControllers().size} controllers")
 
@@ -232,6 +251,11 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         gameAnalytics?.submitDesignEvent(s)
     }
 
+    /**
+     * For some games, e.g. a standalone mobile game, you dont want the player to have
+     * to hit a button to enter the game.  This auto-adds the first player to the game
+     * so he doesnt have to this.
+     */
     fun configureSessionWithPreSelectedInputDevice(session: GameSession){
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
             val controller1 = App.app.mappedControllers.firstOrNull()

@@ -5,7 +5,11 @@ import com.badlogic.gdx.math.MathUtils
 import uk.me.fantastic.retro.input.InputDevice
 
 /**
- *
+ * Represents a player who has joined the game
+ * @param input The keyboard/controller etc he is using
+ * @param name The name to display for this player.  Defaults to 'PLAYERx' but may be customized in options
+ * @param color A custom colour chosen by player in options
+ * @param color Another custom colour
  */
 open class Player(
         @Transient val input: InputDevice,
@@ -16,16 +20,39 @@ open class Player(
 ) :
         Comparable<Player> {
 
+    /**
+     * Compares players to see who has highest score
+     */
     override fun compareTo(other: Player): Int {
         return score.compareTo(other.score)
     }
 
-    var entityId: Int = -1 // might not be used by most games but convenient for those that use it to have it here
+    /**
+     * If your game uses entities you can store the one representing the Player's sprite here.
+     */
+    var entityId: Int = -1
 
+    /**
+     * If your game keeps score you can store it here
+     */
     var score: Int = 0
+
+    /**
+     * If your game tracks lives, you can store how many times the player has died here
+     * (rather than lives remaining)
+     */
     var deaths: Int = 0
+
+    /**
+     * If your game tracks health, you can store how much health the player has lost here
+     * (rather than storing the remaining health)
+     */
     var healthLost: Float = 0f
 
+    /**
+     * When game is part of a multi-round tournment this represents the overall score in
+     * the tournament
+     */
     var metaScore: Int = 0
         private set(value) {field = value}
 
@@ -33,6 +60,9 @@ open class Player(
         metaScore+=i
     }
 
+    /**
+     * How much health the player started with
+     */
     var startingHealth: Float = 0f
 
     fun healthDisplayString(startingHealth: Float): String {
@@ -49,15 +79,19 @@ open class Player(
         return lives
     }
 
+    /**
+    * Gameover, man, gameover.
+     */
     fun isOutOfLives(lives: Int): Boolean {
         return deaths >= lives
     }
 
+    /**
+    * Resets score, lives and health for a new round
+     */
     fun reset() {
         score = 0
         deaths = 0
         healthLost = 0f
     }
-
-    // constructor() : this(null, "", -1, Color.WHITE)
 }

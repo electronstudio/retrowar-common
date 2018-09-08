@@ -1,7 +1,9 @@
 package uk.me.fantastic.retro.utils
 
 /**
- * 2d vector
+ * 2d vector.  Seems wasteful to create millions of these, but they should be removed by JVM's escape analysis.
+ * In some places we have used other equivalents like Pair<Float, Float>, and this can convery to that, but I
+ * think we should standardise.  FIXME
  */
 class Vec(val x: Float, val y: Float) {
     constructor() : this(0f, 0f)

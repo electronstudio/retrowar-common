@@ -6,6 +6,7 @@ import java.io.File
 import java.io.PrintStream
 import java.time.LocalDateTime
 
+/** Logs to file and to standard out */
 class SimpleLogger : Logger {
     override fun error(message: String) {
         println(message)
