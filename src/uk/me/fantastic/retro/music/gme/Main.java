@@ -30,7 +30,7 @@ public class Main {
 
             // byte[] data = player.readFile(url, path);
             //InputStream in = DataReader.openHttp(url);
-            File file = new File("/home/richard/IdeaProjects/retrogame/android/assets/test.nsf");
+            File file = new File("/home/richard/retrogame/core/assets/test.nsf");
             // FileHandle fileHandle = Gdx.files.internal("sonic.vgz");
             InputStream in = new FileInputStream(file);
 
