@@ -249,6 +249,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     open fun submitAnalytics(s: String) {
         gameAnalytics?.submitDesignEvent(s)
+        gameAnalytics?.flushQueueImmediately()
     }
 
     /**
