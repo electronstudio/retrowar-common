@@ -204,7 +204,7 @@ class MenuController(
 
             // log(" item $i top $top bottom $bottom")
             if (my < top && !menu.get(i).isHidden) {
-                menu.selectedItem = i
+              menu.selectedItem = i
             }
         }
     }

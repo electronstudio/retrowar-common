@@ -9,26 +9,73 @@ import java.util.ArrayList
  * Essentially an ArrayList of MenuItems that tracks which of them is selected
  */
 
-class Menu(
+typealias Page = ArrayList<MenuItem>
+
+open class Menu(
     val title: String,
     val bottomText: () -> String = { "" },
     val quitAction: () -> Unit = {},
+    val doubleSpaced: Boolean = Resources.FONT.data.down > -10,
+    val allItems: ArrayList<MenuItem> = ArrayList()
+) {
+    val pages: ArrayList<Page> = ArrayList()
+    var currentPage: ArrayList<MenuItem>
+    init {
+        pages.add(allItems)
+        currentPage=pages[0]
+    }
 
-    val doubleSpaced: Boolean = Resources.FONT.data.down > -10
-) : ArrayList<MenuItem>() {
-
-    var selectedItem = 0
+    internal var selectedItem = 0
 
     var editing: MenuItem? = null
+    internal val indices: IntRange
+        get() =  currentPage.indices
+    val selectedItemIndex: Int
+        get() = allItems.indexOf(currentPage[selectedItem])
+
+    fun paginate(maxLength: Int){
+        pages.clear()
+        pages.add(Page())
+        var c=0
+        for(item in allItems){
+            if(c>maxLength){
+                val page=pages.last()
+                val nextPage=Page()
+                pages.add((nextPage))
+                page.add(ActionMenuItem("[...]", action = {currentPage=nextPage}))
+                nextPage.add(ActionMenuItem("[...]", action = {currentPage=page}))
+                c=0
+            }
+            pages.last().add(item)
+            c++
+        }
+        currentPage=pages.first()
+    }
+
+    fun addAll(elements: Collection<MenuItem>): Boolean {
+        return allItems.addAll(elements)
+    }
+
+    operator fun get(i: Int): MenuItem {
+        return currentPage.get(i)
+    }
+
+    fun add(item: MenuItem) {
+        allItems.add(item)
+    }
+    fun addAndSelect(item: MenuItem) {
+        allItems.add(item)
+        selectedItem=allItems.lastIndex
+    }
 
     fun getSelected(): MenuItem {
-        return this[selectedItem]
+        return currentPage[selectedItem]
     }
 
     fun getText(highlight: String?): String {
         var text = "$title\n\n"
 
-        this.forEachIndexed { i, menuItem ->
+        currentPage.forEachIndexed { i, menuItem ->
             if (doubleSpaced) text += "\n"
             if (i == selectedItem && highlight != null) text = "$text[$highlight]"
             if (!menuItem.isHidden) {
@@ -48,12 +95,12 @@ class Menu(
     fun up() {
         selectedItem--
 
-        while (selectedItem > 0 && get(selectedItem).isHidden) {
+        while (selectedItem > 0 && currentPage.get(selectedItem).isHidden) {
             selectedItem--
         }
 
         if (selectedItem < 0)
-            selectedItem = size - 1
+            selectedItem = currentPage.size - 1
 
         Resources.BLING.play()
     }
@@ -61,14 +108,23 @@ class Menu(
     fun down() {
         selectedItem++
 
-        while (selectedItem < size - 1 && get(selectedItem).isHidden) {
+        while (selectedItem < currentPage.size - 1 && currentPage.get(selectedItem).isHidden) {
             selectedItem++
         }
 
-        if (selectedItem > size - 1)
+        if (selectedItem > currentPage.size - 1)
             selectedItem = 0
 
         Resources.BLING.play()
         log("selecteditem $selectedItem")
     }
+
+
+
+
+}
+
+class ScrollingMenu(title: String, bottomText: () -> String, quitAction: () -> Unit, doubleSpaced: Boolean): Menu
+(title, bottomText, quitAction, doubleSpaced){
+
 }
