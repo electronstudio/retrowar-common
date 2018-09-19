@@ -1,5 +1,5 @@
 RetroWar-common
-***************
+===============
 
 RetroWar-common is a Java library that extends LibGDX.  It contains all the common functions that are shared
 between games developed for the RetroWar project.  However it will be useful for non-RetroWar games, game jam games, etc
