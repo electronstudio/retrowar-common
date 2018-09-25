@@ -42,8 +42,14 @@ open class Menu(
                 val page=pages.last()
                 val nextPage=Page()
                 pages.add((nextPage))
-                page.add(ActionMenuItem("[...]", action = {currentPage=nextPage}))
-                nextPage.add(ActionMenuItem("[...]", action = {currentPage=page}))
+                page.add(ActionMenuItem("[...]", action = {
+                    currentPage=nextPage
+                    selectedItem=0
+                }))
+                nextPage.add(ActionMenuItem("[...]", action = {
+                    currentPage=page
+                    selectedItem=0
+                }))
                 c=0
             }
             pages.last().add(item)
