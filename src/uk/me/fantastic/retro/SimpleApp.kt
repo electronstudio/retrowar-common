@@ -8,7 +8,7 @@ import uk.me.fantastic.retro.screens.SimpleTitleScreen
  * It sets up a simple title screen and menus
  */
 class SimpleApp(callback: Callback, val name: String, val factory: AbstractGameFactory, logger: Logger, manualGC:
-ManualGC? = null, val advertise: Boolean = false) : App
+ManualGC? = null, val advertise: Boolean = false, val fullscreen: Boolean = true) : App
 (callback, logger, manualGC) {
 
     override fun quit() {
@@ -39,7 +39,11 @@ ManualGC? = null, val advertise: Boolean = false) : App
     }
 
     fun setPrefsToDefaultsForSingleGames() {
-        Prefs.BinPref.FULLSCREEN.enable()
+        if(fullscreen) {
+            Prefs.BinPref.FULLSCREEN.enable()
+        }else{
+            Prefs.BinPref.FULLSCREEN.disable()
+        }
         Prefs.BinPref.VSYNC.enable()
         Prefs.MultiChoicePref.LIMIT_FPS.set(0)
 //        BinPrefMenuItem("motion ", BinPref.SMOOTH),

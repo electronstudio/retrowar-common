@@ -15,20 +15,18 @@ abstract class SimpleGame(
     session: GameSession,
     val width: Float,
     val height: Float,
-    val fontClear: BitmapFont =
-            Resources.FONT_CLEAR,
+    //val fontClear: BitmapFont = Resources.FONT_CLEAR,
     val font: BitmapFont = Resources.FONT,
     val fadeInEffect: Boolean = true
 ) : Game(session) {
 
     override val renderer = FBORenderer(WIDTH = width, HEIGHT = height, fadeInEffect = fadeInEffect)
 
-    private val controller = MenuController(session.standardMenu(), width, height, x = 0f, y = height -
-            4)
+    private val controller = MenuController(session.standardMenu(), width, height, font, x = 0f, y = height - 4)
 
     init {
         font.data.markupEnabled = true
-        fontClear.data.markupEnabled = true
+     //   fontClear.data.markupEnabled = true
     }
 
     // render is called by libgdx once every frame (required)

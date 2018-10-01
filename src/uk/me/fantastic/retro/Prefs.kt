@@ -68,29 +68,29 @@ object Prefs {
 
     /** @suppress */
     enum class MultiChoicePref(val pref: String, vararg val choices: String, val default: Int = 0) {
-        GRAPHICS("graphics", "retro", "modern", "CRT") {
+        GRAPHICS("graphics", "RETRO", "MODERN", "CRT") {
             override fun apply() {
                 when (getNum()) {
                     0 -> {
+                        SHADER.set(0)
+                        app.initialiseShader()
                         BinPref.SMOOTH.disable()
                         BinPref.BILINEAR.enable()
                         BinPref.SCANLINES.enable()
-                        SHADER.set(0)
-                        app.initialiseShader()
                     }
                     1 -> {
+                        SHADER.set(0)
+                        app.initialiseShader()
                         BinPref.SMOOTH.enable()
                         BinPref.BILINEAR.disable()
                         BinPref.SCANLINES.disable()
-                        SHADER.set(0)
-                        app.initialiseShader()
                     }
                     else -> {
+                        SHADER.set(1)
+                        app.initialiseShader()
                         BinPref.SMOOTH.disable()
                         BinPref.BILINEAR.disable()
                         BinPref.SCANLINES.disable()
-                        SHADER.set(1)
-                        app.initialiseShader()
                     }
                 }
             }
@@ -170,8 +170,7 @@ object Prefs {
         val pref: String,
         val text: String = pref,
         val tText: String = TEXT["on"],
-        val fText:
-        String = TEXT["off"],
+        val fText: String = TEXT["off"],
         val default: Boolean = true
     ) {
         VSYNC("vsync") {

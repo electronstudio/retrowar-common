@@ -37,7 +37,7 @@ open class SimpleTitleScreen(
             .files.internal("small.fnt")),
     val title: String = "My Game",
     val factory: AbstractGameFactory,
-    val quitText: String = "quit",
+    val quitText: String = "Quit",
     val quitURL: String? = null
 ) : ScreenAdapter() {
 
@@ -45,7 +45,7 @@ open class SimpleTitleScreen(
 
     val renderer = FBORenderer(WIDTH, HEIGHT, false)
 
-    val quitMenu = Menu("quit?")
+    val quitMenu = Menu("Quit?")
 
     val videoOptions = Menu("")
 
@@ -85,41 +85,40 @@ open class SimpleTitleScreen(
         FONT.region.texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
 
         videoOptions.addAll(listOf(
-                MultiPrefMenuItem("graphics ", Prefs.MultiChoicePref.GRAPHICS),
-                BinPrefMenuItem("scaling ", BinPref.STRETCH),
-                BinPrefMenuItem("scanlines ", BinPref.SCANLINES),
+                MultiPrefMenuItem("Graphics ", Prefs.MultiChoicePref.GRAPHICS),
+                BinPrefMenuItem("Scaling ", BinPref.STRETCH),
                 BackMenuItem("BACK")
         ))
 
         soundOptions.addAll(listOf(
-                BinPrefMenuItem("inGameMusic ", BinPref.MUSIC),
-                NumPrefMenuItem("musicVolume ", numPref = Prefs.NumPref.MUSIC_VOLUME),
-                NumPrefMenuItem("fxVolume ", numPref = Prefs.NumPref.FX_VOLUME),
+                BinPrefMenuItem("Game Music ", BinPref.MUSIC),
+                NumPrefMenuItem("Music Volume ", numPref = Prefs.NumPref.MUSIC_VOLUME),
+                NumPrefMenuItem("FX Volume ", numPref = Prefs.NumPref.FX_VOLUME),
                 BackMenuItem("BACK")
         ))
 
         titleMenu.addAll(listOf(
                 //   SubMenuItem("Start game", optionsMenu),
-                ActionMenuItem("start Game", {
+                ActionMenuItem("Start Game", {
 
                     App.app.screen = GameSession(factory)
                 }),
 
-                SubMenuItem("options", subMenu = optionsMenu)
+                SubMenuItem("Options", subMenu = optionsMenu)
         ))
 
         // items.add(MenuItem("Connect to server"))
-        optionsMenu.add(SubMenuItem("video", subMenu = videoOptions))
+        optionsMenu.add(SubMenuItem("Video", subMenu = videoOptions))
 
-        optionsMenu.add(SubMenuItem("sound", subMenu = soundOptions))
+        optionsMenu.add(SubMenuItem("Sound", subMenu = soundOptions))
 
-        optionsMenu.add(BackMenuItem("back"))
+        optionsMenu.add(BackMenuItem("BACK"))
 
         titleMenu.add(BackMenuItem(quitText))
 
-        quitMenu.add(BackMenuItem("no"))
+        quitMenu.add(BackMenuItem("No"))
 
-        quitMenu.add(ActionMenuItem("yes", action = {
+        quitMenu.add(ActionMenuItem("Yes", action = {
             if (quitURL != null) {
                 Gdx.net.openURI(quitURL)
             }
