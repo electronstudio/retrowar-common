@@ -24,6 +24,8 @@ abstract class SimpleGame(
 
     private val controller = MenuController(session.standardMenu(), width, height, font, x = 0f, y = height - 4)
 
+    var noOfPlayersInGameAlready=0
+
     init {
         font.data.markupEnabled = true
      //   fontClear.data.markupEnabled = true
@@ -31,6 +33,11 @@ abstract class SimpleGame(
 
     // render is called by libgdx once every frame (required)
     override fun render(deltaTime: Float) {
+
+        for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
+            noOfPlayersInGameAlready++
+            playerJoined(players[i])
+        }
 
         doLogic(deltaTime)
 
@@ -49,6 +56,9 @@ abstract class SimpleGame(
         }
 
         renderer.renderFBOtoScreen()
+    }
+
+    open fun playerJoined(player: Player) {
     }
 
     fun simpleHighScoreTable(): String = players.sortedDescending().joinToString("") {
