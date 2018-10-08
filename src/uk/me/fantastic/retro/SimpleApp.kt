@@ -7,7 +7,9 @@ import uk.me.fantastic.retro.screens.SimpleTitleScreen
  * Most standalone games will use this as their main GDX or Android Application class
  * It sets up a simple title screen and menus
  */
-class SimpleApp(callback: Callback, val name: String, val factory: AbstractGameFactory, logger: Logger, manualGC:
+class SimpleApp(callback: Callback, val name: String, val factoryClass: Class<out AbstractGameFactory>, logger:
+Logger,
+                manualGC:
 ManualGC? = null, val advertise: Boolean = false, val fullscreen: Boolean = true) : App
 (callback, logger, manualGC) {
 
@@ -18,7 +20,7 @@ ManualGC? = null, val advertise: Boolean = false, val fullscreen: Boolean = true
 
     override fun create() {
 
-        log("SimpleApp from $factory create")
+        log("SimpleApp from $factoryClass create")
         setScreenMode()
 
         initialiseAndroid()
@@ -28,6 +30,8 @@ ManualGC? = null, val advertise: Boolean = false, val fullscreen: Boolean = true
         initializeInput()
         initialiseControllers()
         initialiseShader()
+
+        val factory = factoryClass.getDeclaredConstructor(String::class.java).newInstance("") as AbstractGameFactory
 
         if(advertise){
             title = SimpleTitleScreen(title = name, factory = factory, quitText = "More RetroWar", quitURL =
