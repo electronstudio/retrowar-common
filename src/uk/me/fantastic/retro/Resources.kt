@@ -19,6 +19,7 @@
 package uk.me.fantastic.retro
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -31,26 +32,29 @@ class Resources {
 
     companion object {
 
-        var baseFileHandle = Gdx.files.internal("i18n/RetroWar")
-        var defaultLocale = java.util.Locale.getDefault()
+        private fun load(classpath: String, internal: String): FileHandle {
+            val cFile = Gdx.files.classpath(classpath)
+            val iFile = Gdx.files.internal(internal)
+            return if (iFile.exists()) iFile else cFile
+        }
 
+        // var defaultLocale = java.util.Locale.getDefault()
         //  var locale = Locale.Builder().setLocale(defaultLocale).setVariant("PROFANE").build()
 
-        var TEXT = I18NBundle.createBundle(baseFileHandle)
-
-        val MISSING_TEXTURE = Texture("badlogic.jpg")
+        var TEXT = I18NBundle.createBundle(load("uk/me/fantastic/retro/i18n/RetroWar", "i18n/RetroWar"))
+        @JvmStatic
+        val MISSING_TEXTURE = Texture(Gdx.files.classpath("uk/me/fantastic/retro/badlogic.jpg"))
+        @JvmStatic
         val MISSING_TEXTUREREGION = TextureRegion(MISSING_TEXTURE)
 
-        private fun TextureRegion(s: String): TextureRegion = TextureRegion(Texture(s))
-
-//        val FONT = BitmapFont(Gdx.files.internal("c64_low3_black.fnt"))
-//        val FONT_CLEAR = BitmapFont(Gdx.files.internal("c64_low3.fnt"))
-
-        val FONT = BitmapFont(Gdx.files.internal(TEXT["fontBlack"]))
-        val FONT_CLEAR = BitmapFont(Gdx.files.internal(TEXT["font"]))
-
-        val FONT_ENGLISH = BitmapFont(Gdx.files.internal("english.fnt"))
-
-        val BLING = Gdx.audio.newSound(Gdx.files.internal("powerup.wav"))!!
+        private var fallbackFont = "uk/me/fantastic/retro/english.fnt"
+        @JvmStatic
+        val FONT = BitmapFont(load(fallbackFont,TEXT["fontBlack"]))
+        @JvmStatic
+        val FONT_CLEAR = BitmapFont(load(fallbackFont,TEXT["font"]))
+        @JvmStatic
+        val FONT_ENGLISH = BitmapFont(load(fallbackFont,"english.fnt"))
+        @JvmStatic
+        val BLING = Gdx.audio.newSound(load("uk/me/fantastic/retro/bling.wav", "bling.wav"))!!
     }
 }

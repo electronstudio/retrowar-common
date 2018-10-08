@@ -189,7 +189,7 @@ class MenuController(
         }
     }
 
-    val lineHeightPixels: Float = -Resources.FONT.data.down
+    val lineHeightPixels: Float = -font.data.down
 
     @Suppress("UNUSED_PARAMETER")
     private fun mouseSelect(menu: Menu, mx: Float, my: Float) {

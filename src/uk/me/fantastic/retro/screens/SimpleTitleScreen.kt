@@ -16,6 +16,7 @@ import uk.me.fantastic.retro.App.Companion.app
 import uk.me.fantastic.retro.FBORenderer
 import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.Prefs.BinPref
+import uk.me.fantastic.retro.Resources
 import uk.me.fantastic.retro.log
 import uk.me.fantastic.retro.menu.ActionMenuItem
 import uk.me.fantastic.retro.menu.BackMenuItem
@@ -33,8 +34,7 @@ import uk.me.fantastic.retro.menu.SubMenuItem
 open class SimpleTitleScreen(
     val WIDTH: Float = 160f,
     val HEIGHT: Float = 120f,
-    val FONT: BitmapFont = BitmapFont(Gdx
-            .files.internal("small.fnt")),
+    val FONT: BitmapFont = Resources.FONT, //BitmapFont(Gdx.files.internal("small.fnt")),
     val title: String = "My Game",
     val factory: AbstractGameFactory,
     val quitText: String = "Quit",

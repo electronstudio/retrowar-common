@@ -10,8 +10,6 @@ import uk.me.fantastic.retro.screens.GameSession
  */
 open class GameFactory(name: String, val createGame: (GameSession) -> Game, val i: Texture? = null) : AbstractGameFactory(name) {
 
-    val default = Texture(Gdx.files.internal("badlogic.jpg"))
-
     override val description: String = name
 
     override val image: Texture
@@ -19,7 +17,7 @@ open class GameFactory(name: String, val createGame: (GameSession) -> Game, val 
             if (i != null) {
                 return i
             } else {
-                return default
+                return Resources.MISSING_TEXTURE
             }
         }
 

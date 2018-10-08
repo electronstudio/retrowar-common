@@ -16,7 +16,7 @@ import uk.me.fantastic.retro.screens.GameSession
  * @property name Game name
  * @property levels a List of level names, only for games that have multiple levels. May be null.
  */
-abstract class AbstractGameFactory(val name: String, val levels: List<String>? = null) {
+abstract class AbstractGameFactory(val name: String, val levels: List<String>? = null, val pathPrefix: String = "") {
 
     /** Currently selected level number */
     var level = 0
@@ -25,7 +25,7 @@ abstract class AbstractGameFactory(val name: String, val levels: List<String>? =
     var showOnGamesMenu = true
 
     /** Texture screenshot or logo to display on menu */
-    abstract val image: Texture
+    open val image: Texture by lazy {  Resources.MISSING_TEXTURE }
 
     /** Description displayed on menu */
     abstract val description: String
