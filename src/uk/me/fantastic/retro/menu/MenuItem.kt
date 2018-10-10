@@ -1,5 +1,6 @@
 package uk.me.fantastic.retro.menu
 
+import com.badlogic.gdx.math.MathUtils
 import uk.me.fantastic.retro.Prefs
 
 /**
@@ -97,6 +98,19 @@ class MultiChoiceMenuItem(
     }
 }
 
+class NumberMenuItem(text: String, initial: Int, val min: Int, val max: Int) : MenuItem(text) {
+    var value: Int = initial
+    override fun displayText() = value.toString()
+    override fun doAction() {
+        value = MathUtils.clamp(value+1, min, max)
+    }
+
+    override fun doAction2() {
+        value = MathUtils.clamp(value-1, min, max)
+    }
+}
+
+
 class NumPrefMenuItem(text: String, val numPref: Prefs.NumPref) : MenuItem(text) {
     override fun displayText() = numPref.displayText()
     override fun doAction() {
@@ -112,6 +126,14 @@ class NumPrefMenuItem(text: String, val numPref: Prefs.NumPref) : MenuItem(text)
 class StringPrefMenuItem(text: String, val stringPref: Prefs.StringPref) : MenuItem(text) {
     override fun displayText() = stringPref.displayText()
     override fun doAction() {
+    }
+}
+
+class BinMenuItem(text: String, initial: Boolean) : MenuItem(text) {
+    var value: Boolean = initial
+    override fun displayText() = if(value) "Yes" else "No"
+    override fun doAction() {
+       value = !value
     }
 }
 

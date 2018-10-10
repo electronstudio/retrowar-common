@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -214,7 +215,16 @@ inline fun <reified T> matrix2d(height: Int, width: Int, init: (Int, Int) -> Arr
 
 fun Float.round(): Float = roundToInt().toFloat()
 
-fun createDefaultShader(): ShaderProgram {
+fun createDefaultShader(): ShaderProgram{
+    if(Gdx.app.type==Application.ApplicationType.Android){
+        ShaderProgram.prependFragmentCode = ""
+        ShaderProgram.prependVertexCode = ""
+        return createDefaultShaderGL2()
+    }
+    return createDefaultShaderGL3()
+}
+
+fun createDefaultShaderGL3(): ShaderProgram {
     val vertexShader = ("in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
             "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
             "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
@@ -307,15 +317,58 @@ private fun createFragmentShader(hasColors: Boolean, numTexCoords: Int): String 
 /** Returns a new instance of the default shader used by SpriteBatch for GL2 when no shader is specified.  */
 fun createDefaultShapeShader(hasNormals: Boolean = false, hasColors: Boolean = true, numTexCoords: Int = 0):
         ShaderProgram {
-    val vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords)
-    val fragmentShader = createFragmentShader(hasColors, numTexCoords)
-    ShaderProgram.prependFragmentCode = "#version 330\n"
-    ShaderProgram.prependVertexCode = "#version 330\n"
+    if(Gdx.app.type==Application.ApplicationType.Android){
+        ShaderProgram.prependFragmentCode = ""
+        ShaderProgram.prependVertexCode = ""
+        return ImmediateModeRenderer20.createDefaultShader(hasNormals, hasColors, numTexCoords)
+    }
+else {
+
+        val vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords)
+        val fragmentShader = createFragmentShader(hasColors, numTexCoords)
+        ShaderProgram.prependFragmentCode = "#version 330\n"
+        ShaderProgram.prependVertexCode = "#version 330\n"
+        val shader = ShaderProgram(vertexShader, fragmentShader)
+        if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
+        return shader
+    }
+}
+
+
+fun createDefaultShaderGL2(): ShaderProgram {
+    val vertexShader = ("attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+            + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+            + "uniform mat4 u_projTrans;\n" //
+            + "varying vec4 v_color;\n" //
+            + "varying vec2 v_texCoords;\n" //
+            + "\n" //
+            + "void main()\n" //
+            + "{\n" //
+            + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+            + "   v_color.a = v_color.a * (255.0/254.0);\n" //
+            + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+            + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+            + "}\n")
+    val fragmentShader = ("#ifdef GL_ES\n" //
+            + "#define LOWP lowp\n" //
+            + "precision mediump float;\n" //
+            + "#else\n" //
+            + "#define LOWP \n" //
+            + "#endif\n" //
+            + "varying LOWP vec4 v_color;\n" //
+            + "varying vec2 v_texCoords;\n" //
+            + "uniform sampler2D u_texture;\n" //
+            + "void main()\n"//
+            + "{\n" //
+            + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" //
+            + "}")
+    ShaderProgram.prependFragmentCode = ""
+    ShaderProgram.prependVertexCode = ""
     val shader = ShaderProgram(vertexShader, fragmentShader)
     if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
     return shader
 }
-
 fun renderTileMapToTexture(map: TiledMap): TextureRegion {
     val tiles = map.layers[0] as TiledMapTileLayer
     val width = tiles.width * tiles.tileWidth

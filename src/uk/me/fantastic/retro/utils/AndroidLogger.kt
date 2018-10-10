@@ -10,7 +10,7 @@ import uk.me.fantastic.retro.Logger
  * @param version Version string of app
  * @param dsn The private(ish) code that identifies your app to Sentry
  * */
-internal class AndroidLogger(val version: String, val dsn: String) : Logger {
+class AndroidLogger(val version: String, val dsn: String) : Logger {
     override fun error(message: String) {
         println(message)
         Sentry.capture(message)

@@ -1,10 +1,12 @@
 package uk.me.fantastic.retro.utils
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
+import uk.me.fantastic.retro.createDefaultShaderGL2
 import uk.me.fantastic.retro.log
 
 /** Loads shaders and sets up some vertex attributes format of RetroArch shaders */
@@ -14,13 +16,15 @@ class RetroShader(filename: String) {
 
     init {
         // important since we aren't using some uniforms and attributes that SpriteBatch expects
+        val version = if(Gdx.app.type== Application.ApplicationType.Android) "" else "#version 330\n"
+
         ShaderProgram.pedantic = false
-        ShaderProgram.prependVertexCode = "#version 330\n#define VERTEX\n#define MVPMatrix u_projTrans\n" +
+        ShaderProgram.prependVertexCode = version+"#define VERTEX\n#define MVPMatrix u_projTrans\n" +
                 "#define VertexCoord a_position\n" +
                 "#define TexCoord a_texCoord0\n" +
                 "#define COLOR a_color\n" +
                 "#define Texture u_texture\n"
-        ShaderProgram.prependFragmentCode = "#version 330\n#define FRAGMENT\n#define MVPMatrix u_projTrans\n" +
+        ShaderProgram.prependFragmentCode = version+"#define FRAGMENT\n#define MVPMatrix u_projTrans\n" +
                 "#define VertexCoord a_position\n" +
                 "#define TexCoord a_texCoord0\n" +
                 "#define COLOR a_color\n" +

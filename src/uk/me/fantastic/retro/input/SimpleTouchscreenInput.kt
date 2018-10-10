@@ -27,7 +27,7 @@ internal class SimpleTouchscreenInput : InputDevice() {
                 if (Gdx.input.isTouched(i)) {
                     val x = Gdx.input.getX(i).toFloat()
                     // val y = Gdx.input.getY(i).toFloat()
-                    if (x > Gdx.graphics.displayMode.width / 2) {
+                    if (x > Gdx.graphics.displayMode.width * 0.75) {
                         return true
                     }
                 }
@@ -41,7 +41,7 @@ internal class SimpleTouchscreenInput : InputDevice() {
                 if (Gdx.input.isTouched(i)) {
                     val x = Gdx.input.getX(i).toFloat()
                     val y = Gdx.input.getY(i).toFloat()
-                    if (x < Gdx.graphics.displayMode.width / 2) {
+                    if (x < Gdx.graphics.displayMode.width * 0.75) {
                         if (joyStickFinger == -1) {
                             joyStickOrigin = Vec(x, y)
                         }

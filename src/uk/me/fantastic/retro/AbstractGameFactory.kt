@@ -1,6 +1,7 @@
 package uk.me.fantastic.retro
 
 import com.badlogic.gdx.graphics.Texture
+import uk.me.fantastic.retro.menu.MenuItem
 import uk.me.fantastic.retro.menu.MultiChoiceMenuItem
 import uk.me.fantastic.retro.screens.GameSession
 
@@ -43,5 +44,5 @@ abstract class AbstractGameFactory(val name: String, val levels: List<String>? =
      * It's a way to configure the Factory via a GUI
      * If there are none, just leave List empty
      */
-    open val options: List<MultiChoiceMenuItem> = ArrayList<MultiChoiceMenuItem>()
+    open val options: List<MenuItem> = ArrayList<MenuItem>()
 }
