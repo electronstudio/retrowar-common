@@ -326,7 +326,7 @@ object Prefs {
         PLAYER4("player4", default = "PLAYER4"),
         SERVER("server", default = "1.1.1.1"),
         GAME("game", default = "RETDROID"),
-        PLAYER_GUEST("playerguest", default = "GUEST");
+        PLAYER_MORE("playermore", default = "PLAYER");
 
         fun displayText(): String {
             return prefs.getString(pref, default)

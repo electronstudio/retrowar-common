@@ -220,7 +220,7 @@ open class GameSession(
 
         val namePref = nextPlayerName()
 
-        val player = Player(input = input, name = namePref.getString(), color = Color.valueOf(
+        val player = Player(input = input, name = namePref, color = Color.valueOf(
                 (nextPlayerColor())), color2 = Color.valueOf(nextPlayerColor2()))
 
         players.add(player)
@@ -236,13 +236,13 @@ open class GameSession(
         log("create local player $id")
 
         val namePref = when (id) {
-            0 -> Prefs.StringPref.PLAYER1
-            1 -> Prefs.StringPref.PLAYER2
-            2 -> Prefs.StringPref.PLAYER3
-            3 -> Prefs.StringPref.PLAYER4
-            else -> Prefs.StringPref.PLAYER_GUEST
+            0 -> Prefs.StringPref.PLAYER1.getString()
+            1 -> Prefs.StringPref.PLAYER2.getString()
+            2 -> Prefs.StringPref.PLAYER3.getString()
+            3 -> Prefs.StringPref.PLAYER4.getString()
+            else -> Prefs.StringPref.PLAYER_MORE.getString()+(id+1)
         }
-        val player = ClientPlayer(input = input, name = namePref.getString(), localId = id, color = Color.valueOf(
+        val player = ClientPlayer(input = input, name = namePref, localId = id, color = Color.valueOf(
                 (nextPlayerColor())), color2 = Color.valueOf(nextPlayerColor2()))
         clientPlayers.add(player)
 
@@ -376,13 +376,13 @@ open class GameSession(
 
     // FIXME pre-create array of 16 players and pop the top one when player needed
 
-    fun nextPlayerName(): Prefs.StringPref {
+    fun nextPlayerName(): String {
         return when (players.size) {
-            0 -> Prefs.StringPref.PLAYER1
-            1 -> Prefs.StringPref.PLAYER2
-            2 -> Prefs.StringPref.PLAYER3
-            3 -> Prefs.StringPref.PLAYER4
-            else -> Prefs.StringPref.PLAYER_GUEST
+            0 -> Prefs.StringPref.PLAYER1.getString()
+            1 -> Prefs.StringPref.PLAYER2.getString()
+            2 -> Prefs.StringPref.PLAYER3.getString()
+            3 -> Prefs.StringPref.PLAYER4.getString()
+            else -> Prefs.StringPref.PLAYER_MORE.getString()+(players.size+1)
         }
     }
 
