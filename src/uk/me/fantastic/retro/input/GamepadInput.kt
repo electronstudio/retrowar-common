@@ -8,20 +8,32 @@ import uk.me.fantastic.retro.utils.Vec
  */
 internal class GamepadInput(val controller: MappedController) : InputDevice() {
 
+    var singleStickMode = true
+    var lockedFireDirection:Vec? = null
+
     override val leftStick: Vec
         get() {
-            val x = controller.LStickHorizontalAxis()
-            val y = controller.LStickVerticalAxis()
-            val (a, b) = filterDeadzone(0.05f, x, y)
-            return Vec(a, b)
+            return filterDeadzone(0.05f, controller.LStickHorizontalAxis(), controller.LStickVerticalAxis())
         }
 
     override val rightStick: Vec
         get() {
-            val x = controller.RStickHorizontalAxis()
-            val y = controller.RStickVerticalAxis()
-            val (a, b) = filterDeadzone(0.6f, x, y)
-            return Vec(a, b)
+           // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
+
+            val rawData = filterDeadzone(0.6f, controller.RStickHorizontalAxis(), controller.RStickVerticalAxis())
+            if(rawData.isMoreOrLessZero()) {
+                if(controller.rBumper() ) {
+                    if(lockedFireDirection==null) {
+                        lockedFireDirection = leftStick
+                    }
+                    return lockedFireDirection!!
+                }else{
+                    lockedFireDirection = null
+                    return Vec(0f,0f)
+                }
+            }else {
+                return rawData
+            }
         }
 
     override val leftTrigger: Float

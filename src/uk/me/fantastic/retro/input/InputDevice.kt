@@ -27,10 +27,10 @@ abstract class InputDevice {
 
     var entity: Int = -1
 
-    internal fun filterDeadzone(deadzone: Float, axisX: Float, axisY: Float): Pair<Float, Float> {
+    internal fun filterDeadzone(deadzone: Float, axisX: Float, axisY: Float): Vec {
         if (axisX < deadzone && axisX > -deadzone && axisY < deadzone && axisY > -deadzone) {
-            return Pair(0f, 0f)
+            return Vec(0f, 0f)
         }
-        return Pair(axisX, axisY)
+        return Vec(axisX, axisY)
     }
 }

@@ -19,4 +19,7 @@ class Vec(val x: Float, val y: Float) {
     }
 
     infix operator fun minus(p: Vec): Vec = Vec(x - p.x, y - p.y)
+    fun isMoreOrLessZero(): Boolean {
+        return (x<0.001f && x>-0.001f && y<0.001f && y>-0.001f)
+    }
 }

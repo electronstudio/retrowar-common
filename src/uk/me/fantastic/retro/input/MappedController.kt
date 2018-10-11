@@ -11,6 +11,7 @@ import uk.me.fantastic.retro.isOSX
  * Wraps a GDX controller, provides mapping for buttons/axises because GDX seems to lack this
  */
 internal class MappedController(val controller: Controller) {
+
     var A: Int = 1
     var B: Int = 2
     var X: Int = 0
