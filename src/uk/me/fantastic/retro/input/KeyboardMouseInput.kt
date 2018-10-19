@@ -55,7 +55,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
     override val leftBumper: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
+            return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isButtonPressed(Input.Keys.TAB)
         }
     override val rightBumper: Boolean
         get() {

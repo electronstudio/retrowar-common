@@ -419,7 +419,7 @@ open class GameSession(
         } ?: app.showTitleScreen()
     }
 
-    fun advanceToNextGame(gameToShow: Game) {
+    private fun advanceToNextGame(gameToShow: Game) {
         game?.hide()
         game?.dispose()
         game = gameToShow
@@ -441,6 +441,14 @@ open class GameSession(
         }
         return winners
 
+    }
+
+    fun startSubgameInMetagame(metagame: Game, game: Game) {
+        players.forEach { it.reset() }
+        this.metaGame = metagame
+        state = GameSession.GameState.GETREADY
+        this.game = game
+        resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
 //    private fun setNetworkRoleToClient() {
