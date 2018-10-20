@@ -29,6 +29,7 @@ import com.badlogic.gdx.math.MathUtils
 import uk.me.fantastic.retro.App.Companion.app
 
 import uk.me.fantastic.retro.Resources.Companion.TEXT
+import uk.me.fantastic.retro.Resources.Companion.palette
 
 /**
  *  Stores stuff in GDX preference files, but also provides singleton/enums for use in creating option Menus
@@ -42,24 +43,9 @@ object Prefs {
 
     val shaders = makeShaderList()
 
-    val colors = listOf<Color>(
-            Color(0, 0, 0), // 0: black
-            Color(157, 157, 157), // 1: grey
-            Color(255, 255, 255), // 2: white
-            Color(190, 38, 51), // 3: red
-            Color(224, 111, 139), // 4: pink
-            Color(73, 60, 43),   // 5: dbrown
-            Color(164, 100, 34), // 6: lbrown
-            Color(235, 137, 49), // 7: orange
-            Color(247, 226, 107), // 8: yellow
-            Color(47, 72, 78),   // 9: unknown
-            Color(68, 137, 26),  // 10: dgreen
-            Color(163, 206, 39), // 11: lgreen
-            Color(27, 38, 50), // 12: ddblue
-            Color(0, 87, 132), // 13: dblue
-            Color(49, 162, 242), // 14: blue
-            Color(178, 220, 239) // 15: lblue
-    ).map { it.toString() }
+    val colors = palette.map{it.toString()}
+
+
 
     private fun makeShaderList(): List<String> {
         val shaderFiles = Gdx.files.internal("shaders").list("glsl").map { it.name() }

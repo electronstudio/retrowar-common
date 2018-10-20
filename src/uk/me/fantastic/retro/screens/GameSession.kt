@@ -451,6 +451,12 @@ open class GameSession(
         resize(Gdx.graphics.width, Gdx.graphics.height)
     }
 
+    fun metaGameOver() {
+        nextGame = null
+        metaGame = null
+        quit()
+    }
+
 //    private fun setNetworkRoleToClient() {
 //        game.setNetworkRoleToClient()
 //    }

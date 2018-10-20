@@ -16,11 +16,14 @@ class TextGame(session: GameSession, text: String, width: Float = 416f, height: 
         SimpleGame(session, width, height, font, false) {
 
 
-    val menu = Menu(text, doubleSpaced = true, quitAction = ::gameover, allItems = arrayListOf(BackMenuItem("OK")))
+    val menu = Menu("", bottomText = {text}, doubleSpaced = true, quitAction = ::gameover, allItems = arrayListOf
+        (BackMenuItem("OK")))
 
 
-    val controller = MenuController(menu, width*0.7f, height, x = 0f, y = height - 20f)
+    val controller = MenuController(menu, width/2, height, y = height - 20f)
 
+
+    // FIXME MAKE THIS APPEAR IN A BOX IN tHE MIDDLE OF THE SCREEN LIKE THE ROUND NUMBER BOXES DO!!!
 
     override fun doDrawing(batch: Batch) {
         controller.draw(batch)

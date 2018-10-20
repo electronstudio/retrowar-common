@@ -15,7 +15,7 @@ open class Menu(
     val title: String,
     val bottomText: () -> String = { "" },
     val quitAction: () -> Unit = {},
-    val doubleSpaced: Boolean = Resources.FONT.data.down > -10,
+    val doubleSpaced: Boolean = true, // Resources.FONT.data.down > -10,
     val allItems: ArrayList<MenuItem> = ArrayList()
 ) {
     val pages: ArrayList<Page> = ArrayList()

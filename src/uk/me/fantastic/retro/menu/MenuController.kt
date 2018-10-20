@@ -193,6 +193,8 @@ class MenuController(
 
     @Suppress("UNUSED_PARAMETER")
     private fun mouseSelect(menu: Menu, mx: Float, my: Float) {
+    //    println("${font.data.lineHeight} ${font.data.ascent} ${font.data.descent} ${font.data.down} ${font.data.blankLineScale}")
+
         //  log("mouseselect $y")
         var counter = 0f
         for (i in menu.indices) {

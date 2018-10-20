@@ -20,6 +20,7 @@ package uk.me.fantastic.retro
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -56,5 +57,24 @@ class Resources {
         val FONT_ENGLISH = BitmapFont(load(fallbackFont,"english.fnt"))
         @JvmStatic
         val BLING = Gdx.audio.newSound(load("uk/me/fantastic/retro/bling.wav", "bling.wav"))!!
+
+        val palette = arrayOf(
+                Color(0, 0, 0), // 0: black
+                Color(157, 157, 157), // 1: grey
+                Color(255, 255, 255), // 2: white
+                Color(190, 38, 51), // 3: red
+                Color(224, 111, 139), // 4: pink
+                Color(73, 60, 43),   // 5: dbrown
+                Color(164, 100, 34), // 6: lbrown
+                Color(235, 137, 49), // 7: orange
+                Color(247, 226, 107), // 8: yellow
+                Color(47, 72, 78),   // 9: unknown
+                Color(68, 137, 26),  // 10: dgreen
+                Color(163, 206, 39), // 11: lgreen
+                Color(27, 38, 50), // 12: ddblue
+                Color(0, 87, 132), // 13: dblue
+                Color(49, 162, 242), // 14: blue
+                Color(178, 220, 239) // 15: lblue
+        )
     }
 }
