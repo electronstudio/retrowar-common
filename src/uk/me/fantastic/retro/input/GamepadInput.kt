@@ -22,7 +22,7 @@ internal class GamepadInput(val controller: MappedController) : InputDevice() {
 
             val rawData = filterDeadzone(0.6f, controller.RStickHorizontalAxis(), controller.RStickVerticalAxis())
             if(rawData.isMoreOrLessZero()) {
-                if(controller.rBumper() ) {
+                if(controller.rBumper() || controller.a()) {
                     if(lockedFireDirection==null) {
                         lockedFireDirection = leftStick
                     }
