@@ -4,12 +4,17 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import uk.me.fantastic.retro.screens.GameSession
 
-class SimpleGameFactory(name: String, private val gameClazz: Class<out Game>, path: String, override val image:
-Texture = Resources.MISSING_TEXTURE) :
+class SimpleGameFactory(
+        name: String,
+        private val gameClazz: Class<out Game>,
+        path: String,
+        override val image: Texture = Resources.MISSING_TEXTURE,
+        override val description:String = name
+) :
         AbstractGameFactory
 (name = name, pathPrefix = path) {
 
-    override val description = name
+
 
 
     override fun create(session: GameSession): Game {
