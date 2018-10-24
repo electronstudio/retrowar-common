@@ -48,7 +48,7 @@ object Prefs {
 
 
     private fun makeShaderList(): List<String> {
-        val shaderFiles = Gdx.files.internal("shaders").list("glsl").map { it.name() }
+        val shaderFiles = Gdx.files.internal("shaders").list("glsl").map { it.nameWithoutExtension() }
         return listOf("NONE") + shaderFiles
     }
 

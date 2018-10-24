@@ -224,7 +224,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     }
 
     fun initialiseShader() {
-        shader = RetroShader("shaders/" + Prefs.MultiChoicePref.SHADER.getString())
+        shader = RetroShader("shaders/" + Prefs.MultiChoicePref.SHADER.getString()+".glsl")
     }
 
     protected fun initialiseSteam() {
