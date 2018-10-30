@@ -10,7 +10,9 @@ import uk.co.electronstudio.retrowar.utils.Vec
 /**
  * Maps Keyboard and mouse to input
  */
-internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
+internal class KeyboardMouseInput(
+    val session: GameSession
+) : InputDevice() {
 
     override val leftTrigger: Float
         get() = 0f
@@ -19,53 +21,105 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
     override val leftStick: Vec
         get() {
-            var x = 0f
-            var y = 0f
-            if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_4)) {
-                x = -1f
+            var x =
+                0f
+            var y =
+                0f
+            if (Gdx.input.isKeyPressed(
+                    Input.Keys.A
+                ) || Gdx.input.isKeyPressed(
+                    Input.Keys.NUMPAD_4
+                )
+            ) {
+                x =
+                        -1f
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_6)) {
-                x = 1f
+            if (Gdx.input.isKeyPressed(
+                    Input.Keys.D
+                ) || Gdx.input.isKeyPressed(
+                    Input.Keys.NUMPAD_6
+                )
+            ) {
+                x =
+                        1f
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
-                y = -1f
+            if (Gdx.input.isKeyPressed(
+                    Input.Keys.W
+                ) || Gdx.input.isKeyPressed(
+                    Input.Keys.NUMPAD_8
+                )
+            ) {
+                y =
+                        -1f
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
-                y = 1f
+            if (Gdx.input.isKeyPressed(
+                    Input.Keys.S
+                ) || Gdx.input.isKeyPressed(
+                    Input.Keys.NUMPAD_2
+                )
+            ) {
+                y =
+                        1f
             }
-            return Vec(x, y)
+            return Vec(
+                x,
+                y
+            )
         }
 
     override val A: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isButtonPressed(0)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.SPACE
+            ) || Gdx.input.isButtonPressed(
+                0
+            )
         }
     override val B: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.ENTER)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.ENTER
+            )
         }
     override val X: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.CONTROL_LEFT
+            )
         }
     override val Y: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.CONTROL_RIGHT
+            )
         }
 
     override val leftBumper: Boolean
         get() {
-            return  Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) //|| Gdx.input.isButtonPressed(Input.Keys.TAB)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.SHIFT_LEFT
+            ) //|| Gdx.input.isButtonPressed(Input.Keys.TAB)
         }
     override val rightBumper: Boolean
         get() {
-            return Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)
+            return Gdx.input.isKeyPressed(
+                Input.Keys.SHIFT_RIGHT
+            )
         }
     //  val pointers = Aspect.all(IsPointer::class.java)
 
     override val rightStick: Vec
         get() {
-            if (pressed(Input.Keys.UP) || pressed(Input.Keys.DOWN) || pressed(Input.Keys.LEFT) || pressed(Input.Keys.RIGHT)) {
+            if (pressed(
+                    Input.Keys.UP
+                ) || pressed(
+                    Input.Keys.DOWN
+                ) || pressed(
+                    Input.Keys.LEFT
+                ) || pressed(
+                    Input.Keys.RIGHT
+                )
+            ) {
                 return keyboardAsRightStick()
             }
 
@@ -75,37 +129,74 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
             //    val playerV = (playerVelocity.x*playerVelocity.x+playerVelocity.y*playerVelocity.y).sqrt()
 
-            if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                return Vec(0f, 0f)
+            if (!Gdx.input.isButtonPressed(
+                    Input.Buttons.LEFT
+                )
+            ) {
+                return Vec(
+                    0f,
+                    0f
+                )
             }
 
-            val game = session.game
+            val game =
+                session.game
             if (game != null && game is Game.UsesMouseAsInputDevice) {
-                val m = game.getMouse()
+                val m =
+                    game.getMouse()
                 return m
             }
-            return Vec(0f, 0f)
+            return Vec(
+                0f,
+                0f
+            )
         }
 
     private fun keyboardAsRightStick(): Vec {
-        var x = 0f
-        var y = 0f
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            x = -1f
+        var x =
+            0f
+        var y =
+            0f
+        if (Gdx.input.isKeyPressed(
+                Input.Keys.LEFT
+            )
+        ) {
+            x =
+                    -1f
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            x = 1f
+        if (Gdx.input.isKeyPressed(
+                Input.Keys.RIGHT
+            )
+        ) {
+            x =
+                    1f
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            y = -1f
+        if (Gdx.input.isKeyPressed(
+                Input.Keys.UP
+            )
+        ) {
+            y =
+                    -1f
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            y = 1f
+        if (Gdx.input.isKeyPressed(
+                Input.Keys.DOWN
+            )
+        ) {
+            y =
+                    1f
         }
-        return Vec(x, y)
+        return Vec(
+            x,
+            y
+        )
     }
 
-    fun pressed(x: Int): Boolean = Gdx.input.isKeyPressed(x)
+    fun pressed(
+        x: Int
+    ): Boolean =
+        Gdx.input.isKeyPressed(
+            x
+        )
 
     val <A, B> Pair<A, B>.x: A
         get() = first

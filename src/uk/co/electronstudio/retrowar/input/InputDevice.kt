@@ -25,22 +25,42 @@ abstract class InputDevice {
             return (A || B || X || Y) || rightBumper
         }
 
-    var entity: Int = -1
+    var entity: Int =
+        -1
 
-    internal fun filterDeadzone(deadzone: Float, axisX: Float, axisY: Float): Vec {
+    internal fun filterDeadzone(
+        deadzone: Float,
+        axisX: Float,
+        axisY: Float
+    ): Vec {
         if (axisX < deadzone && axisX > -deadzone && axisY < deadzone && axisY > -deadzone) {
-            return Vec(0f, 0f)
+            return Vec(
+                0f,
+                0f
+            )
         }
-        return Vec(axisX, axisY)
+        return Vec(
+            axisX,
+            axisY
+        )
     }
 
-    fun dPadDirection(): Vec{
-        var x=0f
-        var y=0f
-        if(leftStick.x>0.3) x=1f
-        else if(leftStick.x < -0.3) x=-1f
-        if(leftStick.y>0.3) y=1f
-        else if(leftStick.y < -0.3) y=-1f
-        return Vec(x,y)
+    fun dPadDirection(): Vec {
+        var x =
+            0f
+        var y =
+            0f
+        if (leftStick.x > 0.3) x =
+                1f
+        else if (leftStick.x < -0.3) x =
+                -1f
+        if (leftStick.y > 0.3) y =
+                1f
+        else if (leftStick.y < -0.3) y =
+                -1f
+        return Vec(
+            x,
+            y
+        )
     }
 }

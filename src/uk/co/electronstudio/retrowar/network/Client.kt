@@ -13,15 +13,26 @@ import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.log
 import java.util.concurrent.ArrayBlockingQueue
 
-class Client : Listener() {
-    val BUFFER_SIZE = 1024 * 1024 * 10
+class Client :
+    Listener() {
+    val BUFFER_SIZE =
+        1024 * 1024 * 10
 
-    val client = Client(BUFFER_SIZE, BUFFER_SIZE)
-    val queue = ArrayBlockingQueue<Any>(10)
+    val client =
+        Client(
+            BUFFER_SIZE,
+            BUFFER_SIZE
+        )
+    val queue =
+        ArrayBlockingQueue<Any>(
+            10
+        )
 
-    var gameToLoad: AbstractGameFactory? = null
+    var gameToLoad: AbstractGameFactory? =
+        null
 
-    var player: Player? = null
+    var player: Player? =
+        null
 
     fun initialise() {
         log("initialize networkclient")
@@ -30,40 +41,71 @@ class Client : Listener() {
     }
 
     fun connect() {
-        val p = Player(
-                GamepadInput(app.mappedControllers.first()),
+        val p =
+            Player(
+                GamepadInput(
+                    app.mappedControllers.first()
+                ),
                 Prefs.StringPref.PLAYER1.getString(),
-                Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR.getString()),
-                Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR2.getString())
+                Color.valueOf(
+                    Prefs.MultiChoicePref.PLAYER1_COLOR.getString()
+                ),
+                Color.valueOf(
+                    Prefs.MultiChoicePref.PLAYER1_COLOR2.getString()
+                )
+            )
+        connect(
+            p
         )
-        connect(p)
     }
 
-    fun connect(p: Player) {
-        player = p
-        client.kryo.isRegistrationRequired = false
-        client.kryo.instantiatorStrategy = StdInstantiatorStrategy()
+    fun connect(
+        p: Player
+    ) {
+        player =
+                p
+        client.kryo.isRegistrationRequired =
+                false
+        client.kryo.instantiatorStrategy =
+                StdInstantiatorStrategy()
 
-        client.addListener(this)
+        client.addListener(
+            this
+        )
 
         client.start()
         log("networkclient started")
-        client.connect(5000, Prefs.StringPref.SERVER.getString(), 54555, 54777)
+        client.connect(
+            5000,
+            Prefs.StringPref.SERVER.getString(),
+            54555,
+            54777
+        )
     }
 
-    override fun connected(connection: Connection) {
+    override fun connected(
+        connection: Connection
+    ) {
     }
 
-    override fun received(connection: Connection, obj: Any) {
+    override fun received(
+        connection: Connection,
+        obj: Any
+    ) {
         when (obj) {
             is AbstractGameFactory -> {
-                gameToLoad = obj
+                gameToLoad =
+                        obj
                 player?.let {
-                    client.sendTCP(it)
+                    client.sendTCP(
+                        it
+                    )
                 }
             }
             else -> {
-                queue.offer(obj)
+                queue.offer(
+                    obj
+                )
             }
         }
     }

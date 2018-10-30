@@ -6,11 +6,21 @@ import uk.co.electronstudio.retrowar.utils.Vec
 /**
  * has one joystick on the left and one button on the right of the screen
  */
-internal class SimpleTouchscreenInput : InputDevice() {
+internal class SimpleTouchscreenInput :
+    InputDevice() {
 
-    var joyStickOrigin = Vec(0f, 0f)
-    var joyStickPosition = Vec(0f, 0f)
-    var joyStickFinger = -1
+    var joyStickOrigin =
+        Vec(
+            0f,
+            0f
+        )
+    var joyStickPosition =
+        Vec(
+            0f,
+            0f
+        )
+    var joyStickFinger =
+        -1
 
     override val leftTrigger: Float
         get() = 0f
@@ -24,8 +34,15 @@ internal class SimpleTouchscreenInput : InputDevice() {
 //                return true
 //            }
             for (i in 0..10) {
-                if (Gdx.input.isTouched(i)) {
-                    val x = Gdx.input.getX(i).toFloat()
+                if (Gdx.input.isTouched(
+                        i
+                    )
+                ) {
+                    val x =
+                        Gdx.input.getX(
+                            i
+                        )
+                            .toFloat()
                     // val y = Gdx.input.getY(i).toFloat()
                     if (x > Gdx.graphics.displayMode.width * 0.75) {
                         return true
@@ -38,28 +55,59 @@ internal class SimpleTouchscreenInput : InputDevice() {
     override val leftStick: Vec
         get() {
             for (i in 0..10) {
-                if (Gdx.input.isTouched(i)) {
-                    val x = Gdx.input.getX(i).toFloat()
-                    val y = Gdx.input.getY(i).toFloat()
+                if (Gdx.input.isTouched(
+                        i
+                    )
+                ) {
+                    val x =
+                        Gdx.input.getX(
+                            i
+                        )
+                            .toFloat()
+                    val y =
+                        Gdx.input.getY(
+                            i
+                        )
+                            .toFloat()
                     if (x < Gdx.graphics.displayMode.width * 0.75) {
                         if (joyStickFinger == -1) {
-                            joyStickOrigin = Vec(x, y)
+                            joyStickOrigin =
+                                    Vec(
+                                        x,
+                                        y
+                                    )
                         }
-                        joyStickFinger = i
-                        joyStickPosition = Vec(x, y)
-                        return filterDeadzone(0f, (joyStickPosition.x - joyStickOrigin.x), (joyStickPosition.y -
-                        joyStickOrigin.y)).normVector()
+                        joyStickFinger =
+                                i
+                        joyStickPosition =
+                                Vec(
+                                    x,
+                                    y
+                                )
+                        return filterDeadzone(
+                            0f,
+                            (joyStickPosition.x - joyStickOrigin.x),
+                            (joyStickPosition.y -
+                                    joyStickOrigin.y)
+                        ).normVector()
                     }
                 }
             }
-            joyStickFinger = -1
-            return Vec(0f, 0f)
+            joyStickFinger =
+                    -1
+            return Vec(
+                0f,
+                0f
+            )
         }
 
     override val rightStick: Vec
         get() {
 
-            return Vec(0f, 0f)
+            return Vec(
+                0f,
+                0f
+            )
         }
     override val B: Boolean
         get() {

@@ -8,9 +8,16 @@ import uk.co.electronstudio.retrowar.screens.GameSession
  * produces Games.  you may want to subclass this for your own Game, but you may be able
  * use it as-is by passing in your own constructor method
  */
-open class GameFactory(name: String, val createGame: (GameSession) -> Game, val i: Texture? = null) : AbstractGameFactory(name) {
+open class GameFactory(
+    name: String,
+    val createGame: (GameSession) -> Game,
+    val i: Texture? = null
+) : AbstractGameFactory(
+    name
+) {
 
-    override val description: String = name
+    override val description: String =
+        name
 
     override val image: Texture
         get() {
@@ -21,7 +28,11 @@ open class GameFactory(name: String, val createGame: (GameSession) -> Game, val 
             }
         }
 
-    override fun create(session: GameSession): Game {
-        return createGame(session)
+    override fun create(
+        session: GameSession
+    ): Game {
+        return createGame(
+            session
+        )
     }
 }

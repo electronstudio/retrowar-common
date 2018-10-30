@@ -8,26 +8,43 @@ import uk.co.electronstudio.retrowar.log
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.CopyOnWriteArrayList
 
-class Server : Listener() {
+class Server :
+    Listener() {
 
-    val BUFFER_SIZE = 1024 * 1024 * 10
-    val server = Server(BUFFER_SIZE, BUFFER_SIZE)
+    val BUFFER_SIZE =
+        1024 * 1024 * 10
+    val server =
+        Server(
+            BUFFER_SIZE,
+            BUFFER_SIZE
+        )
 
-    val queue = ArrayBlockingQueue<Pair<Connection, Any>>(10)
+    val queue =
+        ArrayBlockingQueue<Pair<Connection, Any>>(
+            10
+        )
 
     // private var connectionQueue = ArrayBlockingQueue<Connection>(64)
     // private var disConnectionQueue = ArrayBlockingQueue<Connection>(64)
 
-    private var clients = CopyOnWriteArrayList<Connection>()
+    private var clients =
+        CopyOnWriteArrayList<Connection>()
 
     fun initialise() {
         // registerKryo(server.kryo)
-        server.kryo.isRegistrationRequired = false
-        server.kryo.instantiatorStrategy = StdInstantiatorStrategy()
+        server.kryo.isRegistrationRequired =
+                false
+        server.kryo.instantiatorStrategy =
+                StdInstantiatorStrategy()
 
         try {
-            server.bind(54555, 54777)
-            server.addListener(this)
+            server.bind(
+                54555,
+                54777
+            )
+            server.addListener(
+                this
+            )
 
             server.start()
             log("server running")
@@ -36,17 +53,33 @@ class Server : Listener() {
         }
     }
 
-    override fun received(connection: Connection, obj: Any) {
-        queue.offer(Pair(connection, obj))
+    override fun received(
+        connection: Connection,
+        obj: Any
+    ) {
+        queue.offer(
+            Pair(
+                connection,
+                obj
+            )
+        )
     }
 
-    override fun connected(connection: Connection) {
-        clients.add(connection)
+    override fun connected(
+        connection: Connection
+    ) {
+        clients.add(
+            connection
+        )
         log("Server: Connected client $connection")
     }
 
-    override fun disconnected(connection: Connection) {
-        clients.remove(connection)
+    override fun disconnected(
+        connection: Connection
+    ) {
+        clients.remove(
+            connection
+        )
         log("Server: Disconnected client $connection")
     }
 
@@ -54,18 +87,26 @@ class Server : Listener() {
 //        sendReliable(gf)
 //    }
 
-    fun send(obj: Any) {
+    fun send(
+        obj: Any
+    ) {
         log("server send $obj")
-        server.sendToAllUDP(obj)
+        server.sendToAllUDP(
+            obj
+        )
 //        clients.forEach {
 //            log("  to $it")
 //            it.sendUDP(obj)
 //        }
     }
 
-    fun sendReliable(obj: Any) {
+    fun sendReliable(
+        obj: Any
+    ) {
         log("sendreliable")
-        server.sendToAllTCP(obj)
+        server.sendToAllTCP(
+            obj
+        )
 //        clients.forEach {
 //            log("sending $it $obj")
 //            it.sendTCP(obj)

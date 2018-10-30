@@ -51,17 +51,38 @@ import kotlin.math.roundToInt
  * different implementations might show them or send them off
  * to a server */
 interface Logger {
-    fun log(message: String)
-    fun log(caller: String, message: String)
-    fun error(message: String)
+    fun log(
+        message: String
+    )
+
+    fun log(
+        caller: String,
+        message: String
+    )
+
+    fun error(
+        message: String
+    )
+
     fun initialize()
 }
 
-val osName = System.getProperty("os.name")
-val isOSX: Boolean = osName.contains("OS X")
-val isMobile = Gdx.app.type == Application.ApplicationType.Android || Gdx.app.type == Application.ApplicationType.iOS
-val isLinux: Boolean = osName.contains("Linux") && !isMobile
-val isWindows: Boolean = !isLinux && !isOSX && !isMobile
+val osName =
+    System.getProperty(
+        "os.name"
+    )
+val isOSX: Boolean =
+    osName.contains(
+        "OS X"
+    )
+val isMobile =
+    Gdx.app.type == Application.ApplicationType.Android || Gdx.app.type == Application.ApplicationType.iOS
+val isLinux: Boolean =
+    osName.contains(
+        "Linux"
+    ) && !isMobile
+val isWindows: Boolean =
+    !isLinux && !isOSX && !isMobile
 
 /* GDX on iOS has very poor garbage collection.  Supply one of these to disable
 * it and do your own GC at appropriate points when delays wont be noticed.
@@ -73,22 +94,40 @@ interface ManualGC {
 }
 
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun log(log: String) {
+@Suppress(
+    "NOTHING_TO_INLINE"
+)
+inline fun log(
+    log: String
+) {
     if (Prefs.BinPref.DEBUG.isEnabled()) {
-        App.app.logger.log(log)
+        App.app.logger.log(
+            log
+        )
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun log(c: String, log: String) {
+@Suppress(
+    "NOTHING_TO_INLINE"
+)
+inline fun log(
+    c: String,
+    log: String
+) {
     if (Prefs.BinPref.DEBUG.isEnabled()) {
-        App.app.logger.log(c, log)
+        App.app.logger.log(
+            c,
+            log
+        )
     }
 }
 
-fun error(message: String) {
-    App.app.logger.error(message)
+fun error(
+    message: String
+) {
+    App.app.logger.error(
+        message
+    )
 }
 
 fun drawBox(
@@ -100,24 +139,67 @@ fun drawBox(
     y: Float,
     SCREEN_WIDTH: Float
 ) {
-    val box = Rectangle(0f, 0f, width + MARGIN, height + MARGIN)
-    shape.begin(ShapeRenderer.ShapeType.Filled)
-    shape.color = Color.BLACK
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2 + SHADOW_OFFSET, y - SHADOW_OFFSET - box.height + MARGIN / 2, box.width, box
-            .height)
-    shape.color = Color(0, 87, 132)
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
+    val box =
+        Rectangle(
+            0f,
+            0f,
+            width + MARGIN,
+            height + MARGIN
+        )
+    shape.begin(
+        ShapeRenderer.ShapeType.Filled
+    )
+    shape.color =
+            Color.BLACK
+    shape.rect(
+        SCREEN_WIDTH / 2 - box.width / 2 + SHADOW_OFFSET,
+        y - SHADOW_OFFSET - box.height + MARGIN / 2,
+        box.width,
+        box
+            .height
+    )
+    shape.color =
+            Color(
+                0,
+                87,
+                132
+            )
+    shape.rect(
+        SCREEN_WIDTH / 2 - box.width / 2,
+        y - box.height + MARGIN / 2,
+        box.width,
+        box.height
+    )
     shape.end()
-    shape.begin(ShapeRenderer.ShapeType.Line)
-    shape.color = Color.WHITE
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
+    shape.begin(
+        ShapeRenderer.ShapeType.Line
+    )
+    shape.color =
+            Color.WHITE
+    shape.rect(
+        SCREEN_WIDTH / 2 - box.width / 2,
+        y - box.height + MARGIN / 2,
+        box.width,
+        box.height
+    )
     shape.end()
 }
 
-fun listAllLevels() = Gdx.files.internal("levels").list().filter { it.extension() == "tmx" }.map { it.name().dropLast(4) }
+fun listAllLevels() =
+    Gdx.files.internal(
+        "levels"
+    ).list().filter { it.extension() == "tmx" }.map {
+        it.name()
+            .dropLast(
+                4
+            )
+    }
 
 fun Float.roundDown(): Float {
-    return MathUtils.floor(this).toFloat()
+    return MathUtils.floor(
+        this
+    )
+        .toFloat()
 }
 
 /** @suppress */
@@ -129,64 +211,120 @@ enum class Size {
 class JoinRequest
 
 /** @suppress */
-class WorldUpdate(val buffer: ByteArray?, val id: Int) {
-    constructor() : this(null, 0)
+class WorldUpdate(
+    val buffer: ByteArray?,
+    val id: Int
+) {
+    constructor() : this(
+        null,
+        0
+    )
 }
 
 /** @suppress */
-class PlayersUpdate(val players: ArrayList<Player>?) {
-    constructor() : this(null)
+class PlayersUpdate(
+    val players: ArrayList<Player>?
+) {
+    constructor() : this(
+        null
+    )
 }
 
 /** @suppress */
-class CreatePlayerRequest(val player: ClientPlayer?) {
-    constructor() : this(null)
+class CreatePlayerRequest(
+    val player: ClientPlayer?
+) {
+    constructor() : this(
+        null
+    )
 }
 
 /** @suppress */
-class InputUpdate(input: InputDevice?, val playerId: Int) {
+class InputUpdate(
+    input: InputDevice?,
+    val playerId: Int
+) {
 
-    constructor() : this(null, -1)
+    constructor() : this(
+        null,
+        -1
+    )
 
-    var networkInput: NetworkInput? = null
+    var networkInput: NetworkInput? =
+        null
 
     init {
         if (input != null) {
-            networkInput = NetworkInput(input.leftStick, input.rightStick, input.leftTrigger, input.rightTrigger,
-                    input.A)
+            networkInput =
+                    NetworkInput(
+                        input.leftStick,
+                        input.rightStick,
+                        input.leftTrigger,
+                        input.rightTrigger,
+                        input.A
+                    )
         }
     }
 }
 
 /** @suppress */
-class CreatePlayerResponse(val serverPlayerId: Int, val clientPlayerId: Int) {
-    constructor() : this(-1, -1)
+class CreatePlayerResponse(
+    val serverPlayerId: Int,
+    val clientPlayerId: Int
+) {
+    constructor() : this(
+        -1,
+        -1
+    )
 }
 
 fun Pair<Float, Float>.normVector(): Pair<Float, Float> {
 
-    val vMagnitude = (first * first + second * second).sqrt()
-    return Pair(first / vMagnitude, second / vMagnitude)
+    val vMagnitude =
+        (first * first + second * second).sqrt()
+    return Pair(
+        first / vMagnitude,
+        second / vMagnitude
+    )
 }
 
 interface Callback {
-    fun setForegroundFPS(foregroundFPS: Int)
-    fun setBackgroundFPS(backgroundFPS: Int)
+    fun setForegroundFPS(
+        foregroundFPS: Int
+    )
+
+    fun setBackgroundFPS(
+        backgroundFPS: Int
+    )
 }
 
-class EmptyCallback : Callback {
+class EmptyCallback :
+    Callback {
 
-    override fun setForegroundFPS(foregroundFPS: Int) {
+    override fun setForegroundFPS(
+        foregroundFPS: Int
+    ) {
     }
 
-    override fun setBackgroundFPS(backgroundFPS: Int) {
+    override fun setBackgroundFPS(
+        backgroundFPS: Int
+    ) {
     }
 }
 
 typealias Square = ArrayList<Int>
 
-fun Color(r: Int, g: Int, b: Int): Color {
-    return Color(r.toFloat() / 255f, g.toFloat() / 255f, b.toFloat() / 255f, 1.0f)
+fun Color(
+    r: Int,
+    g: Int,
+    b: Int
+): Color {
+    return Color(
+        r.toFloat() / 255f,
+        g.toFloat() / 255f,
+        b.toFloat() / 255f,
+        1.0f
+    )
 }
 
 /*
@@ -211,60 +349,90 @@ It might be better just to use Array<Integer>. There's also IntArray but that la
 //
 // }
 
-inline fun <reified T> matrix2d(height: Int, width: Int, init: (Int, Int) -> Array<T>) = Array(height, { row -> init(row, width) })
+inline fun <reified T> matrix2d(
+    height: Int,
+    width: Int,
+    init: (Int, Int) -> Array<T>
+) =
+    Array(
+        height,
+        { row ->
+            init(
+                row,
+                width
+            )
+        })
 
-fun Float.round(): Float = roundToInt().toFloat()
+fun Float.round(): Float =
+    roundToInt().toFloat()
 
-fun createDefaultShader(): ShaderProgram{
-    if(Gdx.app.type==Application.ApplicationType.Android){
-        ShaderProgram.prependFragmentCode = ""
-        ShaderProgram.prependVertexCode = ""
+fun createDefaultShader(): ShaderProgram {
+    if (Gdx.app.type == Application.ApplicationType.Android) {
+        ShaderProgram.prependFragmentCode =
+                ""
+        ShaderProgram.prependVertexCode =
+                ""
         return createDefaultShaderGL2()
     }
     return createDefaultShaderGL3()
 }
 
 fun createDefaultShaderGL3(): ShaderProgram {
-    val vertexShader = ("in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
-            "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
-            "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
-            "uniform mat4 u_projTrans;\n" + //
-            "out vec4 v_color;\n" + //
-            "out vec2 v_texCoords;\n" + //
-            "\n" + //
-            "void main()\n" + //
-            "{\n" + //
-            "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
-            "   v_color.a = v_color.a * (255.0/254.0);\n" + //
-            "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
-            "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
-            "}\n")
-    val fragmentShader = ("#ifdef GL_ES\n" + //
-            "#define LOWP lowp\n" + //
-            "precision mediump float;\n" + //
-            "#else\n" + //
-            "#define LOWP \n" + //
-            "#endif\n" + //
-            "in LOWP vec4 v_color;\n" + //
-            "in vec2 v_texCoords;\n" + //
-            "out vec4 fragColor;\n" + //
-            "uniform sampler2D u_texture;\n" + //
-            "void main()\n" + //
-            "{\n" + //
-            "  fragColor = v_color * texture(u_texture, v_texCoords);\n" + //
-            "}")
+    val vertexShader =
+        ("in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
+                "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
+                "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
+                "uniform mat4 u_projTrans;\n" + //
+                "out vec4 v_color;\n" + //
+                "out vec2 v_texCoords;\n" + //
+                "\n" + //
+                "void main()\n" + //
+                "{\n" + //
+                "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
+                "   v_color.a = v_color.a * (255.0/254.0);\n" + //
+                "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
+                "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
+                "}\n")
+    val fragmentShader =
+        ("#ifdef GL_ES\n" + //
+                "#define LOWP lowp\n" + //
+                "precision mediump float;\n" + //
+                "#else\n" + //
+                "#define LOWP \n" + //
+                "#endif\n" + //
+                "in LOWP vec4 v_color;\n" + //
+                "in vec2 v_texCoords;\n" + //
+                "out vec4 fragColor;\n" + //
+                "uniform sampler2D u_texture;\n" + //
+                "void main()\n" + //
+                "{\n" + //
+                "  fragColor = v_color * texture(u_texture, v_texCoords);\n" + //
+                "}")
 
-    ShaderProgram.prependFragmentCode = "#version 330\n"
-    ShaderProgram.prependVertexCode = "#version 330\n"
-    val shader = ShaderProgram(vertexShader, fragmentShader)
-    if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
+    ShaderProgram.prependFragmentCode =
+            "#version 330\n"
+    ShaderProgram.prependVertexCode =
+            "#version 330\n"
+    val shader =
+        ShaderProgram(
+            vertexShader,
+            fragmentShader
+        )
+    if (shader.isCompiled == false) throw IllegalArgumentException(
+        "Error compiling shader: " + shader.log
+    )
     return shader
 }
 
-private fun createVertexShader(hasNormals: Boolean, hasColors: Boolean, numTexCoords: Int): String {
-    var shader = ("in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
-            (if (hasNormals) "in vec3 " + ShaderProgram.NORMAL_ATTRIBUTE + ";\n" else "") +
-            if (hasColors) "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" else "")
+private fun createVertexShader(
+    hasNormals: Boolean,
+    hasColors: Boolean,
+    numTexCoords: Int
+): String {
+    var shader =
+        ("in vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
+                (if (hasNormals) "in vec3 " + ShaderProgram.NORMAL_ATTRIBUTE + ";\n" else "") +
+                if (hasColors) "in vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" else "")
 
     for (i in 0 until numTexCoords) {
         shader += "in vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + i + ";\n"
@@ -288,8 +456,12 @@ private fun createVertexShader(hasNormals: Boolean, hasColors: Boolean, numTexCo
     return shader
 }
 
-private fun createFragmentShader(hasColors: Boolean, numTexCoords: Int): String {
-    var shader = "#ifdef GL_ES\n" + "precision mediump float;\n" + "#endif\n"
+private fun createFragmentShader(
+    hasColors: Boolean,
+    numTexCoords: Int
+): String {
+    var shader =
+        "#ifdef GL_ES\n" + "precision mediump float;\n" + "#endif\n"
 
     if (hasColors) shader += "in vec4 v_col;\n"
     for (i in 0 until numTexCoords) {
@@ -315,89 +487,176 @@ private fun createFragmentShader(hasColors: Boolean, numTexCoords: Int): String 
 }
 
 /** Returns a new instance of the default shader used by SpriteBatch for GL2 when no shader is specified.  */
-fun createDefaultShapeShader(hasNormals: Boolean = false, hasColors: Boolean = true, numTexCoords: Int = 0):
+fun createDefaultShapeShader(
+    hasNormals: Boolean = false,
+    hasColors: Boolean = true,
+    numTexCoords: Int = 0
+):
         ShaderProgram {
-    if(Gdx.app.type==Application.ApplicationType.Android){
-        ShaderProgram.prependFragmentCode = ""
-        ShaderProgram.prependVertexCode = ""
-        return ImmediateModeRenderer20.createDefaultShader(hasNormals, hasColors, numTexCoords)
-    }
-else {
+    if (Gdx.app.type == Application.ApplicationType.Android) {
+        ShaderProgram.prependFragmentCode =
+                ""
+        ShaderProgram.prependVertexCode =
+                ""
+        return ImmediateModeRenderer20.createDefaultShader(
+            hasNormals,
+            hasColors,
+            numTexCoords
+        )
+    } else {
 
-        val vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords)
-        val fragmentShader = createFragmentShader(hasColors, numTexCoords)
-        ShaderProgram.prependFragmentCode = "#version 330\n"
-        ShaderProgram.prependVertexCode = "#version 330\n"
-        val shader = ShaderProgram(vertexShader, fragmentShader)
-        if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
+        val vertexShader =
+            createVertexShader(
+                hasNormals,
+                hasColors,
+                numTexCoords
+            )
+        val fragmentShader =
+            createFragmentShader(
+                hasColors,
+                numTexCoords
+            )
+        ShaderProgram.prependFragmentCode =
+                "#version 330\n"
+        ShaderProgram.prependVertexCode =
+                "#version 330\n"
+        val shader =
+            ShaderProgram(
+                vertexShader,
+                fragmentShader
+            )
+        if (shader.isCompiled == false) throw IllegalArgumentException(
+            "Error compiling shader: " + shader.log
+        )
         return shader
     }
 }
 
 
 fun createDefaultShaderGL2(): ShaderProgram {
-    val vertexShader = ("attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-            + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
-            + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-            + "uniform mat4 u_projTrans;\n" //
-            + "varying vec4 v_color;\n" //
-            + "varying vec2 v_texCoords;\n" //
-            + "\n" //
-            + "void main()\n" //
-            + "{\n" //
-            + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
-            + "   v_color.a = v_color.a * (255.0/254.0);\n" //
-            + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-            + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-            + "}\n")
-    val fragmentShader = ("#ifdef GL_ES\n" //
-            + "#define LOWP lowp\n" //
-            + "precision mediump float;\n" //
-            + "#else\n" //
-            + "#define LOWP \n" //
-            + "#endif\n" //
-            + "varying LOWP vec4 v_color;\n" //
-            + "varying vec2 v_texCoords;\n" //
-            + "uniform sampler2D u_texture;\n" //
-            + "void main()\n"//
-            + "{\n" //
-            + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" //
-            + "}")
-    ShaderProgram.prependFragmentCode = ""
-    ShaderProgram.prependVertexCode = ""
-    val shader = ShaderProgram(vertexShader, fragmentShader)
-    if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
+    val vertexShader =
+        ("attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+                + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+                + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+                + "uniform mat4 u_projTrans;\n" //
+                + "varying vec4 v_color;\n" //
+                + "varying vec2 v_texCoords;\n" //
+                + "\n" //
+                + "void main()\n" //
+                + "{\n" //
+                + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
+                + "   v_color.a = v_color.a * (255.0/254.0);\n" //
+                + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
+                + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
+                + "}\n")
+    val fragmentShader =
+        ("#ifdef GL_ES\n" //
+                + "#define LOWP lowp\n" //
+                + "precision mediump float;\n" //
+                + "#else\n" //
+                + "#define LOWP \n" //
+                + "#endif\n" //
+                + "varying LOWP vec4 v_color;\n" //
+                + "varying vec2 v_texCoords;\n" //
+                + "uniform sampler2D u_texture;\n" //
+                + "void main()\n"//
+                + "{\n" //
+                + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" //
+                + "}")
+    ShaderProgram.prependFragmentCode =
+            ""
+    ShaderProgram.prependVertexCode =
+            ""
+    val shader =
+        ShaderProgram(
+            vertexShader,
+            fragmentShader
+        )
+    if (shader.isCompiled == false) throw IllegalArgumentException(
+        "Error compiling shader: " + shader.log
+    )
     return shader
 }
-fun renderTileMapToTexture(map: TiledMap): TextureRegion {
-    val tiles = map.layers[0] as TiledMapTileLayer
-    val width = tiles.width * tiles.tileWidth
-    val height = tiles.height * tiles.tileHeight
-    val batch = SpriteBatch(1000, createDefaultShader())
-    val mapRenderer = OrthogonalTiledMapRenderer(map, 1f, SpriteBatch(1000, createDefaultShader()))
 
-    val fbo = FrameBuffer(Pixmap.Format.RGB888, width.toInt(), height.toInt(), false)
+fun renderTileMapToTexture(
+    map: TiledMap
+): TextureRegion {
+    val tiles =
+        map.layers[0] as TiledMapTileLayer
+    val width =
+        tiles.width * tiles.tileWidth
+    val height =
+        tiles.height * tiles.tileHeight
+    val batch =
+        SpriteBatch(
+            1000,
+            createDefaultShader()
+        )
+    val mapRenderer =
+        OrthogonalTiledMapRenderer(
+            map,
+            1f,
+            SpriteBatch(
+                1000,
+                createDefaultShader()
+            )
+        )
 
-    val fboCam = OrthographicCamera(width, height)
-    val fboTexture = TextureRegion(fbo.colorBufferTexture)
+    val fbo =
+        FrameBuffer(
+            Pixmap.Format.RGB888,
+            width.toInt(),
+            height.toInt(),
+            false
+        )
 
-    fboTexture.texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
+    val fboCam =
+        OrthographicCamera(
+            width,
+            height
+        )
+    val fboTexture =
+        TextureRegion(
+            fbo.colorBufferTexture
+        )
 
-    fboTexture.flip(false, true) // for some reason y-axis is inverted in framebuffer
+    fboTexture.texture.setFilter(
+        Texture.TextureFilter.Nearest,
+        Texture.TextureFilter.Nearest
+    )
 
-    fboCam.position.set(width / 2f, height / 2f, 0f)
+    fboTexture.flip(
+        false,
+        true
+    ) // for some reason y-axis is inverted in framebuffer
+
+    fboCam.position.set(
+        width / 2f,
+        height / 2f,
+        0f
+    )
     fboCam.update()
 
     fbo.begin()
 
-    Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+    Gdx.gl.glClearColor(
+        0f,
+        0f,
+        0f,
+        1f
+    )
+    Gdx.gl.glClear(
+        GL20.GL_COLOR_BUFFER_BIT
+    )
 
-    batch.projectionMatrix = fboCam.combined
+    batch.projectionMatrix =
+            fboCam.combined
 
     batch.begin()
 
-    mapRenderer.setView(fboCam)
+    mapRenderer.setView(
+        fboCam
+    )
     mapRenderer.render()
 
     batch.end()

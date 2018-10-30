@@ -10,42 +10,88 @@ import uk.co.electronstudio.retrowar.FBORenderer
 import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.menu.MenuController
 
-abstract class MenuScreen(val drawBox: Boolean) : ScreenAdapter() {
-    val WIDTH = 416f
-    val HEIGHT = 256f
+abstract class MenuScreen(
+    val drawBox: Boolean
+) : ScreenAdapter() {
+    val WIDTH =
+        416f
+    val HEIGHT =
+        256f
 
     abstract val controller: MenuController
 
-    val renderer = FBORenderer(WIDTH, HEIGHT, false)
+    val renderer =
+        FBORenderer(
+            WIDTH,
+            HEIGHT,
+            false
+        )
 
-    override fun render(delta: Float) {
-        val mouse = renderer.cam.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f))
+    override fun render(
+        delta: Float
+    ) {
+        val mouse =
+            renderer.cam.unproject(
+                Vector3(
+                    Gdx.input.x.toFloat(),
+                    Gdx.input.y.toFloat(),
+                    0f
+                )
+            )
 
-        controller.doMouseInput(mouse.x, mouse.y)
+        controller.doMouseInput(
+            mouse.x,
+            mouse.y
+        )
         controller.doInput()
 
-        renderToFBO(renderer.beginFBO())
+        renderToFBO(
+            renderer.beginFBO()
+        )
         renderer.renderFBOtoScreen()
     }
 
-    fun renderToFBO(batch: Batch) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f) // clear the screen
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+    fun renderToFBO(
+        batch: Batch
+    ) {
+        Gdx.gl.glClearColor(
+            0f,
+            0f,
+            0f,
+            1f
+        ) // clear the screen
+        Gdx.gl.glClear(
+            GL20.GL_COLOR_BUFFER_BIT
+        )
         batch.begin()
-        if (drawBox) controller.draw(batch)
-        else controller.drawFlashing(batch)
-        additionalRendering(batch)
+        if (drawBox) controller.draw(
+            batch
+        )
+        else controller.drawFlashing(
+            batch
+        )
+        additionalRendering(
+            batch
+        )
         batch.end()
     }
 
-    abstract fun additionalRendering(batch: Batch)
+    abstract fun additionalRendering(
+        batch: Batch
+    )
 
     override fun show() {
         app.clearEvents()
     }
 
-    override fun resize(width: Int, height: Int) {
+    override fun resize(
+        width: Int,
+        height: Int
+    ) {
         log("resize $width $height")
-        renderer.resize(width, height)
+        renderer.resize(
+            width,
+            height
+        )
     }
 }

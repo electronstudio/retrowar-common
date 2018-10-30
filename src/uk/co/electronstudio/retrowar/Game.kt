@@ -10,7 +10,9 @@ import uk.co.electronstudio.retrowar.utils.Vec
  * youself.
  * most games probably want to implement SimpleGame subclass instead to get menus.
  */
-abstract class Game(val session: GameSession) {
+abstract class Game(
+    val session: GameSession
+) {
 
     /**
      * For games that require mouse input, we dont supply the raw mouse co-ordinates, we convert them to
@@ -24,10 +26,12 @@ abstract class Game(val session: GameSession) {
     }
 
     /* Maximum FPS we can handle, useful so physics doesnt break at extreme framerates */
-    open val MAX_FPS = 1000f
+    open val MAX_FPS =
+        1000f
 
     /* Minimum FPS we can handle, useful so physics doesnt break at extreme framerates */
-    open val MIN_FPS = 10f
+    open val MIN_FPS =
+        10f
 
     /* All players currently in the game */
     val players: ArrayList<Player>
@@ -41,13 +45,20 @@ abstract class Game(val session: GameSession) {
     abstract fun show()
     abstract fun hide()
 
-    abstract fun resize(width: Int, height: Int)
+    abstract fun resize(
+        width: Int,
+        height: Int
+    )
 
     /* Do all your drawing here */
-    abstract fun render(deltaTime: Float)
+    abstract fun render(
+        deltaTime: Float
+    )
 
     /* Supposed to be for displaying messages to the player, dont think most games implement this? */
-    abstract fun postMessage(s: String)
+    abstract fun postMessage(
+        s: String
+    )
 
     abstract val renderer: FBORenderer
 
@@ -58,7 +69,14 @@ abstract class Game(val session: GameSession) {
     * players to walk through walls.
      */
     fun renderAndClampFramerate() {
-        val delta = MathUtils.clamp(Gdx.graphics.rawDeltaTime, 1f / MAX_FPS, 1f / MIN_FPS)
-        render(delta)
+        val delta =
+            MathUtils.clamp(
+                Gdx.graphics.rawDeltaTime,
+                1f / MAX_FPS,
+                1f / MIN_FPS
+            )
+        render(
+            delta
+        )
     }
 }
