@@ -77,16 +77,16 @@ dokka {
     }
 
     packageOptions {
-        prefix = "uk.me.fantastic.retro.music"
+        prefix = "uk.co.electronstudio.retrowar.music"
         suppress = true
     }
     packageOptions {
-        prefix = "uk.me.fantastic.retro.menu"
+        prefix = "uk.co.electronstudio.retrowar.menu"
         suppress = true
     }
 
     packageOptions {
-        prefix = "uk.me.fantastic.retro.network"
+        prefix = "uk.co.electronstudio.retrowar.network"
         suppress = true
     }
     packageOptions {

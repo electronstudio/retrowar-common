@@ -27,3 +27,7 @@ and able to be added to RetroWar as a mini-game.
 
 * Menus
 
+# License
+
+RetroWar-common is licensed under the GPL initially.   If you want to use it in a non-GPL project we can probably
+work out alternative licensing terms, depending on the nature of your project, if you contact me.

@@ -9,7 +9,7 @@ import java.lang.StringBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static uk.me.fantastic.retro.GlobalsKt.log;
+import static uk.co.electronstudio.retrowar.GlobalsKt.log;
 
 /**
  * Gameanalytics.com client for libGDX
