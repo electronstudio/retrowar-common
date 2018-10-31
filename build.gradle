@@ -170,11 +170,8 @@ publishing {
             }
         }
     }
+  publish.dependsOn jar, sourcesJar, javadocJar, generatePomFileForMavenPublicationPublication
 }
-
-publish.dependsOn jar, sourcesJar, javadocJar //,generatePomFileForMavenPublicationPublication
-
-
 
 String keyString = new File('/Volumes/Home/rich/bintray.key').text.trim()
 
