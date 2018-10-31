@@ -162,7 +162,7 @@ abstract class App(
     lateinit var screenTest2: GameFactory
 
     val ibxmPlayer =
-        uk.co.electronstudio.retrowar.music.ibxm.IBXMPlayer()
+        IBXMPlayer()
 
     internal var mouseClicked =
         false
