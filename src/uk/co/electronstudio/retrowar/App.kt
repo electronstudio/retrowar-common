@@ -56,20 +56,13 @@ import kotlin.concurrent.thread
  * @param manualGC GDX on iOS has very poor garbage collection.  Supply one of these to disable
  * it and do your own GC.  Otherwise null.
  */
-abstract class App(
-    val callback: Callback,
-    val logger: Logger,
-    val manualGC: ManualGC? = null
-) :
-    Game() {
+abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
     /** Title screen */
-    var title: Screen? =
-        null
+    var title: Screen? = null
 
     /** If you are using GameAnalytics service set this, otherwise null */
-    var gameAnalytics: GameAnalytics? =
-        null
+    var gameAnalytics: GameAnalytics? = null
 
     companion object {
         /** A static reference to the singleton Application */
@@ -77,20 +70,13 @@ abstract class App(
         lateinit var app: App
 
         /** Where log file is stored */
-        val LOG_FILE_PATH: String =
-            System.getProperty(
-                "user.home"
-            ) + File.separator + "retrowar-log.txt"
+        val LOG_FILE_PATH: String = System.getProperty("user.home") + File.separator + "retrowar-log.txt"
         /** Where preferences file is stored */
-        val PREF_DIR: String =
-            System.getProperty(
-                "user.home"
-            ) + File.separator + ".prefs"
+        val PREF_DIR: String = System.getProperty("user.home") + File.separator + ".prefs"
     }
 
     init {
-        app =
-                this
+        app = this
         findIPaddress()
     }
 
@@ -100,128 +86,85 @@ abstract class App(
     protected fun findIPaddress() {
         thread {
             try {
-                val whatismyip =
-                    URL("http://checkip.amazonaws.com")
-                val i =
-                    BufferedReader(
-                        InputStreamReader(
-                            whatismyip.openStream()
-                        )
-                    )
-                ip =
-                        i.readLine()
+                val whatismyip = URL("http://checkip.amazonaws.com")
+                val i = BufferedReader(InputStreamReader(whatismyip.openStream()))
+                ip = i.readLine()
             } catch (e: Throwable) {
             }
         }
     }
 
     /** Uses the Callback to set max FPS, if the platform supports it */
-    fun setFPS(
-        f: Int
-    ) {
-        callback.setForegroundFPS(
-            f
-        )
-        callback.setBackgroundFPS(
-            f
-        )
+    fun setFPS(f: Int) {
+        callback.setForegroundFPS(f)
+        callback.setBackgroundFPS(f)
     }
 
     /** Setup network stuff, not currently working */
     protected fun initialiseNetwork() {
-        server =
-                Server()
+        server = Server()
         server?.initialise()
-        client =
-                Client()
+        client = Client()
         client?.initialise()
     }
 
     /** All the controllers currently connected */
-    internal val mappedControllers =
-        ArrayList<MappedController>()
+    internal val mappedControllers = ArrayList<MappedController>()
 
     /** All controllers each wrapped in StatefulController objects, useful for menu input */
-    internal val statefulControllers =
-        ArrayList<StatefulController>()
+    internal val statefulControllers = ArrayList<StatefulController>()
 
     /** Current IP address, if known.  Else "unknown" */
-    var ip: String =
-        "unknown"
+    var ip: String = "unknown"
 
     /** May be null if no Server */
-    var server: Server? =
-        null
+    var server: Server? = null
 
     /** May be null if no Client */
-    var client: Client? =
-        null
+    var client: Client? = null
 
     lateinit var controllerTest: GameFactory
     lateinit var screenTest1: GameFactory
     lateinit var screenTest2: GameFactory
 
-    val ibxmPlayer =
-        IBXMPlayer()
+    val ibxmPlayer = IBXMPlayer()
 
-    internal var mouseClicked =
-        false
+    internal var mouseClicked = false
 
     lateinit var shader: RetroShader
 
     /** has any key or controller button or mouse recently been hit? */
     fun anyKeyHit(): Boolean {
-        return statefulControllers.any { it.isButtonAJustPressed } ||
-                app.mouseJustClicked ||
-                Gdx.input.isKeyJustPressed(
-                    Input.Keys.SPACE
-                ) ||
-                Gdx.input.isKeyJustPressed(
-                    Input.Keys.ESCAPE
-                )
+        return statefulControllers.any { it.isButtonAJustPressed } || app.mouseJustClicked || Gdx.input.isKeyJustPressed(
+            Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
     }
 
     /** For testing sandbox permissions, attempts to read property we shouldnt be allowed to read */
     fun testSandbox(): String {
-        return (App::class.java.name + ": I shouldnt be able to do this: " + System.getProperty(
-            "os" +
-                    ".name"
-        ))
+        return (App::class.java.name + ": I shouldnt be able to do this: " + System.getProperty("os" + ".name"))
     }
 
     val mouseJustClicked: Boolean
         get() {
-            val t =
-                mouseClicked
-            mouseClicked =
-                    false
+            val t = mouseClicked
+            mouseClicked = false
             return t
         }
 
-    val versionString =
-        (App::class.java.`package`.implementationVersion
-            ?: "devel")
+    val versionString = (App::class.java.`package`.implementationVersion ?: "devel")
 
     /** Displays a new screen and disposes of the old one */
-    fun swapScreenAndDispose(
-        screen: Screen
-    ) {
+    fun swapScreenAndDispose(screen: Screen) {
         log("swapscreen")
-        val s =
-            app.screen
-        app.setScreen(
-            screen
-        )
+        val s = app.screen
+        app.setScreen(screen)
         s.dispose()
     }
 
     fun showTitleScreen() {
-        val title =
-            title
+        val title = title
         if (title != null) {
-            swapScreenAndDispose(
-                title
-            )
+            swapScreenAndDispose(title)
         } else {
             log("There is no titlescreen so exiting")
             quit()
@@ -242,10 +185,7 @@ abstract class App(
      * This triggers it for all of them, if they have it.
      */
     protected fun initialisePrefs() {
-        BinPref.values()
-            .forEach(
-                BinPref::apply
-            )
+        BinPref.values().forEach(BinPref::apply)
         Prefs.MultiChoicePref.LIMIT_FPS.apply()
     }
 
@@ -253,38 +193,21 @@ abstract class App(
      * Populates mappedControllers
      */
     protected fun initialiseControllers() {
-        println(
-            "Detected ${Controllers.getControllers().size} controllers"
-        )
+        println("Detected ${Controllers.getControllers().size} controllers")
 
-        Controllers.getControllers()
-            .mapTo(
-                mappedControllers,
-                ::MappedController
-            )
+        Controllers.getControllers().mapTo(mappedControllers, ::MappedController)
 
-        mappedControllers.mapTo(
-            statefulControllers,
-            ::StatefulController
-        )
+        mappedControllers.mapTo(statefulControllers, ::StatefulController)
     }
 
     protected fun initializeInput() {
-        Gdx.input.inputProcessor =
-                object :
-                    InputAdapter() {
-                    override fun touchUp(
-                        x: Int,
-                        y: Int,
-                        pointer: Int,
-                        button: Int
-                    ): Boolean {
-                        log("app touchdown")
-                        mouseClicked =
-                                true
-                        return true
-                    }
-                }
+        Gdx.input.inputProcessor = object : InputAdapter() {
+            override fun touchUp(x: Int, y: Int, pointer: Int, button: Int): Boolean {
+                log("app touchdown")
+                mouseClicked = true
+                return true
+            }
+        }
     }
 
     protected fun initialiseDesktop() {
@@ -292,57 +215,36 @@ abstract class App(
 
     protected fun initialiseAndroid() {
         if (Gdx.app.type == Application.ApplicationType.Android) {
-            Gdx.input.isCatchBackKey =
-                    true
+            Gdx.input.isCatchBackKey = true
         }
     }
 
     fun initialiseShader() {
-        shader =
-                RetroShader(
-                    "shaders/" + Prefs.MultiChoicePref.SHADER.getString() + ".glsl"
-                )
+        shader = RetroShader("shaders/" + Prefs.MultiChoicePref.SHADER.getString() + ".glsl")
     }
 
     protected fun initialiseSteam() {
-        System.out.println(
-            "Initialise Steam client API ..."
-        )
+        System.out.println("Initialise Steam client API ...")
 
         if (!SteamAPI.init()) {
             log("steam error")
-            SteamAPI.printDebugInfo(
-                System.err
-            )
+            SteamAPI.printDebugInfo(System.err)
         }
 
-        SteamAPI.printDebugInfo(
-            System.out
-        )
+        SteamAPI.printDebugInfo(System.out)
     }
 
     fun setScreenMode() {
         if (BinPref.FULLSCREEN.isEnabled()) {
-            Gdx.graphics.setFullscreenMode(
-                Gdx.graphics.displayMode
-            )
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
         } else {
-            Gdx.graphics.setWindowedMode(
-                832,
-                512
-            )
+            Gdx.graphics.setWindowedMode(832, 512)
         }
-        Gdx.graphics.setVSync(
-            BinPref.VSYNC.isEnabled()
-        )
+        Gdx.graphics.setVSync(BinPref.VSYNC.isEnabled())
     }
 
-    open fun submitAnalytics(
-        s: String
-    ) {
-        gameAnalytics?.submitDesignEvent(
-            s
-        )
+    open fun submitAnalytics(s: String) {
+        gameAnalytics?.submitDesignEvent(s)
         gameAnalytics?.flushQueueImmediately()
     }
 
@@ -351,28 +253,17 @@ abstract class App(
      * to hit a button to enter the game.  This auto-adds the first player to the game
      * so he doesnt have to this.
      */
-    fun configureSessionWithPreSelectedInputDevice(
-        session: GameSession
-    ) {
+    fun configureSessionWithPreSelectedInputDevice(session: GameSession) {
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            val controller1 =
-                App.app.mappedControllers.firstOrNull()
+            val controller1 = App.app.mappedControllers.firstOrNull()
             if (controller1 != null) {
-                session.preSelectedInputDevice =
-                        GamepadInput(
-                            controller1
-                        )
+                session.preSelectedInputDevice = GamepadInput(controller1)
             } else {
-                session.preSelectedInputDevice =
-                        KeyboardMouseInput(
-                            session
-                        )
-                session.KBinUse =
-                        true
+                session.preSelectedInputDevice = KeyboardMouseInput(session)
+                session.KBinUse = true
             }
         } else if (isMobile) {
-            session.preSelectedInputDevice =
-                    SimpleTouchscreenInput()
+            session.preSelectedInputDevice = SimpleTouchscreenInput()
         }
     }
 }

@@ -5,21 +5,12 @@ import java.io.OutputStream
 /**
  * combines two outputsteams into one outputstream
  */
-class ComboOutputStream(
-    val stream1: OutputStream,
-    val stream2: OutputStream
-) : OutputStream() {
+class ComboOutputStream(val stream1: OutputStream, val stream2: OutputStream) : OutputStream() {
 
-    override fun write(
-        b: Int
-    ) {
+    override fun write(b: Int) {
 
-        stream2.write(
-            b
-        )
-        stream1.write(
-            b
-        )
+        stream2.write(b)
+        stream1.write(b)
     }
 
     override fun close() {

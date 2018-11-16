@@ -24,25 +24,15 @@ package uk.co.electronstudio.retrowar.utils
 
 /** @suppress */
 fun Float.sqrt(): Float {
-    val f =
-        this
+    val f = this
     var y =
-        java.lang.Float.intBitsToFloat(
-            0x5f375a86 - (java.lang.Float.floatToIntBits(
-                f
-            ) shr 1)
-        ) // evil floating point bit level hacking -- Use 0x5f375a86 instead of 0x5f3759df, due to slight accuracy increase. (Credit to Chris Lomont)
+        java.lang.Float.intBitsToFloat(0x5f375a86 - (java.lang.Float.floatToIntBits(f) shr 1)) // evil floating point bit level hacking -- Use 0x5f375a86 instead of 0x5f3759df, due to slight accuracy increase. (Credit to Chris Lomont)
     y *= (1.5f - 0.5f * f * y * y) // Newton step, repeating increases accuracy
     return f * y
 }
 
 /** @suppress */
 fun Float.sqrta(): Float {
-    val f =
-        this
-    return f * java.lang.Float.intBitsToFloat(
-        0x5f375a86 - (java.lang.Float.floatToIntBits(
-            f
-        ) shr 1)
-    ) // evil floating point bit level hacking -- Use 0x5f375a86 instead of 0x5f3759df, due to slight accuracy increase. (Credit to Chris Lomont)
+    val f = this
+    return f * java.lang.Float.intBitsToFloat(0x5f375a86 - (java.lang.Float.floatToIntBits(f) shr 1)) // evil floating point bit level hacking -- Use 0x5f375a86 instead of 0x5f3759df, due to slight accuracy increase. (Credit to Chris Lomont)
 }

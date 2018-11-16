@@ -9,165 +9,109 @@ import com.badlogic.gdx.controllers.PovDirection
  * api that can be polled
  * Useful for menus (and simple games where you don't want to miss an input ?)
  */
-internal class StatefulController(
-    val c: MappedController
-) : ControllerAdapter() {
+internal class StatefulController(val c: MappedController) : ControllerAdapter() {
 
-    var startPressed =
-        false
-    var upPressed =
-        false
-    var downPressed =
-        false
-    var leftPressed =
-        false
-    var rightPressed =
-        false
-    var APressed =
-        false
-    var BPressed =
-        false
+    var startPressed = false
+    var upPressed = false
+    var downPressed = false
+    var leftPressed = false
+    var rightPressed = false
+    var APressed = false
+    var BPressed = false
 
-    var horCentered =
-        true
-    var vertCentered =
-        true
+    var horCentered = true
+    var vertCentered = true
 
-    val THRESHOLD =
-        0.3
-    val THRESHOLD_H =
-        0.6
+    val THRESHOLD = 0.3
+    val THRESHOLD_H = 0.6
 
     init {
-        c.controller.addListener(
-            this
-        )
+        c.controller.addListener(this)
     }
 
     fun clearEvents() {
-        startPressed =
-                false
-        upPressed =
-                false
-        downPressed =
-                false
-        leftPressed =
-                false
-        rightPressed =
-                false
-        APressed =
-                false
-        BPressed =
-                false
-        horCentered =
-                true
-        vertCentered =
-                true
+        startPressed = false
+        upPressed = false
+        downPressed = false
+        leftPressed = false
+        rightPressed = false
+        APressed = false
+        BPressed = false
+        horCentered = true
+        vertCentered = true
     }
 
     val isUpButtonJustPressed: Boolean
         get() {
-            val t =
-                upPressed
-            upPressed =
-                    false
+            val t = upPressed
+            upPressed = false
             return t
         }
 
     val isDownButtonJustPressed: Boolean
         get() {
-            val t =
-                downPressed
-            downPressed =
-                    false
+            val t = downPressed
+            downPressed = false
             return t
         }
 
     val isLeftButtonJustPressed: Boolean
         get() {
-            val t =
-                leftPressed
-            leftPressed =
-                    false
+            val t = leftPressed
+            leftPressed = false
             return t
         }
 
     val isRightButtonJustPressed: Boolean
         get() {
-            val t =
-                rightPressed
-            rightPressed =
-                    false
+            val t = rightPressed
+            rightPressed = false
             return t
         }
 
     val isButtonAJustPressed: Boolean
         get() {
             //   log("stateful $this pressed button")
-            val t =
-                APressed
-            APressed =
-                    false
+            val t = APressed
+            APressed = false
             return t
         }
     val isButtonBJustPressed: Boolean
         get() {
-            val t =
-                BPressed
-            BPressed =
-                    false
+            val t = BPressed
+            BPressed = false
             return t
         }
 
     val isStartButtonJustPressed: Boolean
         get() {
-            val t =
-                startPressed
-            startPressed =
-                    false
+            val t = startPressed
+            startPressed = false
             return t
         }
 
-    override fun buttonDown(
-        controller: Controller?,
-        buttonIndex: Int
-    ): Boolean {
+    override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
 
         when (buttonIndex) {
-            c.START -> startPressed =
-                    true
-            c.A -> APressed =
-                    true
-            c.B -> BPressed =
-                    true
-            c.DPAD_UP -> upPressed =
-                    true
-            c.DPAD_DOWN -> downPressed =
-                    true
-            c.DPAD_LEFT -> leftPressed =
-                    true
-            c.DPAD_RIGHT -> rightPressed =
-                    true
+            c.START -> startPressed = true
+            c.A -> APressed = true
+            c.B -> BPressed = true
+            c.DPAD_UP -> upPressed = true
+            c.DPAD_DOWN -> downPressed = true
+            c.DPAD_LEFT -> leftPressed = true
+            c.DPAD_RIGHT -> rightPressed = true
         }
 
         return true
     }
 
-    override fun povMoved(
-        controller: Controller?,
-        povIndex: Int,
-        value: PovDirection?
-    ): Boolean {
+    override fun povMoved(controller: Controller?, povIndex: Int, value: PovDirection?): Boolean {
 
         when (value) {
-            PovDirection.north -> upPressed =
-                    true
-            PovDirection.south -> downPressed =
-                    true
-            PovDirection.west -> leftPressed =
-                    true
-            PovDirection.east -> rightPressed =
-                    true
+            PovDirection.north -> upPressed = true
+            PovDirection.south -> downPressed = true
+            PovDirection.west -> leftPressed = true
+            PovDirection.east -> rightPressed = true
             PovDirection.center -> {
             }
             PovDirection.northEast -> {
@@ -183,40 +127,26 @@ internal class StatefulController(
         return true
     }
 
-    override fun axisMoved(
-        controller: Controller?,
-        axisIndex: Int,
-        value: Float
-    ): Boolean {
+    override fun axisMoved(controller: Controller?, axisIndex: Int, value: Float): Boolean {
         if (axisIndex == c.L_STICK_HORIZONTAL_AXIS) {
             if (value > THRESHOLD_H && horCentered) {
-                rightPressed =
-                        true
-                horCentered =
-                        false
+                rightPressed = true
+                horCentered = false
             } else if (value < -THRESHOLD_H && horCentered) {
-                leftPressed =
-                        true
-                horCentered =
-                        false
+                leftPressed = true
+                horCentered = false
             } else if (value < 0.1 && value > -0.1) {
-                horCentered =
-                        true
+                horCentered = true
             }
         } else if (axisIndex == c.L_STICK_VERTICAL_AXIS) {
             if (value > THRESHOLD && vertCentered) {
-                downPressed =
-                        true
-                vertCentered =
-                        false
+                downPressed = true
+                vertCentered = false
             } else if (value < -THRESHOLD && vertCentered) {
-                upPressed =
-                        true
-                vertCentered =
-                        false
+                upPressed = true
+                vertCentered = false
             } else if (value < 0.1 && value > -0.1) {
-                vertCentered =
-                        true
+                vertCentered = true
             }
         }
 
