@@ -17,22 +17,22 @@ import uk.co.electronstudio.retrowar.Prefs.BinPref.FPS
 /**
  * Renders sprites to a FrameBufferObject and thence to the screen
  * Does not support bilinear filtering when smooth motion is enabled
- * Creates new objects every frame, not sure how heavy they are or if they could better be pooled and reused
  */
 class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean) {
 
-    var cam: OrthographicCamera = setupCam(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-    internal var shape = ShapeRenderer(5000, createDefaultShapeShader())
-    internal var batch = SpriteBatch(1000, createDefaultShader())
-
-    internal var scaleFactor = 1f
-
-    var timer = 0.0f
-
-    internal var fboBatch = SpriteBatch(100, createDefaultShader())
-    internal var glyphLayout = GlyphLayout()
-
+    private var cam: OrthographicCamera = setupCam(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
+    private val shape = ShapeRenderer(5000, createDefaultShapeShader())
+    private val batch = SpriteBatch(1000, createDefaultShader())
     private val mFBO = ManagedFBO()
+
+    private var fboBatch = SpriteBatch(100, createDefaultShader())
+    private var glyphLayout = GlyphLayout()
+
+    private var scaleFactor = 1f
+    private var timer = 0.0f
+    private var scaledWidth = 0f
+    private var scaledHeight = 0f
+    private var m = 0f
 
     fun renderFBOtoScreen() {
         endFBO()
@@ -82,23 +82,11 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         return batch
     }
 
-    fun getShape(): ShapeRenderer {
-        shape.projectionMatrix = mFBO.projectionMatrix
-        return shape
-    }
+//    fun getShape(): ShapeRenderer {
+//        shape.projectionMatrix = mFBO.projectionMatrix
+//        return shape
+//    }
 
-    private fun endFBO() {
-        batch.begin()
-        if (FPS.isEnabled()) {
-            Resources.FONT_ENGLISH.setColor(Color.WHITE)
-            glyphLayout.setText(Resources.FONT_ENGLISH, "FPS ${Gdx.graphics.framesPerSecond}")
-            Resources.FONT_ENGLISH.draw(batch, glyphLayout, WIDTH / 2 - glyphLayout.width / 2, HEIGHT + 1)
-        }
-
-        batch.end()
-
-        mFBO.end()
-    }
 
     fun resize(width: Int, height: Int) {
         log("FBOrenderer resize")
@@ -128,40 +116,60 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         //     batch.begin()
     }
 
-    var scaledWidth = 0f
-    var scaledHeight = 0f
-    var m = 0f
+    fun convertGameCoordsToScreenCoords(x: Float, y: Float): Vector3 {
+        return cam.project(Vector3(x, y, 0f))
+    }
 
-    fun setupCam(x: Float, h: Float): OrthographicCamera {
-        val w = x
-        // val m: Float
-        m = findAppropriateScaleFactor(w, h)
+    fun convertScreenToGameCoords(x: Int, y: Int): Vector3 {
+        val g = cam.unproject(Vector3(x.toFloat(), y.toFloat(), 0f))
+        //  log("convertcoords","${g.x} ${g.y}")
+        // g.y = Renderer.HEIGHT-g.y
+        return g
+    }
+
+    private fun endFBO() {
+        batch.begin()
+        if (FPS.isEnabled()) {
+            Resources.FONT_ENGLISH.setColor(Color.WHITE)
+            glyphLayout.setText(Resources.FONT_ENGLISH, "FPS ${Gdx.graphics.framesPerSecond}")
+            Resources.FONT_ENGLISH.draw(batch, glyphLayout, WIDTH / 2 - glyphLayout.width / 2, HEIGHT + 1)
+        }
+
+        batch.end()
+
+        mFBO.end()
+    }
+
+    private fun setupCam(x: Float, h: Float): OrthographicCamera {
+        m = findAppropriateScaleFactor(x, h)
         scaledWidth = WIDTH * m
         scaledHeight = HEIGHT * m
         log("setupcam $scaledWidth $scaledHeight $m")
-        val cam = OrthographicCamera((w) / m, h / m)
+        val cam = OrthographicCamera((x) / m, h / m)
         cam.translate((WIDTH / 2), (HEIGHT / 2))
         cam.update()
         return cam
     }
 
-    fun findAppropriateScaleFactor(w: Float, h: Float): Float =
+
+
+    private fun findAppropriateScaleFactor(w: Float, h: Float): Float =
         if (Prefs.BinPref.STRETCH.isEnabled()) findHighestScaleFactor(w, h)
         else findHighestIntegerScaleFactor(w, h)
 
-    fun findHighestIntegerScaleFactor(width: Float, height: Float): Float {
+    private fun findHighestIntegerScaleFactor(width: Float, height: Float): Float {
         val w = width / WIDTH
         val h = height / HEIGHT
         return if (w < h) w.roundDown() else h.roundDown()
     }
 
-    fun findHighestScaleFactor(width: Float, height: Float): Float {
+    private fun findHighestScaleFactor(width: Float, height: Float): Float {
         val w = width / WIDTH
         val h = height / HEIGHT
         return if (w < h) w else h
     }
 
-    fun drawScanlines(shape: ShapeRenderer, cam: Camera) {
+    private fun drawScanlines(shape: ShapeRenderer, cam: Camera) {
         if (Prefs.BinPref.SCANLINES.isEnabled()) {
             shape.projectionMatrix = cam.combined
 
@@ -181,14 +189,4 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         }
     }
 
-    fun convertGameCoordsToScreenCoords(x: Float, y: Float): Vector3 {
-        return cam.project(Vector3(x, y, 0f))
-    }
-
-    fun convertScreenToGameCoords(x: Int, y: Int): Vector3 {
-        val g = cam.unproject(Vector3(x.toFloat(), y.toFloat(), 0f))
-        //  log("convertcoords","${g.x} ${g.y}")
-        // g.y = Renderer.HEIGHT-g.y
-        return g
-    }
 }

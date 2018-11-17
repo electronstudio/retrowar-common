@@ -19,7 +19,7 @@ abstract class MenuScreen(val drawBox: Boolean) : ScreenAdapter() {
     val renderer = FBORenderer(WIDTH, HEIGHT, false)
 
     override fun render(delta: Float) {
-        val mouse = renderer.cam.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f))
+        val mouse = renderer.convertScreenToGameCoords(Gdx.input.x, Gdx.input.y)
 
         controller.doMouseInput(mouse.x, mouse.y)
         controller.doInput()

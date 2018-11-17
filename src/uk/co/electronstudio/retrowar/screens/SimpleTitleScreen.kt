@@ -123,7 +123,7 @@ open class SimpleTitleScreen(val WIDTH: Float = 160f, val HEIGHT: Float = 120f,
     override fun render(delta: Float) {
         timer += delta
 
-        val mouse = renderer.cam.unproject(Vector3(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f))
+        val mouse = renderer.convertScreenToGameCoords(Gdx.input.x, Gdx.input.y)
 
         controller.doMouseInput(mouse.x, mouse.y)
         if (timer > 0.2f) {

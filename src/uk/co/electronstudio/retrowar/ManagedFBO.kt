@@ -16,10 +16,10 @@ import uk.co.electronstudio.retrowar.App.Companion.app
 class ManagedFBO {
     val MAX_WIDTH = Gdx.graphics.displayMode.width
     val MAX_HEIGHT = Gdx.graphics.displayMode.height
-    private var fbo: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, MAX_WIDTH, MAX_HEIGHT, false)
-    internal var fboCam: OrthographicCamera = OrthographicCamera()
+    private val fbo: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, MAX_WIDTH, MAX_HEIGHT, false)
+    private val fboCam: OrthographicCamera = OrthographicCamera()
 
-    val texture
+    internal val texture
         get() = fbo.colorBufferTexture
 
     var width: Float = 0f
