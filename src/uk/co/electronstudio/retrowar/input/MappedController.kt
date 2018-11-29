@@ -51,6 +51,43 @@ internal class MappedController(val controller: Controller) {
 
     var crippledTrigger = false
 
+    fun setToSDLDefault() {
+        mapping = "SDL"
+        A = 0
+        B = 1
+        X = 2
+        Y = 3
+        START = 4
+        GUIDE = 5
+        BACK = 6
+        L_STICK_PUSH = 7
+        R_STICK_PUSH = 8
+        L_BUMPER = 9
+        R_BUMPER = 10
+        DPAD_UP = 11
+        DPAD_DOWN = 12
+        DPAD_LEFT = 13
+        DPAD_RIGHT = 14
+
+        R_TRIGGER = -1
+        L_TRIGGER = -1
+
+
+
+        L_TRIGGER_AXIS = 4
+        R_TRIGGER_AXIS = 5
+        crippledTrigger = false
+
+
+
+        DPAD = 0
+
+        L_STICK_VERTICAL_AXIS = 1
+        L_STICK_HORIZONTAL_AXIS = 0
+        R_STICK_VERTICAL_AXIS = 3
+        R_STICK_HORIZONTAL_AXIS = 2
+    }
+
     fun setToMacDefault() {
         mapping = "MAC Default"
         A = 1
@@ -282,7 +319,10 @@ internal class MappedController(val controller: Controller) {
     }
 
     init {
-        if (isOSX) {
+        if (controller.name.startsWith("SDL")){
+            setToSDLDefault()
+        }
+        else if (isOSX) {
             setToMacDefault()
         } else if (isLinux) {
             if (controller.name.contains("Sony")) {

@@ -86,27 +86,26 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 480f) {
                     font.draw(batch, "$mapping ${c.getPov(j)}", x, y, 256f, Align.left, false)
                 }
             }
-            try {
-
-                for (j in 0..31) {
-                    y -= 8f
-                    font.draw(batch, "Accel$j: ${c.getAccelerometer(j)}", x, y, 256f, Align.left, false)
-                }
-            } catch (e: GdxRuntimeException) {
-            }
-
-            for (j in 0..31) {
-                if (c.getSliderX(j)) {
-                    y -= 8f
-                    font.draw(batch, "XSlider$j: ${c.getSliderX(j)}", x, y, 256f, Align.left, false)
-                }
-            }
-            for (j in 0..31) {
-                if (c.getSliderY(j)) {
-                    y -= 8f
-                    font.draw(batch, "YSlider$j: ${c.getSliderY(j)}", x, y, 256f, Align.left, false)
-                }
-            }
+//            try {
+//                for (j in 0..31) {
+//                    y -= 8f
+//                    font.draw(batch, "Accel$j: ${c.getAccelerometer(j)}", x, y, 256f, Align.left, false)
+//                }
+//            } catch (e: GdxRuntimeException) {
+//            }
+//
+//            for (j in 0..31) {
+//                if (c.getSliderX(j)) {
+//                    y -= 8f
+//                    font.draw(batch, "XSlider$j: ${c.getSliderX(j)}", x, y, 256f, Align.left, false)
+//                }
+//            }
+//            for (j in 0..31) {
+//                if (c.getSliderY(j)) {
+//                    y -= 8f
+//                    font.draw(batch, "YSlider$j: ${c.getSliderY(j)}", x, y, 256f, Align.left, false)
+//                }
+//            }
             x += 256f
         }
 
