@@ -9,7 +9,7 @@ import com.badlogic.gdx.controllers.PovDirection
  * api that can be polled
  * Useful for menus (and simple games where you don't want to miss an input ?)
  */
-internal class StatefulController(val c: MappedController) : ControllerAdapter() {
+internal class StatefulController(val mappedController: MappedController) : ControllerAdapter() {
 
     var startPressed = false
     var upPressed = false
@@ -26,7 +26,7 @@ internal class StatefulController(val c: MappedController) : ControllerAdapter()
     val THRESHOLD_H = 0.6
 
     init {
-        c.controller.addListener(this)
+        mappedController.controller.addListener(this)
     }
 
     fun clearEvents() {
@@ -93,13 +93,13 @@ internal class StatefulController(val c: MappedController) : ControllerAdapter()
     override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
 
         when (buttonIndex) {
-            c.START -> startPressed = true
-            c.A -> APressed = true
-            c.B -> BPressed = true
-            c.DPAD_UP -> upPressed = true
-            c.DPAD_DOWN -> downPressed = true
-            c.DPAD_LEFT -> leftPressed = true
-            c.DPAD_RIGHT -> rightPressed = true
+            mappedController.START -> startPressed = true
+            mappedController.A -> APressed = true
+            mappedController.B -> BPressed = true
+            mappedController.DPAD_UP -> upPressed = true
+            mappedController.DPAD_DOWN -> downPressed = true
+            mappedController.DPAD_LEFT -> leftPressed = true
+            mappedController.DPAD_RIGHT -> rightPressed = true
         }
 
         return true
@@ -128,7 +128,7 @@ internal class StatefulController(val c: MappedController) : ControllerAdapter()
     }
 
     override fun axisMoved(controller: Controller?, axisIndex: Int, value: Float): Boolean {
-        if (axisIndex == c.L_STICK_HORIZONTAL_AXIS) {
+        if (axisIndex == mappedController.L_STICK_HORIZONTAL_AXIS) {
             if (value > THRESHOLD_H && horCentered) {
                 rightPressed = true
                 horCentered = false
@@ -138,7 +138,7 @@ internal class StatefulController(val c: MappedController) : ControllerAdapter()
             } else if (value < 0.1 && value > -0.1) {
                 horCentered = true
             }
-        } else if (axisIndex == c.L_STICK_VERTICAL_AXIS) {
+        } else if (axisIndex == mappedController.L_STICK_VERTICAL_AXIS) {
             if (value > THRESHOLD && vertCentered) {
                 downPressed = true
                 vertCentered = false

@@ -6,19 +6,16 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
-import uk.co.electronstudio.retrowar.AbstractGameFactory
+import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.App.Companion.app
-import uk.co.electronstudio.retrowar.Game
-import uk.co.electronstudio.retrowar.Player
-import uk.co.electronstudio.retrowar.Prefs
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.KeyboardMouseInput
 import uk.co.electronstudio.retrowar.input.MappedController
 import uk.co.electronstudio.retrowar.input.NetworkInput
-import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.menu.ActionMenuItem
 import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.BinPrefMenuItem
@@ -266,10 +263,10 @@ open class GameSession(val factory: AbstractGameFactory
         game!!.show()
         app.server?.sendReliable(factory)
 
-        for (c in app.mappedControllers) {
-            log("attaching listener to $c")
-            attachListenerToController(c)
-        }
+//        for (c in app.mappedControllers) {
+//            log("attaching listener to $c")
+//            attachListenerToController(c)
+//        }
         preSelectedInputDevice?.let {
             createPlayer(it)
         }
@@ -279,29 +276,46 @@ open class GameSession(val factory: AbstractGameFactory
         //            }
     }
 
-    private fun attachListenerToController(c: MappedController) {
-        preSelectedInputDevice?.let {
-            if (it is GamepadInput && it.controller == c) {
-                return // dont use controller if its already been used as the preselectedinputdevice
-            }
-        }
+//    private fun attachListenerToController(c: MappedController) {
+//        preSelectedInputDevice?.let {
+//            if (it is GamepadInput && it.controller == c) {
+//                return // dont use controller if its already been used as the preselectedinputdevice
+//            }
+//        }
+//
+//        c.listener = object : ControllerAdapter() {
+//            override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
+//
+//                log("controller $controller $buttonIndex")
+//
+//                if (!usedControllers.contains(c)) {
+//                    createControllerPlayer(c)
+//                    usedControllers.add(c)
+//
+//                    //  unusedControllers.removeValue(controller, true)
+//                }
+//                return true
+//            }
+//        }
+//        c.controller.addListener(c.listener)
+//    }
 
-        c.listener = object : ControllerAdapter() {
-            override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
-
-                log("controller $controller $buttonIndex")
-
-                if (!usedControllers.contains(c)) {
-                    createControllerPlayer(c)
-                    usedControllers.add(c)
-
-                    //  unusedControllers.removeValue(controller, true)
+    fun checkForPlayerJoins() {
+        App.app.mappedControllers.forEach {
+            val p = preSelectedInputDevice
+            if (p == null || p !is GamepadInput || p.controller != it) {
+                if (it.a() || it.b() || it.x() || it.y() || it.rBumper() || it.lBumper()) {
+                    if (!usedControllers.contains(it)) {
+                        createControllerPlayer(it)
+                        usedControllers.add(it)
+                    }
                 }
-                return true
             }
         }
+    }
 
-        c.controller.addListener(c.listener)
+    fun checkForPlayerDisconnects(){
+        players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller.controller) }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -309,21 +323,23 @@ open class GameSession(val factory: AbstractGameFactory
     }
 
     override fun render(deltaTime: Float) {
+        checkForPlayerJoins();
+        checkForPlayerDisconnects();
         game?.renderAndClampFramerate()
 
-        if (state == GameState.GETREADY) {
+        if (state == GameSession.GameState.GETREADY) {
             readyTimer -= deltaTime * 10
             if (readyTimer < 0f) {
-                state = GameState.PLAY
+                state = GameSession.GameState.PLAY
             }
         }
 
-        if (state == GameState.PLAY || state == GameState.GETREADY) {
+        if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
             if (input.isKeyJustPressed(Input.Keys.BACK)) {
                 app.showTitleScreen()
             }
             if (input.isKeyJustPressed(Input.Keys.ESCAPE) || app.statefulControllers.any { it.isStartButtonJustPressed }) {
-                state = GameState.MENU
+                state = GameSession.GameState.MENU
                 app.clearEvents()
             }
             if (input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -373,9 +389,9 @@ open class GameSession(val factory: AbstractGameFactory
 
         Gdx.input.isCursorCatched = false
 
-        app.mappedControllers.filter { it.listener != null }.forEach {
-            it.controller.removeListener(it.listener)
-        }
+//        app.mappedControllers.filter { it.listener != null }.forEach {
+//            it.controller.removeListener(it.listener)
+//        }
     }
 
     // FIXME pre-create array of 16 players and pop the top one when player needed

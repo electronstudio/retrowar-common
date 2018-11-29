@@ -24,6 +24,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.controllers.Controller
+import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
 import com.codedisaster.steamworks.SteamAPI
 import de.golfgl.gdxgameanalytics.GameAnalytics
@@ -196,8 +198,22 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         println("Detected ${Controllers.getControllers().size} controllers")
 
         Controllers.getControllers().mapTo(mappedControllers, ::MappedController)
-
         mappedControllers.mapTo(statefulControllers, ::StatefulController)
+
+        Controllers.addListener(object : ControllerAdapter(){
+            override fun connected(controller: Controller) {
+                val c = MappedController(controller);
+                mappedControllers.add(c)
+                statefulControllers.add(StatefulController(c))
+            }
+
+            override fun disconnected(controller: Controller) {
+                mappedControllers.removeAll { it.controller!=controller }
+                statefulControllers.removeAll { it.mappedController.controller==controller }
+            }
+        })
+
+
     }
 
     protected fun initializeInput() {

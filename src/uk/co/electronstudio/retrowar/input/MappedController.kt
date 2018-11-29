@@ -434,5 +434,5 @@ internal class MappedController(val controller: Controller) {
         return controller.getButton(START)
     }
 
-    var listener: ControllerAdapter? = null
+    //var listener: ControllerAdapter? = null
 }
