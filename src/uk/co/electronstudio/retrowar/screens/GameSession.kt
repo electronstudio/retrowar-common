@@ -9,6 +9,7 @@ import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
+import jdk.nashorn.internal.objects.NativeArray.forEach
 import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.App.Companion.app
 import uk.co.electronstudio.retrowar.input.GamepadInput
@@ -67,7 +68,7 @@ open class GameSession(val factory: AbstractGameFactory
 
     enum class NetworkRole { NONE, CLIENT, SERVER }
 
-    internal val usedControllers = ArrayList<MappedController>()
+    internal val usedControllers = ArrayList<Controller>()
 
     private val remotePlayers = HashMap<Int, Player>()
     private val networkInputs = HashMap<Int, NetworkInput>()
@@ -134,7 +135,7 @@ open class GameSession(val factory: AbstractGameFactory
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createControllerPlayer(controller: MappedController) {
+    private fun createControllerPlayer(controller: Controller) {
         val gamepad = GamepadInput(controller)
         createPlayer(gamepad)
     }
@@ -301,13 +302,15 @@ open class GameSession(val factory: AbstractGameFactory
 //    }
 
     fun checkForPlayerJoins() {
-        App.app.mappedControllers.forEach {
+        Controllers.getControllers().forEach {
             val p = preSelectedInputDevice
             if (p == null || p !is GamepadInput || p.controller != it) {
-                if (it.a() || it.b() || it.x() || it.y() || it.rBumper() || it.lBumper()) {
-                    if (!usedControllers.contains(it)) {
-                        createControllerPlayer(it)
-                        usedControllers.add(it)
+                for(i in 0..15) {
+                    if (it.getButton(i)) {
+                        if (!usedControllers.contains(it)) {
+                            createControllerPlayer(it)
+                            usedControllers.add(it)
+                        }
                     }
                 }
             }
@@ -315,7 +318,7 @@ open class GameSession(val factory: AbstractGameFactory
     }
 
     fun checkForPlayerDisconnects(){
-        players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller.controller) }
+        players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
     }
 
     override fun resize(width: Int, height: Int) {

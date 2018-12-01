@@ -30,11 +30,11 @@ class Client : Listener() {
     }
 
     fun connect() {
-        val p = Player(GamepadInput(app.mappedControllers.first()),
-            Prefs.StringPref.PLAYER1.getString(),
-            Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR.getString()),
-            Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR2.getString()))
-        connect(p)
+//        val p = Player(GamepadInput(app.mappedControllers.first()),
+//            Prefs.StringPref.PLAYER1.getString(),
+//            Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR.getString()),
+//            Color.valueOf(Prefs.MultiChoicePref.PLAYER1_COLOR2.getString()))
+//        connect(p)
     }
 
     fun connect(p: Player) {
