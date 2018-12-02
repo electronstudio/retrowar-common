@@ -54,7 +54,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-    compile name: 'Jamepad2'
+    compile "uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.+"
     compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     compile 'com.beust:klaxon:0.30'

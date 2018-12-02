@@ -197,7 +197,8 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     protected fun initialiseControllers() {
         println("Detected ${Controllers.getControllers().size} controllers")
 
-        //Controllers.getControllers().mapTo(mappedControllers, ::MappedController)
+        Controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
+
         //mappedControllers.mapTo(statefulControllers, ::StatefulController)
 
         Controllers.addListener(object : ControllerAdapter(){
@@ -212,6 +213,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
                 statefulControllers.removeAll { it.mappedController.controller==controller }
             }
         })
+
 
 
     }

@@ -136,6 +136,14 @@ open class GameSession(val factory: AbstractGameFactory
     }
 
     private fun createControllerPlayer(controller: Controller) {
+
+        val c = controller.javaClass
+        val m = c.methods.find { it.name.equals("rumble") }
+        m!!.invoke(controller, 1f, 1f, 500)
+
+//        if(controller is SDL2Controller){
+//            controller.rumble(1f, 1f, 500)
+//        }
         val gamepad = GamepadInput(controller)
         createPlayer(gamepad)
     }
