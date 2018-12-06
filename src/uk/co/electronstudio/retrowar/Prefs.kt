@@ -214,9 +214,7 @@ object Prefs {
         },
         FULLSCREEN("fullscreen", tText = TEXT["fullscreen"], fText = TEXT["windowed"]) {
             override fun apply() {
-                if (!isWindows) {
-                    app.setScreenMode()
-                }
+                app.setScreenMode()
             }
         };
 
