@@ -22,6 +22,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.I18NBundle
@@ -50,11 +51,11 @@ class Resources {
 
         private var fallbackFont = "uk/co/electronstudio/retrowar/english.fnt"
         @JvmStatic
-        val FONT = BitmapFont(load(fallbackFont, TEXT["fontBlack"]))
+        val FONT = BitmapFont(load(fallbackFont, TEXT["fontBlack"])).also { it.data.markupEnabled=true}
         @JvmStatic
-        val FONT_CLEAR = BitmapFont(load(fallbackFont, TEXT["font"]))
+        val FONT_CLEAR = BitmapFont(load(fallbackFont, TEXT["font"])).also { it.data.markupEnabled=true}
         @JvmStatic
-        val FONT_ENGLISH = BitmapFont(load(fallbackFont, "english.fnt"))
+        val FONT_ENGLISH = BitmapFont(load(fallbackFont, "english.fnt")).also { it.data.markupEnabled=true}
         @JvmStatic
         val BLING = Gdx.audio.newSound(load("uk/co/electronstudio/retrowar/bling.wav", "bling.wav"))!!
 
@@ -75,5 +76,21 @@ class Resources {
             Color(49, 162, 242), // 14: blue
             Color(178, 220, 239) // 15: lblue
         )
+
+        val flashAnim = Animation<Color>(1f / 60f,
+         //   palette[3],
+            Color.RED, Color.RED, Color.PURPLE, Color.BLUE, Color.BLUE, Color.CYAN, Color.GREEN, Color.GREEN, Color.YELLOW
+         //   palette[3],
+          //  palette[13],
+          //  palette[14],
+          //  palette[11],
+          //  palette[11]
+           // palette[8],
+        //    palette[8]
+        ).also {
+            it.playMode = Animation.PlayMode.LOOP
+        }
+
+        val sequence = arrayOf("RED", "RED", "PURPLE", "BLUE", "BLUE", "CYAN", "GREEN", "GREEN", "YELLOW")
     }
 }

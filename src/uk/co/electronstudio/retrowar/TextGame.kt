@@ -2,8 +2,10 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import uk.co.electronstudio.retrowar.menu.ActionMenuItem
 import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.Menu
@@ -12,11 +14,11 @@ import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.retrowar.utils.Vec
 
 class TextGame(session: GameSession, text: String, width: Float = 416f, height: Float = 256f,
-               font: BitmapFont = Resources.FONT) : SimpleGame(session, width, height, font, false) {
+               font: BitmapFont = Resources.FONT, val graphic: Texture? = null) : SimpleGame(session, width, height, font, false) {
 
 
-    val menu = Menu("",
-        bottomText = { text },
+    val menu = Menu(title = text,
+       // bottomText = { text },
         doubleSpaced = true,
         quitAction = ::gameover,
         allItems = arrayListOf(BackMenuItem("OK")))
@@ -29,6 +31,9 @@ class TextGame(session: GameSession, text: String, width: Float = 416f, height: 
 
     override fun doDrawing(batch: Batch) {
         controller.draw(batch)
+        if(graphic != null){
+            batch.draw(graphic, width/2f + width/4f - graphic.width/2f, height/2f - graphic.height/2f)
+        }
     }
 
     override fun doLogic(deltaTime: Float) {
