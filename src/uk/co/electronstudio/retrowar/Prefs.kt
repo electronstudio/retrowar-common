@@ -282,7 +282,11 @@ object Prefs {
             max = 10,
             default = 10,
             step = 1),
-        MUSIC_VOLUME("musicvolume", min = 0, max = 10, default = 10, step = 1),
+        MUSIC_VOLUME("musicvolume", min = 0, max = 10, default = 10, step = 1){
+            override fun apply() {
+                app.applyMusicVolume(asVolume())
+            }
+        },
 
         BUFFER("buffer", min = 0, max = 20, default = 6, step = 1);
 

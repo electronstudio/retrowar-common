@@ -284,6 +284,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
             session.preSelectedInputDevice = SimpleTouchscreenInput()
         }
     }
+
+    open fun applyMusicVolume(volume: Float) {
+    }
 }
 
 // class SingleGameAppFromClass(callback: Callback, val name: String, val gameClazz: Class<out uk.co.electronstudio.retrowar.Game>, val screenClazz: Class<out Screen>, val t: Screen? = null) : App(callback) {
