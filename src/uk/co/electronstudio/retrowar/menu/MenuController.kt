@@ -111,6 +111,7 @@ class MenuController(val rootMenu: Menu, val WIDTH: Float, val HEIGHT: Float,
     fun pushLeft() {
         log("pushLeft")
         val s = menus.peek().getSelected()
+        Resources.BLING.play()
         s.doAction2()
     }
 
