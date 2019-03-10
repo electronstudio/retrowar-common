@@ -5,18 +5,19 @@ import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
-import jdk.nashorn.internal.objects.NativeArray.forEach
-import uk.co.electronstudio.retrowar.*
+import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App.Companion.app
+import uk.co.electronstudio.retrowar.Game
+import uk.co.electronstudio.retrowar.Player
+import uk.co.electronstudio.retrowar.Prefs
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.KeyboardMouseInput
-import uk.co.electronstudio.retrowar.input.MappedController
 import uk.co.electronstudio.retrowar.input.NetworkInput
+import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.menu.ActionMenuItem
 import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.BinPrefMenuItem
@@ -35,7 +36,8 @@ import java.util.ArrayList
  * but for a series of games you pass a single GameSession from game to game
  * to maintain the same players, scores, (network connections?)
  */
-open class GameSession(val factory: AbstractGameFactory
+open class GameSession(
+    val factory: AbstractGameFactory
 
     // val preSelectedInputDevice: InputDevice? = null
 ) : ScreenAdapter() {
@@ -313,7 +315,7 @@ open class GameSession(val factory: AbstractGameFactory
         Controllers.getControllers().forEach {
             val p = preSelectedInputDevice
             if (p == null || p !is GamepadInput || p.controller != it) {
-                for(i in 0..15) {
+                for (i in 0..15) {
                     if (it.getButton(i)) {
                         if (!usedControllers.contains(it)) {
                             createControllerPlayer(it)
@@ -325,7 +327,7 @@ open class GameSession(val factory: AbstractGameFactory
         }
     }
 
-    fun checkForPlayerDisconnects(){
+    fun checkForPlayerDisconnects() {
         players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
     }
 
@@ -334,8 +336,8 @@ open class GameSession(val factory: AbstractGameFactory
     }
 
     override fun render(deltaTime: Float) {
-        checkForPlayerJoins();
-        checkForPlayerDisconnects();
+        checkForPlayerJoins()
+        checkForPlayerDisconnects()
         game?.renderAndClampFramerate()
 
         if (state == GameSession.GameState.GETREADY) {
@@ -471,7 +473,6 @@ open class GameSession(val factory: AbstractGameFactory
             }
         }
         return winners
-
     }
 
     fun startSubgameInMetagame(metagame: Game, game: Game) {

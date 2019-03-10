@@ -11,10 +11,14 @@ import uk.co.electronstudio.retrowar.screens.GameSession
  * Most games probably want to extend this.  It does menus and rendering loop, but it's not a Unigame so you're still
  * free to do any sort of game you want really.
  */
-abstract class SimpleGame @JvmOverloads constructor(session: GameSession, val width: Float, val height: Float,
-    //val fontClear: BitmapFont = Resources.FONT_CLEAR,
-                                                    val font: BitmapFont = Resources.FONT_CLEAR,
-                                                    val fadeInEffect: Boolean = true) : Game(session) {
+abstract class SimpleGame @JvmOverloads constructor(
+    session: GameSession,
+    val width: Float,
+    val height: Float,
+    // val fontClear: BitmapFont = Resources.FONT_CLEAR,
+    val font: BitmapFont = Resources.FONT_CLEAR,
+    val fadeInEffect: Boolean = true
+) : Game(session) {
 
     override val renderer = FBORenderer(WIDTH = width, HEIGHT = height, fadeInEffect = fadeInEffect)
 

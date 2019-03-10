@@ -1,7 +1,6 @@
 package uk.co.electronstudio.retrowar.input
 
 import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.PovDirection
 import org.libsdl.SDL
 import uk.co.electronstudio.retrowar.utils.Vec
 
@@ -21,14 +20,11 @@ internal class GamepadInput(val controller: Controller) : InputDevice() {
             val analog = filterDeadzone(0.05f,
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY))
-            if(analog.isMoreOrLessZero()){
+            if (analog.isMoreOrLessZero()) {
                 return dpadAsStick()
-            }else{
+            } else {
                 return analog
             }
-
-
-
 
 //            return when(controller.getPov(0)){ // TODO untested, not sure any SDL controllers even have pov?
 //                PovDirection.north -> Vec(0f, -1f)
@@ -46,13 +42,13 @@ internal class GamepadInput(val controller: Controller) : InputDevice() {
         }
 
     private fun dpadAsStick(): Vec {
-        val x = if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_LEFT)) -1f
-        else if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) 1f
+        val x = if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_LEFT)) -1f
+        else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) 1f
         else 0f
-        val y = if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_UP)) -1f
-        else if(controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_DOWN)) 1f
+        val y = if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_UP)) -1f
+        else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_DOWN)) 1f
         else 0f
-        return Vec(x,y)
+        return Vec(x, y)
     }
 
     override val rightStick: Vec

@@ -75,7 +75,6 @@ interface ManualGC {
     fun doGC()
 }
 
-
 @Suppress("NOTHING_TO_INLINE")
 inline fun log(log: String) {
     if (Prefs.BinPref.DEBUG.isEnabled()) {
@@ -94,8 +93,15 @@ fun error(message: String) {
     App.app.logger.error(message)
 }
 
-fun drawBox(MARGIN: Int, SHADOW_OFFSET: Int, shape: ShapeRenderer, width: Float, height: Float, y: Float,
-            SCREEN_WIDTH: Float) {
+fun drawBox(
+    MARGIN: Int,
+    SHADOW_OFFSET: Int,
+    shape: ShapeRenderer,
+    width: Float,
+    height: Float,
+    y: Float,
+    SCREEN_WIDTH: Float
+) {
     val box = Rectangle(0f, 0f, width + MARGIN, height + MARGIN)
     shape.begin(ShapeRenderer.ShapeType.Filled)
     shape.color = Color.BLACK
@@ -316,8 +322,11 @@ private fun createFragmentShader(hasColors: Boolean, numTexCoords: Int): String 
 }
 
 /** Returns a new instance of the default shader used by SpriteBatch for GL2 when no shader is specified.  */
-fun createDefaultShapeShader(hasNormals: Boolean = false, hasColors: Boolean = true,
-                             numTexCoords: Int = 0): ShaderProgram {
+fun createDefaultShapeShader(
+    hasNormals: Boolean = false,
+    hasColors: Boolean = true,
+    numTexCoords: Int = 0
+): ShaderProgram {
     if (Gdx.app.type == Application.ApplicationType.Android) {
         ShaderProgram.prependFragmentCode = ""
         ShaderProgram.prependVertexCode = ""
@@ -334,35 +343,34 @@ fun createDefaultShapeShader(hasNormals: Boolean = false, hasColors: Boolean = t
     }
 }
 
-
 fun createDefaultShaderGL2(): ShaderProgram {
-    val vertexShader = ("attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-            + "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
-            + "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-            + "uniform mat4 u_projTrans;\n" //
-            + "varying vec4 v_color;\n" //
-            + "varying vec2 v_texCoords;\n" //
-            + "\n" //
-            + "void main()\n" //
-            + "{\n" //
-            + "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" //
-            + "   v_color.a = v_color.a * (255.0/254.0);\n" //
-            + "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" //
-            + "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" //
-            + "}\n")
-    val fragmentShader = ("#ifdef GL_ES\n" //
-            + "#define LOWP lowp\n" //
-            + "precision mediump float;\n" //
-            + "#else\n" //
-            + "#define LOWP \n" //
-            + "#endif\n" //
-            + "varying LOWP vec4 v_color;\n" //
-            + "varying vec2 v_texCoords;\n" //
-            + "uniform sampler2D u_texture;\n" //
-            + "void main()\n" //
-            + "{\n" //
-            + "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" //
-            + "}")
+    val vertexShader = ("attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
+            "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
+            "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
+            "uniform mat4 u_projTrans;\n" + //
+            "varying vec4 v_color;\n" + //
+            "varying vec2 v_texCoords;\n" + //
+            "\n" + //
+            "void main()\n" + //
+            "{\n" + //
+            "   v_color = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" + //
+            "   v_color.a = v_color.a * (255.0/254.0);\n" + //
+            "   v_texCoords = " + ShaderProgram.TEXCOORD_ATTRIBUTE + "0;\n" + //
+            "   gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + //
+            "}\n")
+    val fragmentShader = ("#ifdef GL_ES\n" + //
+            "#define LOWP lowp\n" + //
+            "precision mediump float;\n" + //
+            "#else\n" + //
+            "#define LOWP \n" + //
+            "#endif\n" + //
+            "varying LOWP vec4 v_color;\n" + //
+            "varying vec2 v_texCoords;\n" + //
+            "uniform sampler2D u_texture;\n" + //
+            "void main()\n" + //
+            "{\n" + //
+            "  gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" + //
+            "}")
     ShaderProgram.prependFragmentCode = ""
     ShaderProgram.prependVertexCode = ""
     val shader = ShaderProgram(vertexShader, fragmentShader)

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Align
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
@@ -31,10 +30,15 @@ import uk.co.electronstudio.retrowar.menu.SubMenuItem
  * Created by richard on 23/06/2016.
  * GDX screen, i.e. a render loop, used to render the titlescreen
  */
-open class SimpleTitleScreen(val WIDTH: Float = 160f, val HEIGHT: Float = 120f,
-                             val FONT: BitmapFont = Resources.FONT, //BitmapFont(Gdx.files.internal("small.fnt")),
-                             val title: String = "My Game", val factory: AbstractGameFactory,
-                             val quitText: String = "Quit", val quitURL: String? = null) : ScreenAdapter() {
+open class SimpleTitleScreen(
+    val WIDTH: Float = 160f,
+    val HEIGHT: Float = 120f,
+    val FONT: BitmapFont = Resources.FONT, // BitmapFont(Gdx.files.internal("small.fnt")),
+    val title: String = "My Game",
+    val factory: AbstractGameFactory,
+    val quitText: String = "Quit",
+    val quitURL: String? = null
+) : ScreenAdapter() {
 
     val FONT_ENGLISH = FONT
 

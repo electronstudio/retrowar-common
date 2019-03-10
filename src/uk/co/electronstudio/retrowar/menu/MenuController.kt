@@ -27,8 +27,14 @@ import java.util.Stack
  * Wraps a Menu and changes menu selections based on input
  */
 
-class MenuController(val rootMenu: Menu, val WIDTH: Float, val HEIGHT: Float,
-                     val font: BitmapFont = Resources.FONT_CLEAR, val x: Float = 0f, val y: Float) {
+class MenuController(
+    val rootMenu: Menu,
+    val WIDTH: Float,
+    val HEIGHT: Float,
+    val font: BitmapFont = Resources.FONT_CLEAR,
+    val x: Float = 0f,
+    val y: Float
+) {
 
     val menus = Stack<Menu>()
 

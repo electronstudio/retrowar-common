@@ -6,7 +6,6 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.math.Vector2
-import uk.co.electronstudio.retrowar.createDefaultShaderGL2
 import uk.co.electronstudio.retrowar.log
 
 /** Loads shaders and sets up some vertex attributes format of RetroArch shaders */

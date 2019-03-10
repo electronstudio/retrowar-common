@@ -111,7 +111,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     }
 
     /** All the controllers currently connected */
- //   internal val mappedControllers = ArrayList<MappedController>()
+    //   internal val mappedControllers = ArrayList<MappedController>()
 
     /** All controllers each wrapped in StatefulController objects, useful for menu input */
     internal val statefulControllers = ArrayList<StatefulController>()
@@ -199,23 +199,20 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
         Controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
 
-        //mappedControllers.mapTo(statefulControllers, ::StatefulController)
+        // mappedControllers.mapTo(statefulControllers, ::StatefulController)
 
-        Controllers.addListener(object : ControllerAdapter(){
+        Controllers.addListener(object : ControllerAdapter() {
             override fun connected(controller: Controller) {
-                val c = MappedController(controller);
-                //mappedControllers.add(c)
+                val c = MappedController(controller)
+                // mappedControllers.add(c)
                 statefulControllers.add(StatefulController(c))
             }
 
             override fun disconnected(controller: Controller) {
-                //mappedControllers.removeAll { it.controller!=controller }
-                statefulControllers.removeAll { it.mappedController.controller==controller }
+                // mappedControllers.removeAll { it.controller!=controller }
+                statefulControllers.removeAll { it.mappedController.controller == controller }
             }
         })
-
-
-
     }
 
     protected fun initializeInput() {

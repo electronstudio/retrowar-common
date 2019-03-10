@@ -1,15 +1,12 @@
 package uk.co.electronstudio.retrowar.network
 
-import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Client
 import com.esotericsoftware.kryonet.Connection
 import com.esotericsoftware.kryonet.Listener
 import org.objenesis.strategy.StdInstantiatorStrategy
 import uk.co.electronstudio.retrowar.AbstractGameFactory
-import uk.co.electronstudio.retrowar.App.Companion.app
 import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.Prefs
-import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.log
 import java.util.concurrent.ArrayBlockingQueue
 

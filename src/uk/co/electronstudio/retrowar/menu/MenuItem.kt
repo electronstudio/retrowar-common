@@ -62,8 +62,12 @@ class ColorPrefMenuItem(text: String, val mPref: Prefs.MultiChoicePref, val acti
 }
 
 // fixme this really shouldnt be mutable.  there should just be some mutable wrapper around it to swap them when needed.
-class MultiChoiceMenuItem(text: String, val onUpdate: (String, Int) -> Unit = { _, _ -> run {} },
-                          var choices: List<String>, val intValues: List<Int>) : MenuItem(text) {
+class MultiChoiceMenuItem(
+    text: String,
+    val onUpdate: (String, Int) -> Unit = { _, _ -> run {} },
+    var choices: List<String>,
+    val intValues: List<Int>
+) : MenuItem(text) {
     var selected = 0
 
     override fun doAction() {
@@ -107,7 +111,6 @@ class NumberMenuItem(text: String, initial: Int, val min: Int, val max: Int) : M
         value = MathUtils.clamp(value - 1, min, max)
     }
 }
-
 
 class NumPrefMenuItem(text: String, val numPref: Prefs.NumPref) : MenuItem(text) {
     override fun displayText() = numPref.displayText()

@@ -20,7 +20,6 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Nearest
@@ -44,7 +43,6 @@ object Prefs {
     val shaders = makeShaderList()
 
     val colors = palette.map { it.toString() }
-
 
     private fun makeShaderList(): List<String> {
         val shaderFiles = Gdx.files.internal("shaders").list("glsl").map { it.nameWithoutExtension() }
@@ -171,8 +169,13 @@ object Prefs {
     }
 
     /** @suppress */
-    enum class BinPref(val pref: String, val text: String = pref, val tText: String = TEXT["on"],
-                       val fText: String = TEXT["off"], val default: Boolean = true) {
+    enum class BinPref(
+        val pref: String,
+        val text: String = pref,
+        val tText: String = TEXT["on"],
+        val fText: String = TEXT["off"],
+        val default: Boolean = true
+    ) {
         VSYNC("vsync") {
             override fun apply() {
                 Gdx.graphics.setVSync(VSYNC.isEnabled())
@@ -260,8 +263,14 @@ object Prefs {
     }
 
     /** @suppress */
-    enum class NumPref(val pref: String, val text: String = pref, val min: Int = 0, val max: Int = 0,
-                       val default: Int = 50, val step: Int = 1) {
+    enum class NumPref(
+        val pref: String,
+        val text: String = pref,
+        val min: Int = 0,
+        val max: Int = 0,
+        val default: Int = 50,
+        val step: Int = 1
+    ) {
         SCREEN_SHAKE("screenshake", min = 0, max = 100, default = 30, step = 10), SHIP_SPEED("shipspeed",
             min = 100,
             max = 500,
@@ -282,7 +291,7 @@ object Prefs {
             max = 10,
             default = 10,
             step = 1),
-        MUSIC_VOLUME("musicvolume", min = 0, max = 10, default = 10, step = 1){
+        MUSIC_VOLUME("musicvolume", min = 0, max = 10, default = 10, step = 1) {
             override fun apply() {
                 app.applyMusicVolume(asVolume())
             }

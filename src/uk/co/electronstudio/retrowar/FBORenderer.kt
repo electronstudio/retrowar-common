@@ -87,7 +87,6 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
 //        return shape
 //    }
 
-
     fun resize(width: Int, height: Int) {
         log("FBOrenderer resize")
         // mFBO.resizeToScreenSize(WIDTH, HEIGHT, scaleFactor, m)
@@ -151,8 +150,6 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         return cam
     }
 
-
-
     private fun findAppropriateScaleFactor(w: Float, h: Float): Float =
         if (Prefs.BinPref.STRETCH.isEnabled()) findHighestScaleFactor(w, h)
         else findHighestIntegerScaleFactor(w, h)
@@ -188,5 +185,4 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
             Gdx.gl.glDisable(GL20.GL_BLEND)
         }
     }
-
 }

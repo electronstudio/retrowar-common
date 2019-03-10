@@ -2,7 +2,6 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.graphics.Texture
 import uk.co.electronstudio.retrowar.menu.MenuItem
-import uk.co.electronstudio.retrowar.menu.MultiChoiceMenuItem
 import uk.co.electronstudio.retrowar.screens.GameSession
 
 /**

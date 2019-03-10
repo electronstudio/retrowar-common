@@ -1,7 +1,6 @@
 package uk.co.electronstudio.retrowar.input
 
 import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.controllers.PovDirection
 
 import uk.co.electronstudio.retrowar.isLinux
@@ -72,13 +71,9 @@ internal class MappedController(val controller: Controller) {
         R_TRIGGER = -1
         L_TRIGGER = -1
 
-
-
         L_TRIGGER_AXIS = 4
         R_TRIGGER_AXIS = 5
         crippledTrigger = false
-
-
 
         DPAD = 0
 
@@ -319,10 +314,9 @@ internal class MappedController(val controller: Controller) {
     }
 
     init {
-        if (controller.name.startsWith("SDL")){
+        if (controller.name.startsWith("SDL")) {
             setToSDLDefault()
-        }
-        else if (isOSX) {
+        } else if (isOSX) {
             setToMacDefault()
         } else if (isLinux) {
             if (controller.name.contains("Sony")) {
@@ -434,5 +428,5 @@ internal class MappedController(val controller: Controller) {
         return controller.getButton(START)
     }
 
-    //var listener: ControllerAdapter? = null
+    // var listener: ControllerAdapter? = null
 }

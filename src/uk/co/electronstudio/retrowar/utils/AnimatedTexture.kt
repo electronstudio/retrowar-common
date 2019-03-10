@@ -17,8 +17,14 @@ class AnimatedTexture(val delay: Float, vararg tex: TextureRegion, val mode: Pla
         *(default.map { t[0][it] }.toTypedArray()),
         mode = mode)
 
-    constructor (delay: Float, file: String, width: Int, height: Int, default: IntRange,
-                 mode: PlayMode = PlayMode.LOOP) : this(delay,
+    constructor (
+        delay: Float,
+        file: String,
+        width: Int,
+        height: Int,
+        default: IntRange,
+        mode: PlayMode = PlayMode.LOOP
+    ) : this(delay,
         TextureRegion.split(Texture(file), width, height),
         default,
         mode)

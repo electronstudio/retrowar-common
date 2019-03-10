@@ -1,6 +1,5 @@
 package uk.co.electronstudio.retrowar
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import uk.co.electronstudio.retrowar.screens.GameSession
 

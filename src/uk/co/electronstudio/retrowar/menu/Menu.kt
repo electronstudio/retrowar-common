@@ -11,9 +11,12 @@ import java.util.ArrayList
 
 typealias Page = ArrayList<MenuItem>
 
-open class Menu(val title: String, val bottomText: () -> String = { "" }, val quitAction: () -> Unit = {},
-                val doubleSpaced: Boolean = true, // Resources.FONT.data.down > -10,
-                val allItems: ArrayList<MenuItem> = ArrayList()) {
+open class Menu(
+    val title: String,
+    val bottomText: () -> String = { "" },
+    val quitAction: () -> Unit = {},
+    val doubleSpaced: Boolean = true, // Resources.FONT.data.down > -10,
+    val allItems: ArrayList<MenuItem> = ArrayList()) {
     val pages: ArrayList<Page> = ArrayList()
     var currentPage: ArrayList<MenuItem>
 
@@ -120,11 +123,7 @@ open class Menu(val title: String, val bottomText: () -> String = { "" }, val qu
         Resources.BLING.play()
         log("selecteditem $selectedItem")
     }
-
-
 }
 
 class ScrollingMenu(title: String, bottomText: () -> String, quitAction: () -> Unit, doubleSpaced: Boolean) :
-    Menu(title, bottomText, quitAction, doubleSpaced) {
-
-}
+    Menu(title, bottomText, quitAction, doubleSpaced)
