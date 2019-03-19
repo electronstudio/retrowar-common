@@ -50,7 +50,7 @@ open class GameSession(
     var nextGame: Game? = null // allows chaining several games together
     var metaGame: Game? = null // allows one game to launch minigames that return control to the parent game when done
 
-    var readyTimer = if (Prefs.BinPref.DEBUG.isEnabled()) 1f else 40f
+    var readyTimer = 0f
 
     enum class GameState {
         PLAY, GAMEOVER, MENU, GETREADY
@@ -95,8 +95,14 @@ open class GameSession(
 
         // val clazz = UniGame::class
         // game = clazz.primaryConstructor?.call()
+        resetTimer()
         game = factory.create(this)
         app.submitAnalytics("sessionStart:${factory.name}")
+    }
+
+    private fun resetTimer() {
+        readyTimer = if (Prefs.BinPref.DEBUG.isEnabled()) 1f else 40f
+        state = GameState.GETREADY
     }
 
     fun createClient(connection: Connection) {
@@ -455,8 +461,10 @@ open class GameSession(
     private fun advanceToNextGame(gameToShow: Game) {
         game?.hide()
         game?.dispose()
+        resetTimer()
         game = gameToShow
         game?.show()
+
     }
 
     // search for Player (or multiple Players) with highest score
