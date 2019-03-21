@@ -5,10 +5,11 @@ import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.controllers.Controller
-import com.badlogic.gdx.controllers.Controllers
+
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
 import uk.co.electronstudio.retrowar.AbstractGameFactory
+import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.App.Companion.app
 import uk.co.electronstudio.retrowar.Game
 import uk.co.electronstudio.retrowar.Player
@@ -318,7 +319,7 @@ open class GameSession(
 //    }
 
     fun checkForPlayerJoins() {
-        Controllers.getControllers().forEach {
+        App.app.controllers.getControllers().forEach {
             val p = preSelectedInputDevice
             if (p == null || p !is GamepadInput || p.controller != it) {
                 for (i in 0..15) {
@@ -334,7 +335,7 @@ open class GameSession(
     }
 
     fun checkForPlayerDisconnects() {
-        players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
+        players.removeAll { it.input is GamepadInput && !App.app.controllers.getControllers().contains(it.input.controller) }
     }
 
     override fun resize(width: Int, height: Int) {

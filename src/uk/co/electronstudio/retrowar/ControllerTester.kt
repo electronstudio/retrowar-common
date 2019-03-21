@@ -1,7 +1,7 @@
 package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.controllers.Controllers
+
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -23,13 +23,13 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 480f, f
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f) // clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        font.draw(batch, "Controllers connected: ${Controllers.getControllers().size}", 0f, 20f)
+        font.draw(batch, "Controllers connected: ${App.app.controllers.getControllers().size}", 0f, 20f)
         //  batch.begin()
 
         var x = 0f
-        for (i in 0..Controllers.getControllers().size - 1) {
+        for (i in 0..App.app.controllers.getControllers().size - 1) {
             var y = 472f
-            val m = Controllers.getControllers()[i]
+            val m = App.app.controllers.getControllers()[i]
             //  val c = m.controller
             font.draw(batch, m.name, x, y, 256f, Align.left, false)
             y -= 8

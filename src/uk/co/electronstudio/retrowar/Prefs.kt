@@ -51,6 +51,9 @@ object Prefs {
 
     /** @suppress */
     enum class MultiChoicePref(val pref: String, vararg val choices: String, val default: Int = 0) {
+        INPUT("input","RAW INPUT","XINPUT","DIRECT INPUT"){
+
+        },
         GRAPHICS("graphics", "RETRO", "MODERN", "CRT") {
             override fun apply() {
                 when (getNum()) {

@@ -21,12 +21,13 @@ package uk.co.electronstudio.retrowar
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Gdx.app
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
-import com.badlogic.gdx.controllers.Controllers
+
 import com.codedisaster.steamworks.SteamAPI
 import de.golfgl.gdxgameanalytics.GameAnalytics
 import uk.co.electronstudio.retrowar.Prefs.BinPref
@@ -40,6 +41,7 @@ import uk.co.electronstudio.retrowar.network.Client
 import uk.co.electronstudio.retrowar.network.Server
 import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.retrowar.utils.RetroShader
+import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -66,6 +68,8 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     /** If you are using GameAnalytics service set this, otherwise null */
     var gameAnalytics: GameAnalytics? = null
 
+    lateinit var controllers: SDL2ControllerManager
+
     companion object {
         /** A static reference to the singleton Application */
         @JvmStatic
@@ -75,6 +79,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         val LOG_FILE_PATH: String = System.getProperty("user.home") + File.separator + "retrowar-log.txt"
         /** Where preferences file is stored */
         val PREF_DIR: String = System.getProperty("user.home") + File.separator + ".prefs"
+
     }
 
     init {
@@ -195,13 +200,24 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
      * Populates mappedControllers
      */
     protected fun initialiseControllers() {
-        println("Detected ${Controllers.getControllers().size} controllers")
+        if(::controllers.isInitialized && controllers!=null){
+            controllers.close()
+        }
+        controllers = SDL2ControllerManager(
+        when (Prefs.MultiChoicePref.INPUT.getNum()){
+            0 -> SDL2ControllerManager.InputPreference.RAW_INPUT
+            1 -> SDL2ControllerManager.InputPreference.XINPUT
+            2 -> SDL2ControllerManager.InputPreference.DIRECT_INPUT
+            else -> SDL2ControllerManager.InputPreference.XINPUT
+        }
+        )
+        println("Detected ${controllers.getControllers().size} controllers")
 
-        Controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
+        controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
 
         // mappedControllers.mapTo(statefulControllers, ::StatefulController)
 
-        Controllers.addListener(object : ControllerAdapter() {
+        controllers.addListener(object : ControllerAdapter() {
             override fun connected(controller: Controller) {
                 val c = MappedController(controller)
                 // mappedControllers.add(c)
@@ -270,7 +286,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
      */
     fun configureSessionWithPreSelectedInputDevice(session: GameSession) {
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            val controller1 = Controllers.getControllers().firstOrNull()
+            val controller1 = controllers.getControllers().firstOrNull()
             if (controller1 != null) {
                 session.preSelectedInputDevice = GamepadInput(controller1)
             } else {
