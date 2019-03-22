@@ -14,10 +14,13 @@ class Vec(val x: Float, val y: Float) {
         return Pair(x, y)
     }
 
-    fun normVector(): Vec {
+    fun normVector(toNorm: Float = 1f): Vec {
+        val vMagnitude = magnitude()
+        return Vec(x / vMagnitude, y / vMagnitude) * toNorm
+    }
 
-        val vMagnitude = (x * x + y * y).sqrt()
-        return Vec(x / vMagnitude, y / vMagnitude)
+    fun magnitude(): Float{
+        return (x * x + y * y).sqrt()
     }
 
     infix operator fun minus(p: Vec): Vec = Vec(x - p.x, y - p.y)
@@ -31,5 +34,46 @@ class Vec(val x: Float, val y: Float) {
             if (MathUtils.isEqual(x, other.x) && (MathUtils.isEqual(y, other.y))) return true
         }
         return false
+    }
+
+    operator fun times(other: Float): Vec {
+        return Vec(this.x*other, this.y*other)
+    }
+
+    fun rescaleWithDeadzone(deadzone: Float): Vec{
+        val magnitude=magnitude()
+        if(magnitude<deadzone){
+            return Vec(0f,0f)
+        }
+        else {
+            val range = 1f-deadzone
+            val scaleFactor = (magnitude-deadzone)/range
+            return normVector() * scaleFactor
+        }
+    }
+
+    fun ignoreDeadzone(deadzone: Float): Vec{
+        if(magnitude()<deadzone) return Vec(0f,0f)
+        else return this
+    }
+
+    fun clampMagnitude(max: Float): Vec =
+        if(magnitude()>max)
+            normVector(toNorm = max)
+        else
+            this
+
+
+    fun rescaleWithDeadzone(deadzone: Float, upperBound: Float): Vec {
+        val magnitude=magnitude()
+        if (magnitude<=deadzone) {
+            return Vec(0f, 0f)
+        }else if(magnitude>upperBound){
+            return normVector(toNorm = upperBound)
+        }else{
+            val range = upperBound-deadzone
+            val scaleFactor = (magnitude-deadzone)/range
+            return normVector() * scaleFactor
+        }
     }
 }

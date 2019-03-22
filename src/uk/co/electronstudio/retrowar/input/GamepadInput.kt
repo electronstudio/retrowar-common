@@ -2,6 +2,7 @@ package uk.co.electronstudio.retrowar.input
 
 import com.badlogic.gdx.controllers.Controller
 import org.libsdl.SDL
+import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.utils.Vec
 
 /**
@@ -17,9 +18,10 @@ internal class GamepadInput(val controller: Controller) : InputDevice() {
     override val leftStick: Vec
         get() {
 
-            val analog = filterDeadzone(0.05f,
+            val analog = filterDeadzone(0.2f,
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY))
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY), 0.8f)
+            log(analog.magnitude().toString())
             if (analog.isMoreOrLessZero()) {
                 return dpadAsStick()
             } else {

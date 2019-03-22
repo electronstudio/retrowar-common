@@ -27,11 +27,19 @@ abstract class InputDevice {
 
     var entity: Int = -1
 
-    internal fun filterDeadzone(deadzone: Float, axisX: Float, axisY: Float): Vec {
-        if (axisX < deadzone && axisX > -deadzone && axisY < deadzone && axisY > -deadzone) {
+    internal fun filterDeadzone(deadzone: Float = 0.1f, axisX: Float, axisY: Float, outerCircle: Float = 1f): Vec {
+        val v = Vec(axisX, axisY)
+        val magnitude=v.magnitude()
+        if (magnitude<=deadzone) {
             return Vec(0f, 0f)
+        }else if(magnitude>outerCircle){
+            return v.normVector(toNorm = outerCircle)
+           //val scale = outerCircle/m
+           // return v * scale
+        }else{
+            val scale = (magnitude-deadzone)/(outerCircle-deadzone)
+            return v.normVector() * scale
         }
-        return Vec(axisX, axisY)
     }
 
     fun dPadDirection(): Vec {
