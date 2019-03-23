@@ -47,7 +47,7 @@ internal class SimpleTouchscreenInput : InputDevice() {
                         }
                         joyStickFinger = i
                         joyStickPosition = Vec(x, y)
-                        return filterDeadzone(0f,
+                        return Vec(
                             (joyStickPosition.x - joyStickOrigin.x),
                             (joyStickPosition.y - joyStickOrigin.y)).normVector()
                     }

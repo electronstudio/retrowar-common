@@ -2,6 +2,7 @@ package uk.co.electronstudio.retrowar.input
 
 import com.badlogic.gdx.controllers.Controller
 import org.libsdl.SDL
+import uk.co.electronstudio.retrowar.MINIMUM_DEADZONE
 import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.utils.Vec
 
@@ -12,16 +13,20 @@ import uk.co.electronstudio.retrowar.utils.Vec
  */
 internal class GamepadInput(val controller: Controller) : InputDevice() {
 
-    var singleStickMode = true
+ //   var singleStickMode = true
     var lockedFireDirection: Vec? = null
+
+
+
 
     override val leftStick: Vec
         get() {
 
-            val analog = filterDeadzone(0.2f,
+            val analog = Vec(
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY), 0.8f)
-            log(analog.magnitude().toString())
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)
+            ).ignoreDeadzone(MINIMUM_DEADZONE).clampMagnitude(1.0f)
+
             if (analog.isMoreOrLessZero()) {
                 return dpadAsStick()
             } else {
@@ -50,15 +55,18 @@ internal class GamepadInput(val controller: Controller) : InputDevice() {
         val y = if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_UP)) -1f
         else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_DOWN)) 1f
         else 0f
-        return Vec(x, y)
+        return Vec(x, y).clampMagnitude(1.0f)
     }
 
     override val rightStick: Vec
         get() {
             // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
 
-            val rawData = filterDeadzone(0.6f, controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX), controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY))
-            if (rawData.isMoreOrLessZero()) {
+            val analog = Vec(
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX),
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)
+                ).ignoreDeadzone(MINIMUM_DEADZONE).clampMagnitude(1.0f)
+            if (analog.isMoreOrLessZero()) {    //fixme this is unigame specific hack, should be moved there
                 if (rightBumper || A) {
                     if (lockedFireDirection == null) {
                         lockedFireDirection = leftStick
@@ -69,7 +77,7 @@ internal class GamepadInput(val controller: Controller) : InputDevice() {
                     return Vec(0f, 0f)
                 }
             } else {
-                return rawData
+                return analog
             }
         }
 

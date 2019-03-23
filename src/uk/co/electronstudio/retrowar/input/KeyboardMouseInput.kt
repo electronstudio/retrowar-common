@@ -33,7 +33,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
             if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
                 y = 1f
             }
-            return Vec(x, y)
+            return Vec(x, y).clampMagnitude(1f)
         }
 
     override val A: Boolean
@@ -102,7 +102,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             y = 1f
         }
-        return Vec(x, y)
+        return Vec(x, y).clampMagnitude(1f)
     }
 
     fun pressed(x: Int): Boolean = Gdx.input.isKeyPressed(x)

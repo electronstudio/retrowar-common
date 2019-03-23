@@ -14,9 +14,9 @@ class Vec(val x: Float, val y: Float) {
         return Pair(x, y)
     }
 
-    fun normVector(toNorm: Float = 1f): Vec {
-        val vMagnitude = magnitude()
-        return Vec(x / vMagnitude, y / vMagnitude) * toNorm
+    fun normVector(magnitude: Float = 1f): Vec {
+        val oldMagnitude = magnitude()
+        return Vec(x / oldMagnitude, y / oldMagnitude) * magnitude
     }
 
     fun magnitude(): Float{
@@ -59,7 +59,7 @@ class Vec(val x: Float, val y: Float) {
 
     fun clampMagnitude(max: Float): Vec =
         if(magnitude()>max)
-            normVector(toNorm = max)
+            normVector(magnitude = max)
         else
             this
 
@@ -69,7 +69,7 @@ class Vec(val x: Float, val y: Float) {
         if (magnitude<=deadzone) {
             return Vec(0f, 0f)
         }else if(magnitude>upperBound){
-            return normVector(toNorm = upperBound)
+            return normVector(magnitude = upperBound)
         }else{
             val range = upperBound-deadzone
             val scaleFactor = (magnitude-deadzone)/range
