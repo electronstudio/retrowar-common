@@ -172,7 +172,7 @@ publishing {
             }
         }
     }
-  publish.dependsOn jar, sourcesJar //, javadocJargeneratePomFileForMavenPublicationPublication
+  publish.dependsOn jar, sourcesJar, javadocJar, generatePomFileForMavenPublicationPublication
 }
 
 String keyString = ''
@@ -192,6 +192,12 @@ bintray {
      //   userOrg = 'electronstudio'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/electronstudio/retrowar-common.git'
+      version {
+          name = '0.16.0'
+          desc = '0.16.0 description'
+          released = new Date()
+          vcsTag = '0.16.0'
+      }
     }
 }
 
