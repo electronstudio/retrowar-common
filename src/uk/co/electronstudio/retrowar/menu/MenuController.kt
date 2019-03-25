@@ -104,7 +104,8 @@ class MenuController(
         val s = menus.peek().getSelected()
         when (s) {
 
-            is MultiPrefMenuItem, is NumPrefMenuItem, is BinPrefMenuItem, is MultiChoiceMenuItem -> {
+            is MultiPrefMenuItem, is NumPrefMenuItem, is BinPrefMenuItem,
+            is MultiChoiceMenuItem, is BinMenuItem, is NumberMenuItem-> {
                 s.doAction()
                 Resources.BLING.play()
             }

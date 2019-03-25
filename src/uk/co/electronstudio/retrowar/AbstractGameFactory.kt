@@ -1,8 +1,10 @@
 package uk.co.electronstudio.retrowar
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import uk.co.electronstudio.retrowar.menu.MenuItem
 import uk.co.electronstudio.retrowar.screens.GameSession
+import java.util.Vector
 
 /**
  * GameFactories provide RetroWar with info about a game and generate an
@@ -26,6 +28,19 @@ abstract class AbstractGameFactory(val name: String, val levels: List<String>? =
 
     /** Texture screenshot or logo to display on menu */
     open val image: Texture by lazy { Resources.MISSING_TEXTURE }
+
+    val levelImages: Vector<Texture> = Vector()
+
+    init {
+        levels?.mapTo(levelImages) {
+            val i = Gdx.files.internal("${pathPrefix}levels/$it.png")
+            if (i.exists()) {
+                Texture(i)
+            } else {
+                Resources.MISSING_TEXTURE
+            }
+        }
+    }
 
     /** Description displayed on menu */
     abstract val description: String
