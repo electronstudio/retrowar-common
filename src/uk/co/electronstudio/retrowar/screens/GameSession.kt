@@ -456,7 +456,7 @@ open class GameSession(
             advanceToNextGame(it)
         } ?: metaGame?.let {
             advanceToNextGame(it)
-        } ?: app.showTitleScreen()
+        } ?: app.restoreSavedScreenAndDisposeCurrentScreen()
     }
 
     private fun advanceToNextGame(gameToShow: Game) {

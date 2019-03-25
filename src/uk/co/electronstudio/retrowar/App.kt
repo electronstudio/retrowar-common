@@ -160,12 +160,32 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     val versionString = (App::class.java.`package`.implementationVersion ?: "devel")
 
+    var savedScreen: Screen? = null
+
     /** Displays a new screen and disposes of the old one */
     fun swapScreenAndDispose(screen: Screen) {
-        log("swapscreen")
+        log("swapscreen dispose")
         val s = app.screen
         app.setScreen(screen)
         s.dispose()
+    }
+
+    /** Displays a new screen and save old one for later*/
+    fun swapScreenAndSave(screen: Screen) {
+        log("swapscreen save")
+        savedScreen= app.screen
+        app.setScreen(screen)
+    }
+
+    fun restoreSavedScreenAndDisposeCurrentScreen(){
+        val s = savedScreen
+        savedScreen = null
+        if(s!=null) {
+            swapScreenAndDispose(s)
+        }else{
+            log("there is no saved screen so going back to title")
+            showTitleScreen()
+        }
     }
 
     fun showTitleScreen() {
