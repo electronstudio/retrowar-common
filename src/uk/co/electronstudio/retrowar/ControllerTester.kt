@@ -14,7 +14,7 @@ import uk.co.electronstudio.retrowar.screens.GameSession
 /**
  * Displays all connected controllers so we can test if the mappings are correct.
  */
-class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 480f, fadeInEffect = false) {
+class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, fadeInEffect = false) {
 
     override fun doLogic(deltaTime: Float) { // Called automatically every frame
     }
@@ -25,29 +25,19 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 480f, f
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
         font.draw(batch, "Controllers connected: ${App.app.controllers.getControllers().size}", 0f, 20f)
-        //  batch.begin()
 
-        var x = 0f
-        var y = 472f
-        for (i in 0..App.app.controllers.getControllers().size/2 - 1) {
-            val m = App.app.controllers.getControllers()[i]
-            font.draw(batch, m.name, x, y, 256f, Align.left, false)
-            drawController(m, y, batch, x)
-            y -= 50
+        var y = height
+        App.app.controllers.getControllers().forEachIndexed{index, controller->
+            val x = if(index % 2 == 0) 0f else width/2f
+            font.color=com.badlogic.gdx.graphics.Color.LIME
+            font.draw(batch, controller.name.removePrefix("SDL GameController "), x, y, 256f, Align.left, false)
+            drawController(controller, y, batch, x)
+            y -=  if(index % 2 == 0) 0f else 50f
         }
-        x=320f
-        y=0f
-        for (i in App.app.controllers.getControllers().size/2 ..  App.app.controllers.getControllers().size-1 ) {
-            val m = App.app.controllers.getControllers()[i]
-            font.draw(batch, m.name, x, y, 256f, Align.left, false)
-            drawController(m, y, batch, x)
-            y -= 50
-        }
-
-        //  batch.end()
     }
 
     private fun drawController(m: Controller, y: Float, batch: Batch, x: Float): Float {
+        font.color=com.badlogic.gdx.graphics.Color.WHITE
         var y1 = y
         for (j in 0..31) {
             if (m.getButton(j)) {
