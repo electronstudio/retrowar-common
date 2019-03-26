@@ -19,11 +19,8 @@ class DesktopCallback : Callback {
         config.useGL30 = true
         config.gles30ContextMajorVersion = 3
         config.gles30ContextMinorVersion = 3
-        config.addIcon("icon256.png", Files.FileType.Internal);
-        config.addIcon("icon128.png", Files.FileType.Internal);
-        config.addIcon("icon64.png", Files.FileType.Internal);
-        config.addIcon("icon32.png", Files.FileType.Internal);
-        config.addIcon("icon16.png", Files.FileType.Internal);
+
+
         // //   config.useVsync(true)
         //     config.setIdleFPS(30)
         //     config.
