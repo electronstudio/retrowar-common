@@ -65,7 +65,7 @@ class MenuController(
         val MARGIN = 6
         val SHADOW_OFFSET = 5
 
-        drawBox(MARGIN, SHADOW_OFFSET, shape, glyphLayout.width, glyphLayout.height, y, WIDTH)
+        drawBox(MARGIN, SHADOW_OFFSET, shape, glyphLayout.width, glyphLayout.height, y, WIDTH, x)
 
         batch.begin()
         // fontClear.draw(batch, glyphLayout, 0f, y)

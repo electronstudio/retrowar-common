@@ -93,6 +93,7 @@ fun error(message: String) {
     App.app.logger.error(message)
 }
 
+//fixme param order is bad, and im not sure they are even correctly named for what they do
 fun drawBox(
     MARGIN: Int,
     SHADOW_OFFSET: Int,
@@ -100,21 +101,22 @@ fun drawBox(
     width: Float,
     height: Float,
     y: Float,
-    SCREEN_WIDTH: Float
+    SCREEN_WIDTH: Float,
+    x: Float=0f
 ) {
     val box = Rectangle(0f, 0f, width + MARGIN, height + MARGIN)
     shape.begin(ShapeRenderer.ShapeType.Filled)
     shape.color = Color.BLACK
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2 + SHADOW_OFFSET,
+    shape.rect(x + SCREEN_WIDTH / 2 - box.width / 2 + SHADOW_OFFSET,
         y - SHADOW_OFFSET - box.height + MARGIN / 2,
         box.width,
         box.height)
     shape.color = Color(0, 87, 132)
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
+    shape.rect(x + SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
     shape.end()
     shape.begin(ShapeRenderer.ShapeType.Line)
     shape.color = Color.WHITE
-    shape.rect(SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
+    shape.rect(x +SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
     shape.end()
 }
 
