@@ -299,8 +299,9 @@ object Prefs {
                 app.applyMusicVolume(asVolume())
             }
         },
-
+        DEADZONE("deadzone", min=0, max=25, default=10, step = 1),
         BUFFER("buffer", min = 0, max = 20, default = 6, step = 1);
+
 
         fun displayText(): String {
             return "${prefs.getInteger(pref, default)}"

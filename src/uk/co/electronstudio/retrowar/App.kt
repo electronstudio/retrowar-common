@@ -41,6 +41,7 @@ import uk.co.electronstudio.retrowar.network.Client
 import uk.co.electronstudio.retrowar.network.Server
 import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.retrowar.utils.RetroShader
+import uk.co.electronstudio.sdl2gdx.SDL2Controller
 import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager
 import java.io.BufferedReader
 import java.io.File
@@ -308,7 +309,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
             val controller1 = controllers.getControllers().firstOrNull()
             if (controller1 != null) {
-                session.preSelectedInputDevice = GamepadInput(controller1)
+                session.preSelectedInputDevice = GamepadInput(controller1 as SDL2Controller)
             } else {
                 session.preSelectedInputDevice = KeyboardMouseInput(session)
                 session.KBinUse = true

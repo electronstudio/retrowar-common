@@ -14,6 +14,9 @@ class Vec(val x: Float, val y: Float) {
         return Pair(x, y)
     }
 
+    operator fun component1() = x
+    operator fun component2() = y
+
     fun normVector(magnitude: Float = 1f): Vec {
         val oldMagnitude = magnitude()
         return Vec(x / oldMagnitude, y / oldMagnitude) * magnitude

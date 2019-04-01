@@ -8,6 +8,7 @@ import com.badlogic.gdx.controllers.Controller
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
+import jdk.nashorn.internal.objects.NativeArray.forEach
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.App.Companion.app
@@ -27,6 +28,7 @@ import uk.co.electronstudio.retrowar.menu.MultiPrefMenuItem
 import uk.co.electronstudio.retrowar.menu.SubMenuItem
 import uk.co.electronstudio.retrowar.network.ClientGameSession
 import uk.co.electronstudio.retrowar.network.ClientPlayer
+import uk.co.electronstudio.sdl2gdx.SDL2Controller
 import java.util.ArrayList
 
 /**
@@ -144,15 +146,16 @@ open class GameSession(
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createControllerPlayer(controller: Controller) {
+    private fun createControllerPlayer(controller: SDL2Controller) {
 
-        val c = controller.javaClass
-        val m = c.methods.find { it.name.equals("rumble") }
-        m!!.invoke(controller, 1f, 1f, 500)
+//        val c = controller.javaClass
+//        val m = c.methods.find { it.name.equals("rumble") }
+//        m!!.invoke(controller, 1f, 1f, 500)
 
-//        if(controller is SDL2Controller){
-//            controller.rumble(1f, 1f, 500)
-//        }
+
+        if(controller is SDL2Controller){
+            controller.rumble(0.0f, 0.5f, 5000)
+        }
         val gamepad = GamepadInput(controller)
         createPlayer(gamepad)
     }
@@ -319,7 +322,8 @@ open class GameSession(
 //    }
 
     fun checkForPlayerJoins() {
-        App.app.controllers.getControllers().forEach {
+        val controllers = App.app.controllers.controllers as com.badlogic.gdx.utils.Array<SDL2Controller>
+        controllers.forEach {
             val p = preSelectedInputDevice
             if (p == null || p !is GamepadInput || p.controller != it) {
                 for (i in 0..15) {

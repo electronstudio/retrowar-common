@@ -418,4 +418,3 @@ fun renderTileMapToTexture(map: TiledMap): TextureRegion {
     return fboTexture
 }
 
-val MINIMUM_DEADZONE=0.1f

@@ -6,6 +6,9 @@ import uk.co.electronstudio.retrowar.utils.Vec
  * All input devices are abstracted to look something like the ubiquitious xbox controller
  */
 abstract class InputDevice {
+    open fun rumble(left: Float, right: Float, duration_ms: Int) {
+
+    }
 
     abstract val leftStick: Vec
     abstract val rightStick: Vec
