@@ -6,10 +6,12 @@ import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer.getAxis
 import com.badlogic.gdx.utils.Align
 import org.libsdl.SDL
 import uk.co.electronstudio.retrowar.screens.GameSession
+import uk.co.electronstudio.sdl2gdx.SDL2Controller
 
 /**
  * Displays all connected controllers so we can test if the mappings are correct.
@@ -32,6 +34,17 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
             font.color=com.badlogic.gdx.graphics.Color.LIME
             font.draw(batch, controller.name.removePrefix("SDL GameController "), x, y, 256f, Align.left, false)
             drawController(controller, y, batch, x)
+            (controller as SDL2Controller).rumble(
+                MathUtils.clamp(
+                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)/-1f,
+                    0f,
+                    1f),
+            MathUtils.clamp(
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)/-1f,
+                0f,
+                1f),
+            100
+            )
             y -=  if(index % 2 == 0) 0f else 50f
         }
     }
