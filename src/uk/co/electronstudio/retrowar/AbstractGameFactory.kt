@@ -18,7 +18,7 @@ import java.util.Vector
  * @property name Game name
  * @property levels a List of level names, only for games that have multiple levels. May be null.
  */
-abstract class AbstractGameFactory(val name: String, val levels: List<String>? = null, val pathPrefix: String = "") {
+abstract class AbstractGameFactory(name: String="", val levels: List<String>? = null, val pathPrefix: String = "") {
 
     /** Currently selected level number */
     var level = 0
@@ -28,6 +28,8 @@ abstract class AbstractGameFactory(val name: String, val levels: List<String>? =
 
     /** Texture screenshot or logo to display on menu */
     open val image: Texture by lazy { Resources.MISSING_TEXTURE }
+
+    open val name: String = name
 
     val levelImages: Vector<Texture> = Vector()
 
