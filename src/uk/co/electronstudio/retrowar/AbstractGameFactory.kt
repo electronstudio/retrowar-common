@@ -18,7 +18,7 @@ import java.util.Vector
  * @property name Game name
  * @property levels a List of level names, only for games that have multiple levels. May be null.
  */
-abstract class AbstractGameFactory(name: String="", val levels: List<String>? = null, val pathPrefix: String = "") {
+abstract class AbstractGameFactory(name: String="", val levels: List<LevelLoader>? = null, val pathPrefix: String = "") {
 
     /** Currently selected level number */
     var level = 0
@@ -35,7 +35,7 @@ abstract class AbstractGameFactory(name: String="", val levels: List<String>? = 
 
     init {
         levels?.mapTo(levelImages) {
-            val i = Gdx.files.internal("${pathPrefix}levels/$it.png")
+            val i = it.image
             if (i.exists()) {
                 Texture(i)
             } else {

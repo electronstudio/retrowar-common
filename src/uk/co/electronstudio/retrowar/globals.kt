@@ -120,8 +120,9 @@ fun drawBox(
     shape.end()
 }
 
-fun listAllLevels() = Gdx.files.internal("levels").list().filter { it.extension() == "tmx" }.map {
-    it.name().dropLast(4)
+@JvmOverloads
+fun listAllLevels(path: String="levels") = Gdx.files.internal(path).list("tmx").map {
+    LevelLoader(it, Gdx.files.internal("${it.pathWithoutExtension()}.png"), it.nameWithoutExtension())
 }
 
 fun Float.roundDown(): Float {
