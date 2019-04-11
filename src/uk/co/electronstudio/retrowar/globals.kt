@@ -20,6 +20,7 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -419,3 +420,6 @@ fun renderTileMapToTexture(map: TiledMap): TextureRegion {
     return fboTexture
 }
 
+fun Sound.playAtOurVolume() {
+    this.play(Prefs.NumPref.FX_VOLUME.asVolume())
+}
