@@ -71,6 +71,16 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     lateinit var controllers: SDL2ControllerManager
 
+    val playerData = mutableListOf(PlayerData("Bob", com.badlogic.gdx.graphics.Color.BLUE, com.badlogic.gdx.graphics.Color.LIME,"", 0),
+            PlayerData("Jon", com.badlogic.gdx.graphics.Color.RED, com.badlogic.gdx.graphics.Color.LIME,"", 0),
+            PlayerData("George", com.badlogic.gdx.graphics.Color.PURPLE, com.badlogic.gdx.graphics.Color.LIME,"", 0))
+
+    val players = mutableListOf<Player>()
+
+    fun findPlayerAssociatedWithController(c: SDL2Controller): Player? {
+        return players.filter { it.input is GamepadInput && it.input.controller==c }.firstOrNull()
+    }
+
     companion object {
         /** A static reference to the singleton Application */
         @JvmStatic
