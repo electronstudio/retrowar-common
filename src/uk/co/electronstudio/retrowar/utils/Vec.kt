@@ -85,7 +85,8 @@ class Vec(val x: Float, val y: Float) {
     }
 
     fun convertToDpad(): Vec {
-        return Vec(if(x>0.3) 1f else if(x < -0.3f) -1f else 0f, if(y>0.3) 1f else if(y < -0.3f) -1f else 0f)
+        val n=this.normVector()
+        return Vec(if(n.x>0.38) 1f else if(n.x < -0.38f) -1f else 0f, if(n.y>0.38) 1f else if(n.y < -0.38f) -1f else 0f)
 
     }
 }
