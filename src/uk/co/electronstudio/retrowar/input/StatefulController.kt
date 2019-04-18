@@ -11,7 +11,7 @@ import com.badlogic.gdx.controllers.PovDirection
  */
 internal class StatefulController(val mappedController: MappedController) : ControllerAdapter() {
 
-    var startPressed = false
+    var littleButtonsPressed = false
     var upPressed = false
     var downPressed = false
     var leftPressed = false
@@ -30,7 +30,7 @@ internal class StatefulController(val mappedController: MappedController) : Cont
     }
 
     fun clearEvents() {
-        startPressed = false
+        littleButtonsPressed = false
         upPressed = false
         downPressed = false
         leftPressed = false
@@ -83,17 +83,17 @@ internal class StatefulController(val mappedController: MappedController) : Cont
             return t
         }
 
-    val isStartButtonJustPressed: Boolean
+    val isAnyLittleButtonJustPressed: Boolean
         get() {
-            val t = startPressed
-            startPressed = false
+            val t = littleButtonsPressed
+            littleButtonsPressed = false
             return t
         }
 
     override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
 
         when (buttonIndex) {
-            mappedController.START -> startPressed = true
+            mappedController.START,  mappedController.BACK,  mappedController.GUIDE -> littleButtonsPressed = true
             mappedController.A -> APressed = true
             mappedController.B -> BPressed = true
             mappedController.DPAD_UP -> upPressed = true

@@ -8,7 +8,6 @@ import com.badlogic.gdx.controllers.Controller
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
-import jdk.nashorn.internal.objects.NativeArray.forEach
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.App.Companion.app
@@ -172,7 +171,9 @@ open class GameSession(
 
     @SuppressWarnings
     fun standardMenu(): Menu {
-        val inGameMenu: Menu = Menu("MENU")
+        val inGameMenu: Menu = Menu("MENU", quitAction = {
+            requestStateChangeMenuToPlay()
+        })
         val inGameOptions = Menu("OPTIONS")
 
         // inGameOptions.add(BinPrefMenuItem("Display mode: ", Prefs.BinPref.FULLSCREEN))
@@ -202,10 +203,16 @@ open class GameSession(
         inGameMenu.add(SubMenuItem("Quit", subMenu = quitMenu))
 
         inGameMenu.add(ActionMenuItem("Continue", action = {
-            this.state = GameState.PLAY
+            requestStateChangeMenuToPlay()
         }))
 
         return inGameMenu
+    }
+
+    private var requestStateChangeMenuToPlay = false
+
+    private fun requestStateChangeMenuToPlay() {
+        requestStateChangeMenuToPlay=true
     }
 
     private fun createPlayer(input: InputDevice): Player {
@@ -351,6 +358,7 @@ open class GameSession(
         checkForPlayerDisconnects()
         game?.renderAndClampFramerate()
 
+
         if (state == GameSession.GameState.GETREADY) {
             readyTimer -= deltaTime * 10
             if (readyTimer < 0f) {
@@ -358,11 +366,12 @@ open class GameSession(
             }
         }
 
-        if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
+        else if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
             if (input.isKeyJustPressed(Input.Keys.BACK)) {
                 app.showTitleScreen()
             }
-            if (input.isKeyJustPressed(Input.Keys.ESCAPE) || app.statefulControllers.any { it.isStartButtonJustPressed }) {
+            if (input.isKeyJustPressed(Input.Keys.ESCAPE) || app.statefulControllers.any { it.isAnyLittleButtonJustPressed }) {
+                log("GameSession","in play, menu")
                 state = GameSession.GameState.MENU
                 app.clearEvents()
             }
@@ -370,6 +379,20 @@ open class GameSession(
                 createKBPlayer()
             }
         }
+
+        if(requestStateChangeMenuToPlay){
+            state=GameState.PLAY
+            requestStateChangeMenuToPlay=false
+        }
+
+//        else if(state==GameState.MENU){
+//
+//            if (input.isKeyJustPressed(Input.Keys.ESCAPE) || app.statefulControllers.any { it.isAnyLittleButtonJustPressed }) {
+//                log("GameSession","in menu, back")
+//                this.state = GameState.PLAY
+//                app.clearEvents()
+//            }
+//        }
 
         val server = app.server
 

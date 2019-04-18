@@ -231,7 +231,7 @@ class MenuController(
     }
 
     private fun inputBack() =
-        input.isKeyJustPressed(ESCAPE) || input.isKeyJustPressed(BACK) || app.statefulControllers.any { it.isStartButtonJustPressed } || app.statefulControllers.any { it.isButtonBJustPressed }
+        input.isKeyJustPressed(ESCAPE) || input.isKeyJustPressed(BACK) || app.statefulControllers.any { it.isAnyLittleButtonJustPressed } || app.statefulControllers.any { it.isButtonBJustPressed }
 
     private fun inputSelect() =
     //  input.isKeyJustPressed(RIGHT) ||
