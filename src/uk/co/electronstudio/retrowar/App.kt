@@ -27,6 +27,7 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
+import com.badlogic.gdx.utils.Json
 
 import com.codedisaster.steamworks.SteamAPI
 import de.golfgl.gdxgameanalytics.GameAnalytics
@@ -71,9 +72,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     lateinit var controllers: SDL2ControllerManager
 
-    val playerData = mutableListOf(PlayerData("Bob", com.badlogic.gdx.graphics.Color.BLUE, com.badlogic.gdx.graphics.Color.LIME,"", 0),
-            PlayerData("Jon", com.badlogic.gdx.graphics.Color.RED, com.badlogic.gdx.graphics.Color.LIME,"", 0),
-            PlayerData("George", com.badlogic.gdx.graphics.Color.PURPLE, com.badlogic.gdx.graphics.Color.LIME,"", 0))
+//    val playerData = mutableListOf(PlayerData("Bob", com.badlogic.gdx.graphics.Color.BLUE, com.badlogic.gdx.graphics.Color.LIME,"", 0),
+//            PlayerData("Jon", com.badlogic.gdx.graphics.Color.RED, com.badlogic.gdx.graphics.Color.LIME,"", 0),
+//            PlayerData("George", com.badlogic.gdx.graphics.Color.PURPLE, com.badlogic.gdx.graphics.Color.LIME,"", 0))
 
     val players = mutableListOf<Player>()
 
@@ -96,6 +97,25 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     init {
         app = this
         findIPaddress()
+    }
+
+    var playerData = mutableListOf<PlayerData>()
+    val controllerMappings = mutableMapOf<SDL2Controller, PlayerData>()
+
+    fun loadPlayerData(){
+        try {
+            val file = Gdx.files.external(".prefs/retrowar.players.json")
+            playerData = Json().fromJson(playerData::class.java, file)
+        }catch (e: Throwable){
+            log("App","Unable to load playerdata file $e")
+        }
+    }
+
+    fun savePlayerData(){
+        val json = Json().toJson(playerData)
+        val file = Gdx.files.external(".prefs/retrowar.players.json")
+        System.out.println(json)
+        file.writeString(json, false)
     }
 
     /** Tries to connect to AWS to get current IP address
@@ -273,6 +293,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     }
 
     protected fun initialiseDesktop() {
+        loadPlayerData()
     }
 
     protected fun initialiseAndroid() {

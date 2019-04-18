@@ -18,6 +18,8 @@ internal class StatefulController(val mappedController: MappedController) : Cont
     var rightPressed = false
     var APressed = false
     var BPressed = false
+    var XPressed = false
+    var YPressed = false
 
     var horCentered = true
     var vertCentered = true
@@ -37,6 +39,8 @@ internal class StatefulController(val mappedController: MappedController) : Cont
         rightPressed = false
         APressed = false
         BPressed = false
+        XPressed = false
+        YPressed = false
         horCentered = true
         vertCentered = true
     }
@@ -83,6 +87,20 @@ internal class StatefulController(val mappedController: MappedController) : Cont
             return t
         }
 
+    val isButtonXJustPressed: Boolean
+        get() {
+            //   log("stateful $this pressed button")
+            val t = XPressed
+            XPressed = false
+            return t
+        }
+    val isButtonYJustPressed: Boolean
+        get() {
+            val t = YPressed
+            YPressed = false
+            return t
+        }
+
     val isAnyLittleButtonJustPressed: Boolean
         get() {
             val t = littleButtonsPressed
@@ -96,6 +114,8 @@ internal class StatefulController(val mappedController: MappedController) : Cont
             mappedController.START,  mappedController.BACK,  mappedController.GUIDE -> littleButtonsPressed = true
             mappedController.A -> APressed = true
             mappedController.B -> BPressed = true
+            mappedController.X -> XPressed = true
+            mappedController.Y -> YPressed = true
             mappedController.DPAD_UP -> upPressed = true
             mappedController.DPAD_DOWN -> downPressed = true
             mappedController.DPAD_LEFT -> leftPressed = true

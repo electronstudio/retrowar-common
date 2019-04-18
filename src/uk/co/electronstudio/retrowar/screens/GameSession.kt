@@ -8,11 +8,13 @@ import com.badlogic.gdx.controllers.Controller
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
+import sun.audio.AudioPlayer.player
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.App.Companion.app
 import uk.co.electronstudio.retrowar.Game
 import uk.co.electronstudio.retrowar.Player
+import uk.co.electronstudio.retrowar.PlayerData
 import uk.co.electronstudio.retrowar.Prefs
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.InputDevice
@@ -140,12 +142,12 @@ open class GameSession(
         KBinUse = true
 
         val i = KeyboardMouseInput(this)
-        keyboardPlayer = createPlayer(i)
+        keyboardPlayer = createPlayer(i, null) //FIXME keyboard player never has any name data
 
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createControllerPlayer(controller: SDL2Controller) {
+    private fun createControllerPlayer(controller: SDL2Controller, playerData: PlayerData?) {
 
 //        val c = controller.javaClass
 //        val m = c.methods.find { it.name.equals("rumble") }
@@ -156,7 +158,7 @@ open class GameSession(
             controller.rumble(0.0f, 0.5f, 5000)
         }
         val gamepad = GamepadInput(controller)
-        createPlayer(gamepad)
+        createPlayer(gamepad, playerData)
     }
 
     //    var touchscreenInput: TouchscreenInput? = null
@@ -216,9 +218,9 @@ open class GameSession(
         requestStateChangeMenuToPlay=true
     }
 
-    private fun createPlayer(input: InputDevice): Player {
+    private fun createPlayer(input: InputDevice, playerData: PlayerData?): Player {
 
-        return createLocalPlayerOnServer(input)
+        return createLocalPlayerOnServer(input, playerData)
     }
 
     fun createNetworkPlayerOnServer(name: String): Int {
@@ -239,7 +241,7 @@ open class GameSession(
         return id
     }
 
-    private fun createLocalPlayerOnServer(input: InputDevice): Player {
+    private fun createLocalPlayerOnServer(input: InputDevice, playerData: PlayerData?): Player {
 
         val id = players.size
 
@@ -247,10 +249,15 @@ open class GameSession(
 
         val namePref = nextPlayerName()
 
-        val player = Player(input = input,
+        val player =
+            if(playerData==null){
+            Player(input = input,
             name = namePref,
             color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))
+            color2 = Color.valueOf(nextPlayerColor2()))}
+        else{
+                Player(input, playerData.name, playerData.color, playerData.color2)
+            }
 
         players.add(player)
 
@@ -265,10 +272,10 @@ open class GameSession(
         log("create local player $id")
 
         val namePref = when (id) {
-            0 -> Prefs.StringPref.PLAYER1.getString()
-            1 -> Prefs.StringPref.PLAYER2.getString()
-            2 -> Prefs.StringPref.PLAYER3.getString()
-            3 -> Prefs.StringPref.PLAYER4.getString()
+//            0 -> Prefs.StringPref.PLAYER1.getString()
+//            1 -> Prefs.StringPref.PLAYER2.getString()
+//            2 -> Prefs.StringPref.PLAYER3.getString()
+//            3 -> Prefs.StringPref.PLAYER4.getString()
             else -> Prefs.StringPref.PLAYER_MORE.getString() + (id + 1)
         }
         val player = ClientPlayer(input = input,
@@ -297,7 +304,12 @@ open class GameSession(
 //            attachListenerToController(c)
 //        }
         preSelectedInputDevice?.let {
-            createPlayer(it)
+            createPlayer(it, null)
+        }
+
+        app.controllerMappings.forEach { controller, playerData ->
+            createControllerPlayer(controller, playerData)
+            usedControllers.add(controller)
         }
 
         //            if (Gdx.app.type == Application.ApplicationType.Android) {
@@ -337,7 +349,7 @@ open class GameSession(
                 for (i in 0..15) {
                     if (it.getButton(i)) {
                         if (!usedControllers.contains(it)) {
-                            createControllerPlayer(it)
+                            createControllerPlayer(it, null)
                             usedControllers.add(it)
                         }
                     }
@@ -446,10 +458,10 @@ open class GameSession(
 
     fun nextPlayerName(): String {
         return when (players.size) {
-            0 -> Prefs.StringPref.PLAYER1.getString()
-            1 -> Prefs.StringPref.PLAYER2.getString()
-            2 -> Prefs.StringPref.PLAYER3.getString()
-            3 -> Prefs.StringPref.PLAYER4.getString()
+//            0 -> Prefs.StringPref.PLAYER1.getString()
+//            1 -> Prefs.StringPref.PLAYER2.getString()
+//            2 -> Prefs.StringPref.PLAYER3.getString()
+//            3 -> Prefs.StringPref.PLAYER4.getString()
             else -> Prefs.StringPref.PLAYER_MORE.getString() + (players.size + 1)
         }
     }

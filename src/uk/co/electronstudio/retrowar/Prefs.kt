@@ -353,10 +353,7 @@ object Prefs {
 
     /** @suppress */
     enum class StringPref(val pref: String, val text: String = pref, val default: String = "") {
-        PLAYER1("player1", default = "PLAYER1"), PLAYER2("player2", default = "PLAYER2"), PLAYER3("player3",
-            default = "PLAYER3"),
-        PLAYER4("player4", default = "PLAYER4"), SERVER("server", default = "1.1.1.1"), GAME("game",
-            default = "RETDROID"),
+        SERVER("server", default = "1.1.1.1"),
         PLAYER_MORE("playermore", default = "PLAYER");
 
         fun displayText(): String {

@@ -66,8 +66,9 @@ open class Menu(
         return currentPage.get(i)
     }
 
-    fun add(item: MenuItem) {
+    fun add(item: MenuItem): Menu {
         allItems.add(item)
+        return this
     }
 
     fun addAndSelect(item: MenuItem) {
