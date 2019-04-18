@@ -176,6 +176,7 @@ open class GameSession(
         })
         val inGameOptions = Menu("OPTIONS")
 
+        inGameMenu.add(BinPrefMenuItem("Controls: ", Prefs.BinPref.ANALOG_CONTOLRS))
         // inGameOptions.add(BinPrefMenuItem("Display mode: ", Prefs.BinPref.FULLSCREEN))
         inGameOptions.add(MultiPrefMenuItem("Shader: ", Prefs.MultiChoicePref.SHADER))
         inGameOptions.add(BinPrefMenuItem("Vsync: ", Prefs.BinPref.VSYNC))

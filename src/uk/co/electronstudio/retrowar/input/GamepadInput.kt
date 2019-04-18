@@ -17,6 +17,7 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
  //   var singleStickMode = true
     var lockedFireDirection: Vec? = null
 
+    var lastDirectionPushedOnLeftStick = Vec(0f,0f)
 
     override fun rumble(left: Float, right: Float, duration_ms: Int) {
         controller.rumble(left, right, duration_ms)
@@ -34,6 +35,7 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
             if (analog.isMoreOrLessZero()) {
                 return dpadAsStick()
             } else {
+                lastDirectionPushedOnLeftStick=analog
                 return analog
             }
 
@@ -66,24 +68,30 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
         get() {
             // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
 
+
+
             val analog = Vec(
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX),
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)
                 ).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent()).clampMagnitude(1.0f)
             if (analog.isMoreOrLessZero()) {    //fixme this is unigame specific hack, should be moved there
-                if (rightBumper || A) {
+                if (rightBumper || A || B || X || Y) {
                     if (lockedFireDirection == null) {
-                        lockedFireDirection = leftStick
+                        lockedFireDirection = lastDirectionPushedOnLeftStick.normVector()
                     }
                     return lockedFireDirection!!
                 } else {
                     lockedFireDirection = null
-                    return Vec(0f, 0f)
+                    return Vec(0f,0f)//lastDirectionPushedOnLeftStick
                 }
             } else {
                 return analog
             }
         }
+
+
+
+
 
     override val leftTrigger: Float
         get() {

@@ -79,4 +79,13 @@ class Vec(val x: Float, val y: Float) {
             return normVector() * scaleFactor
         }
     }
+
+    fun toAngle(): Float {
+        return MathUtils.atan2(x, y)
+    }
+
+    fun convertToDpad(): Vec {
+        return Vec(if(x>0.3) 1f else if(x < -0.3f) -1f else 0f, if(y>0.3) 1f else if(y < -0.3f) -1f else 0f)
+
+    }
 }

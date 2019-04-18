@@ -189,10 +189,15 @@ object Prefs {
                 App.app.resize(Gdx.graphics.width, Gdx.graphics.height)
             }
         },
-        SCANLINES("scanlines", default = true), SMOOTH("smooth",
+        SCANLINES("scanlines", default = true),
+        SMOOTH("smooth",
             tText = "FAKE but SMOOTH",
             fText = "GENUINE",
             default = false),
+        ANALOG_CONTOLRS("analog",
+            tText = "MODERN (ANALOGUE STICK)",
+            fText = "RETRO (8-WAY STICK)",
+            default = true),
         SPLASH("splash", default = true), //        PROFANITY("profanity", default = false) {
         //            override fun apply() {
         //                var locale = Locale(Resources.defaultLocale.language, "", if (PROFANITY.isEnabled()) "profane" else "")
