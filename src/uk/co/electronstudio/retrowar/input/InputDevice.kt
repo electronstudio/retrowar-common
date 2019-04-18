@@ -10,6 +10,13 @@ abstract class InputDevice {
 
     }
 
+    val leftStick: Vec
+        get(){return movementVec}
+
+    val rightStick: Vec
+        get(){return aimingVec}
+
+
     abstract val movementVec: Vec
     abstract val aimingVec: Vec
     abstract val leftTrigger: Float
