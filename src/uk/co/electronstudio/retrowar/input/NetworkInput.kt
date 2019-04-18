@@ -7,8 +7,8 @@ import uk.co.electronstudio.retrowar.utils.Vec
  * to be sent over network
  */
 open class NetworkInput(
-    override var leftStick: Vec = Vec(0f, 0f),
-    override var rightStick: Vec = Vec(0f, 0f),
+    override var movementVec: Vec = Vec(0f, 0f),
+    override var aimingVec: Vec = Vec(0f, 0f),
     override var leftTrigger: Float = 0f,
     override var rightTrigger: Float = 0f,
     override var A: Boolean = false,
@@ -26,14 +26,14 @@ open class NetworkInput(
         get() = TODO("not implemented") // To change initializer of created properties use File | Settings | File Templates.
 
     fun copyTo(other: NetworkInput) {
-        other.leftStick = leftStick
-        other.rightStick = rightStick
+        other.movementVec = movementVec
+        other.aimingVec = aimingVec
         other.A = A
     }
 
     fun copyFrom(other: InputDevice) {
-        leftStick = other.leftStick
-        rightStick = other.rightStick
+        movementVec = other.movementVec
+        aimingVec = other.aimingVec
         A = other.A
     }
 }

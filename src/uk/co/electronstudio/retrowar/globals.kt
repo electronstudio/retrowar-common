@@ -163,7 +163,7 @@ class InputUpdate(input: InputDevice?, val playerId: Int) {
     init {
         if (input != null) {
             networkInput =
-                    NetworkInput(input.leftStick, input.rightStick, input.leftTrigger, input.rightTrigger, input.A)
+                    NetworkInput(input.movementVec, input.aimingVec, input.leftTrigger, input.rightTrigger, input.A)
         }
     }
 }

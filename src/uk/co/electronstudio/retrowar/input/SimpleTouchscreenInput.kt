@@ -35,7 +35,7 @@ internal class SimpleTouchscreenInput : InputDevice() {
             return false
         }
 
-    override val leftStick: Vec
+    override val movementVec: Vec
         get() {
             for (i in 0..10) {
                 if (Gdx.input.isTouched(i)) {
@@ -57,7 +57,7 @@ internal class SimpleTouchscreenInput : InputDevice() {
             return Vec(0f, 0f)
         }
 
-    override val rightStick: Vec
+    override val aimingVec: Vec
         get() {
 
             return Vec(0f, 0f)

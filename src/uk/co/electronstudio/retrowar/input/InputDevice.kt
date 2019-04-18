@@ -10,8 +10,8 @@ abstract class InputDevice {
 
     }
 
-    abstract val leftStick: Vec
-    abstract val rightStick: Vec
+    abstract val movementVec: Vec
+    abstract val aimingVec: Vec
     abstract val leftTrigger: Float
     abstract val rightTrigger: Float
 

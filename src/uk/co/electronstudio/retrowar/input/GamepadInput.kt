@@ -24,7 +24,7 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
     }
 
 
-    override val leftStick: Vec
+    override val movementVec: Vec
         get() {
 
             val analog = Vec(
@@ -64,7 +64,7 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
         return Vec(x, y).clampMagnitude(1.0f)
     }
 
-    override val rightStick: Vec
+    override val aimingVec: Vec
         get() {
             // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
 

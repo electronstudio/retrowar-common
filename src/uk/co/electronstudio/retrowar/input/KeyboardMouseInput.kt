@@ -17,7 +17,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
     override val rightTrigger: Float
         get() = 0f
 
-    override val leftStick: Vec
+    override val movementVec: Vec
         get() {
             var x = 0f
             var y = 0f
@@ -63,7 +63,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
         }
     //  val pointers = Aspect.all(IsPointer::class.java)
 
-    override val rightStick: Vec
+    override val aimingVec: Vec
         get() {
             if (pressed(Input.Keys.UP) || pressed(Input.Keys.DOWN) || pressed(Input.Keys.LEFT) || pressed(Input.Keys.RIGHT)) {
                 return keyboardAsRightStick()
