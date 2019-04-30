@@ -13,9 +13,9 @@ import uk.co.electronstudio.retrowar.utils.Vec
 internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
     override val leftTrigger: Float
-        get() = 0f
+        get() = if(Gdx.input.isButtonPressed(Input.Buttons.MIDDLE)) 1f else 0f
     override val rightTrigger: Float
-        get() = 0f
+        get() = if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) 1f else 0f
 
     override val movementVec: Vec
         get() {
@@ -75,7 +75,7 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
             //    val playerV = (playerVelocity.x*playerVelocity.x+playerVelocity.y*playerVelocity.y).sqrt()
 
-            if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT) && !Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
                 return Vec(0f, 0f)
             }
 
