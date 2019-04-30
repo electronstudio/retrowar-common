@@ -13,14 +13,19 @@ import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.sdl2gdx.SDL2Controller
 import java.lang.StringBuilder
 
-class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, val tab1: Float, val tab2: Float,
-                   val tab3: Float, val tab4: Float) {
-
+class ControllerUI(
+    val controller: SDL2Controller,
+    val x: Float,
+    val y: Float,
+    val tab1: Float,
+    val tab2: Float,
+    val tab3: Float,
+    val tab4: Float
+) {
 
     private val statefulController = StatefulController(MappedController(controller))
 
- //   var playerData = PlayerData("", Color.RED, Color.BLUE, "", 0)
-
+    //   var playerData = PlayerData("", Color.RED, Color.BLUE, "", 0)
 
     val chars = "ABCDEFGHIJKLMNOPQRSTUVWXY0123456789!*_"
     var stringBeingEdited = StringBuilder("A____________")
@@ -44,7 +49,7 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
 
     fun isDone() = state == State.DONE_PLAYER || state == State.DONE_UNASSIGNED
 
-    fun init(){
+    fun init() {
         statefulController.clearEvents()
     }
 
@@ -59,8 +64,8 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
             State.SHOWING_UNASSIGNED, State.DONE_UNASSIGNED -> FONT.draw(batch, "[UNASSIGNED]", x + tab1, y)
             State.SHOWING_PLAYER_NAME, State.DONE_PLAYER -> {
                 FONT.draw(batch, "${player().name}", x + tab1, y)
-                FONT.draw(batch, "[#${player().color.toString()}];;;;;;[]", x + tab2, y)
-                FONT.draw(batch, "[#${player().color2.toString()}];;;;;;[]", x + tab3, y)
+                FONT.draw(batch, "[#${player().color}];;;;;;[]", x + tab2, y)
+                FONT.draw(batch, "[#${player().color2}];;;;;;[]", x + tab3, y)
             }
             State.SHOWING_NEW_PLAYER -> {
                 FONT.draw(batch, "[NEW PLAYER...]", x + tab1, y)
@@ -71,29 +76,31 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
                 val end = stringBeingEdited.toString().substring(cursorPosition + 1, stringBeingEdited.length)
                 val s = "$start${flash.getKeyFrame(time, true)}$middle[]$end"
                 FONT.draw(batch, s, x + tab1, y)
-                FONT.draw(batch, "[#${colourBeingEdited1.toString()}];;;;;;[]", x + tab2, y)
-                FONT.draw(batch, "[#${colourBeingEdited2.toString()}];;;;;;[]", x + tab3, y)
+                FONT.draw(batch, "[#$colourBeingEdited1];;;;;;[]", x + tab2, y)
+                FONT.draw(batch, "[#$colourBeingEdited2];;;;;;[]", x + tab3, y)
                 // println(s)
             }
             State.EDITING_COLOUR1 -> {
                 FONT.draw(batch, stringBeingEdited, x + tab1, y)
-                val s = "${flash.getKeyFrame(time, true)}>[#${colourBeingEdited1.toString()}];;;;[]${flash.getKeyFrame(time, true)}<[]"
+                val s =
+                    "${flash.getKeyFrame(time, true)}>[#$colourBeingEdited1];;;;[]${flash.getKeyFrame(time, true)}<[]"
                 FONT.draw(batch, s, x + tab2, y)
 
-                FONT.draw(batch, "[#${colourBeingEdited2.toString()}];;;;;;[]", x + tab3, y)
+                FONT.draw(batch, "[#$colourBeingEdited2];;;;;;[]", x + tab3, y)
                 // println(s)
             }
             State.EDITING_COLOUR2 -> {
                 FONT.draw(batch, stringBeingEdited, x + tab1, y)
 
-                FONT.draw(batch, "[#${colourBeingEdited1.toString()}];;;;;;[]", x + tab2, y)
-                val s = "${flash.getKeyFrame(time, true)}>[#${colourBeingEdited2.toString()}];;;;[]${flash.getKeyFrame(time, true)}<[]"
+                FONT.draw(batch, "[#$colourBeingEdited1];;;;;;[]", x + tab2, y)
+                val s =
+                    "${flash.getKeyFrame(time, true)}>[#$colourBeingEdited2];;;;[]${flash.getKeyFrame(time, true)}<[]"
                 FONT.draw(batch, s, x + tab3, y)
 
                 // println(s)
             }
         }
-        if (state==  State.DONE_PLAYER || state == State.DONE_UNASSIGNED) {
+        if (state == State.DONE_PLAYER || state == State.DONE_UNASSIGNED) {
             FONT.draw(batch, "READY!", x + tab4, y)
         }
     }
@@ -200,7 +207,7 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
             }
         }
         if (statefulController.isRightButtonJustPressed || statefulController.isButtonAJustPressed || statefulController.isButtonBJustPressed || statefulController.isButtonXJustPressed || statefulController.isButtonYJustPressed) {
-            log("ControlluerUI","button press")
+            log("ControlluerUI", "button press")
             when (state) {
                 State.SHOWING_UNASSIGNED -> {
                     state = State.DONE_UNASSIGNED
@@ -215,7 +222,7 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
                 }
                 State.EDITING_NAME -> {
                     if (cursorPosition < stringBeingEdited.length - 1) {
-                        cursorPosition++ //fixme repeat previous character?
+                        cursorPosition++ // fixme repeat previous character?
                     } else {
                         state = State.EDITING_COLOUR1
                     }
@@ -245,7 +252,7 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
                 State.SHOWING_UNASSIGNED -> {
                 }
                 State.SHOWING_PLAYER_NAME -> {
-                    //state = State.EDITING_COLOUR2
+                    // state = State.EDITING_COLOUR2
                 }
                 State.SHOWING_NEW_PLAYER -> {
                 }
@@ -270,5 +277,4 @@ class ControllerUI(val controller: SDL2Controller, val x: Float, val y: Float, v
             }
         }
     }
-
 }

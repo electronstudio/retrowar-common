@@ -8,7 +8,6 @@ import com.badlogic.gdx.controllers.Controller
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
-import sun.audio.AudioPlayer.player
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.App.Companion.app
@@ -26,6 +25,7 @@ import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.BinPrefMenuItem
 import uk.co.electronstudio.retrowar.menu.Menu
 import uk.co.electronstudio.retrowar.menu.MultiPrefMenuItem
+import uk.co.electronstudio.retrowar.menu.NumPrefMenuItem
 import uk.co.electronstudio.retrowar.menu.SubMenuItem
 import uk.co.electronstudio.retrowar.network.ClientGameSession
 import uk.co.electronstudio.retrowar.network.ClientPlayer
@@ -142,7 +142,7 @@ open class GameSession(
         KBinUse = true
 
         val i = KeyboardMouseInput(this)
-        keyboardPlayer = createPlayer(i, null) //FIXME keyboard player never has any name data
+        keyboardPlayer = createPlayer(i, null) // FIXME keyboard player never has any name data
 
         //  val ship = createCharacter(i, player)
     }
@@ -153,8 +153,7 @@ open class GameSession(
 //        val m = c.methods.find { it.name.equals("rumble") }
 //        m!!.invoke(controller, 1f, 1f, 500)
 
-
-        if(controller is SDL2Controller){
+        if (controller is SDL2Controller) {
             controller.rumble(0.0f, 0.5f, 5000)
         }
         val gamepad = GamepadInput(controller)
@@ -176,27 +175,32 @@ open class GameSession(
         val inGameMenu: Menu = Menu("MENU", quitAction = {
             requestStateChangeMenuToPlay()
         })
-        val inGameOptions = Menu("OPTIONS")
+        val inGameVideoOptions = Menu("VIDEO")
 
-        inGameMenu.add(BinPrefMenuItem("Controls: ", Prefs.BinPref.ANALOG_CONTOLRS))
+
         // inGameOptions.add(BinPrefMenuItem("Display mode: ", Prefs.BinPref.FULLSCREEN))
-        inGameOptions.add(MultiPrefMenuItem("Shader: ", Prefs.MultiChoicePref.SHADER))
-        inGameOptions.add(BinPrefMenuItem("Vsync: ", Prefs.BinPref.VSYNC))
-        inGameOptions.add(MultiPrefMenuItem("FPS limit: ", Prefs.MultiChoicePref.LIMIT_FPS))
-        inGameOptions.add(BinPrefMenuItem("Pixels: ", Prefs.BinPref.SMOOTH))
-        inGameOptions.add(BinPrefMenuItem("Blur: ", Prefs.BinPref.BILINEAR))
-        inGameOptions.add(BinPrefMenuItem("Scaling: ", Prefs.BinPref.STRETCH))
-        inGameOptions.add(BinPrefMenuItem("Scanlines: ", Prefs.BinPref.SCANLINES))
-        inGameOptions.add(BinPrefMenuItem("Show FPS: ", Prefs.BinPref.FPS))
+        inGameVideoOptions.add(MultiPrefMenuItem("Shader: ", Prefs.MultiChoicePref.SHADER))
+        inGameVideoOptions.add(BinPrefMenuItem("Vsync: ", Prefs.BinPref.VSYNC))
+        inGameVideoOptions.add(MultiPrefMenuItem("FPS limit: ", Prefs.MultiChoicePref.LIMIT_FPS))
+        inGameVideoOptions.add(BinPrefMenuItem("Pixels: ", Prefs.BinPref.SMOOTH))
+        inGameVideoOptions.add(BinPrefMenuItem("Blur: ", Prefs.BinPref.BILINEAR))
+        inGameVideoOptions.add(BinPrefMenuItem("Scaling: ", Prefs.BinPref.STRETCH))
+        inGameVideoOptions.add(BinPrefMenuItem("Scanlines: ", Prefs.BinPref.SCANLINES))
+        inGameVideoOptions.add(BinPrefMenuItem("Show FPS: ", Prefs.BinPref.FPS))
+        inGameVideoOptions.add(BackMenuItem("<<<<"))
 
-        inGameOptions.add(BackMenuItem("<<<<"))
+        inGameMenu.add(SubMenuItem("Video Options", subMenu = inGameVideoOptions))
 
-        inGameMenu.add(SubMenuItem("Video Options", subMenu = inGameOptions))
+        val inGameControlOptions = Menu("CONTROLS")
+        inGameControlOptions.add(BinPrefMenuItem("Type: ", Prefs.BinPref.ANALOG_CONTOLRS))
+        inGameControlOptions.add(NumPrefMenuItem("Deadzone %", Prefs.NumPref.DEADZONE))
+        inGameControlOptions.add(MultiPrefMenuItem("Rumble: ", Prefs.MultiChoicePref.RUMBLE))
+        inGameVideoOptions.add(BackMenuItem("<<<<"))
+
+        inGameMenu.add(SubMenuItem("Controller Options", subMenu = inGameControlOptions))
 
         val quitMenu = Menu("QUIT?")
-
         quitMenu.add(BackMenuItem("No"))
-
         quitMenu.add(ActionMenuItem("YES", action = {
             this.nextGame = null
             this.metaGame = null
@@ -205,17 +209,13 @@ open class GameSession(
 
         inGameMenu.add(SubMenuItem("Quit", subMenu = quitMenu))
 
-        inGameMenu.add(ActionMenuItem("Continue", action = {
-            requestStateChangeMenuToPlay()
-        }))
-
         return inGameMenu
     }
 
     private var requestStateChangeMenuToPlay = false
 
     private fun requestStateChangeMenuToPlay() {
-        requestStateChangeMenuToPlay=true
+        requestStateChangeMenuToPlay = true
     }
 
     private fun createPlayer(input: InputDevice, playerData: PlayerData?): Player {
@@ -250,12 +250,11 @@ open class GameSession(
         val namePref = nextPlayerName()
 
         val player =
-            if(playerData==null){
+            if (playerData == null) {
             Player(input = input,
             name = namePref,
             color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))}
-        else{
+            color2 = Color.valueOf(nextPlayerColor2())) } else {
                 Player(input, playerData.name, playerData.color, playerData.color2)
             }
 
@@ -371,20 +370,17 @@ open class GameSession(
         checkForPlayerDisconnects()
         game?.renderAndClampFramerate()
 
-
         if (state == GameSession.GameState.GETREADY) {
             readyTimer -= deltaTime * 10
             if (readyTimer < 0f) {
                 state = GameSession.GameState.PLAY
             }
-        }
-
-        else if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
+        } else if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
             if (input.isKeyJustPressed(Input.Keys.BACK)) {
                 app.showTitleScreen()
             }
             if (input.isKeyJustPressed(Input.Keys.ESCAPE) || app.statefulControllers.any { it.isAnyLittleButtonJustPressed }) {
-                log("GameSession","in play, menu")
+                log("GameSession", "in play, menu")
                 state = GameSession.GameState.MENU
                 app.clearEvents()
             }
@@ -393,9 +389,9 @@ open class GameSession(
             }
         }
 
-        if(requestStateChangeMenuToPlay){
-            state=GameState.PLAY
-            requestStateChangeMenuToPlay=false
+        if (requestStateChangeMenuToPlay) {
+            state = GameState.PLAY
+            requestStateChangeMenuToPlay = false
         }
 
 //        else if(state==GameState.MENU){
@@ -505,7 +501,6 @@ open class GameSession(
         resetTimer()
         game = gameToShow
         game?.show()
-
     }
 
     // search for Player (or multiple Players) with highest score

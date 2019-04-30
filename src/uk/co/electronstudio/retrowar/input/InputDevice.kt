@@ -7,15 +7,13 @@ import uk.co.electronstudio.retrowar.utils.Vec
  */
 abstract class InputDevice {
     open fun rumble(left: Float, right: Float, duration_ms: Int) {
-
     }
 
     val leftStick: Vec
-        get(){return movementVec}
+        get() { return movementVec }
 
     val rightStick: Vec
-        get(){return aimingVec}
-
+        get() { return aimingVec }
 
     abstract val movementVec: Vec
     abstract val aimingVec: Vec
@@ -51,6 +49,4 @@ abstract class InputDevice {
 //            return v.normVector() * scale
 //        }
 //    }
-
-
 }

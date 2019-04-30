@@ -4,33 +4,37 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.utils.Align.right
 import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.Menu
 import uk.co.electronstudio.retrowar.menu.MenuController
 import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.retrowar.utils.Vec
 
-class TextGame(session: GameSession, text: String,
-               width: Float = 416f, height: Float = 256f,
-               font: BitmapFont = Resources.FONT,
-               val graphic: Texture? = null, val rightSideGraphic: Boolean = true) :
+class TextGame(
+    session: GameSession,
+    text: String,
+    width: Float = 416f,
+    height: Float = 256f,
+    font: BitmapFont = Resources.FONT,
+    val graphic: Texture? = null,
+    val rightSideGraphic: Boolean = true
+) :
     SimpleGame(session, width, height, font, false) {
 
     val menu = Menu(title = text,
         // bottomText = { text },
         doubleSpaced = true, quitAction = ::gameover, allItems = arrayListOf(BackMenuItem("OK")))
 
-    val controller = MenuController(menu, width / 2, height, x=if (rightSideGraphic) 0f else width/2f, y = height - 20f)
+    val controller = MenuController(menu, width / 2, height, x = if (rightSideGraphic) 0f else width / 2f, y = height - 20f)
 
     // FIXME MAKE THIS APPEAR IN A BOX IN tHE MIDDLE OF THE SCREEN LIKE THE ROUND NUMBER BOXES DO!!!
 
     override fun doDrawing(batch: Batch) {
         controller.draw(batch)
         if (graphic != null) {
-            if(rightSideGraphic) {
+            if (rightSideGraphic) {
                 batch.draw(graphic, width / 2f + width / 4f - graphic.width / 2f, height / 2f - graphic.height / 2f)
-            }else{
+            } else {
                 batch.draw(graphic, 0 + width / 4f - graphic.width / 2f, height / 2f - graphic.height / 2f)
             }
         }

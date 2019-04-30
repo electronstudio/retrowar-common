@@ -94,7 +94,7 @@ fun error(message: String) {
     App.app.logger.error(message)
 }
 
-//fixme param order is bad, and im not sure they are even correctly named for what they do
+// fixme param order is bad, and im not sure they are even correctly named for what they do
 fun drawBox(
     MARGIN: Int,
     SHADOW_OFFSET: Int,
@@ -103,7 +103,7 @@ fun drawBox(
     height: Float,
     y: Float,
     SCREEN_WIDTH: Float,
-    x: Float=0f
+    x: Float = 0f
 ) {
     val box = Rectangle(0f, 0f, width + MARGIN, height + MARGIN)
     shape.begin(ShapeRenderer.ShapeType.Filled)
@@ -117,12 +117,12 @@ fun drawBox(
     shape.end()
     shape.begin(ShapeRenderer.ShapeType.Line)
     shape.color = Color.WHITE
-    shape.rect(x +SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
+    shape.rect(x + SCREEN_WIDTH / 2 - box.width / 2, y - box.height + MARGIN / 2, box.width, box.height)
     shape.end()
 }
 
 @JvmOverloads
-fun listAllLevels(path: String="levels") = Gdx.files.internal(path).list("tmx").map {
+fun listAllLevels(path: String = "levels") = Gdx.files.internal(path).list("tmx").map {
     LevelLoader(it, Gdx.files.internal("${it.pathWithoutExtension()}.png"), it.nameWithoutExtension())
 }
 

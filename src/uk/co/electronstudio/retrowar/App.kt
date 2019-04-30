@@ -79,7 +79,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     val players = mutableListOf<Player>()
 
     fun findPlayerAssociatedWithController(c: SDL2Controller): Player? {
-        return players.filter { it.input is GamepadInput && it.input.controller==c }.firstOrNull()
+        return players.filter { it.input is GamepadInput && it.input.controller == c }.firstOrNull()
     }
 
     companion object {
@@ -91,7 +91,6 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         val LOG_FILE_PATH: String = System.getProperty("user.home") + File.separator + "retrowar-log.txt"
         /** Where preferences file is stored */
         val PREF_DIR: String = System.getProperty("user.home") + File.separator + ".prefs"
-
     }
 
     init {
@@ -102,16 +101,16 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     var playerData = mutableListOf<PlayerData>()
     val controllerMappings = mutableMapOf<SDL2Controller, PlayerData>()
 
-    fun loadPlayerData(){
+    fun loadPlayerData() {
         try {
             val file = Gdx.files.external(".prefs/retrowar.players.json")
             playerData = Json().fromJson(playerData::class.java, file)
-        }catch (e: Throwable){
-            log("App","Unable to load playerdata file $e")
+        } catch (e: Throwable) {
+            log("App", "Unable to load playerdata file $e")
         }
     }
 
-    fun savePlayerData(){
+    fun savePlayerData() {
         val json = Json().toJson(playerData)
         val file = Gdx.files.external(".prefs/retrowar.players.json")
         System.out.println(json)
@@ -204,16 +203,16 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     /** Displays a new screen and save old one for later*/
     fun swapScreenAndSave(screen: Screen) {
         log("swapscreen save")
-        savedScreen= app.screen
+        savedScreen = app.screen
         app.setScreen(screen)
     }
 
-    fun restoreSavedScreenAndDisposeCurrentScreen(){
+    fun restoreSavedScreenAndDisposeCurrentScreen() {
         val s = savedScreen
         savedScreen = null
-        if(s!=null) {
+        if (s != null) {
             swapScreenAndDispose(s)
-        }else{
+        } else {
             log("there is no saved screen so going back to title")
             showTitleScreen()
         }
@@ -251,11 +250,11 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
      * Populates mappedControllers
      */
     protected fun initialiseControllers() {
-        if(::controllers.isInitialized && controllers!=null){
+        if (::controllers.isInitialized && controllers != null) {
             controllers.close()
         }
         controllers = SDL2ControllerManager(
-        when (Prefs.MultiChoicePref.INPUT.getNum()){
+        when (Prefs.MultiChoicePref.INPUT.getNum()) {
             0 -> SDL2ControllerManager.InputPreference.RAW_INPUT
             1 -> SDL2ControllerManager.InputPreference.XINPUT
             2 -> SDL2ControllerManager.InputPreference.DIRECT_INPUT

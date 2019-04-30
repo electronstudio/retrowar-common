@@ -22,7 +22,7 @@ class Vec(val x: Float, val y: Float) {
         return Vec(x / oldMagnitude, y / oldMagnitude) * magnitude
     }
 
-    fun magnitude(): Float{
+    fun magnitude(): Float {
         return (x * x + y * y).sqrt()
     }
 
@@ -43,39 +43,37 @@ class Vec(val x: Float, val y: Float) {
         return Vec(this.x*other, this.y*other)
     }
 
-    fun rescaleWithDeadzone(deadzone: Float): Vec{
-        val magnitude=magnitude()
-        if(magnitude<deadzone){
-            return Vec(0f,0f)
-        }
-        else {
-            val range = 1f-deadzone
-            val scaleFactor = (magnitude-deadzone)/range
+    fun rescaleWithDeadzone(deadzone: Float): Vec {
+        val magnitude = magnitude()
+        if (magnitude<deadzone) {
+            return Vec(0f, 0f)
+        } else {
+            val range = 1f - deadzone
+            val scaleFactor = (magnitude - deadzone) / range
             return normVector() * scaleFactor
         }
     }
 
-    fun ignoreDeadzone(deadzone: Float): Vec{
-        if(magnitude()<deadzone) return Vec(0f,0f)
+    fun ignoreDeadzone(deadzone: Float): Vec {
+        if (magnitude()<deadzone) return Vec(0f, 0f)
         else return this
     }
 
     fun clampMagnitude(max: Float): Vec =
-        if(magnitude()>max)
+        if (magnitude()>max)
             normVector(magnitude = max)
         else
             this
 
-
     fun rescaleWithDeadzone(deadzone: Float, upperBound: Float): Vec {
-        val magnitude=magnitude()
-        if (magnitude<=deadzone) {
+        val magnitude = magnitude()
+        if (magnitude <= deadzone) {
             return Vec(0f, 0f)
-        }else if(magnitude>upperBound){
+        } else if (magnitude>upperBound) {
             return normVector(magnitude = upperBound)
-        }else{
-            val range = upperBound-deadzone
-            val scaleFactor = (magnitude-deadzone)/range
+        } else {
+            val range = upperBound - deadzone
+            val scaleFactor = (magnitude - deadzone) / range
             return normVector() * scaleFactor
         }
     }
@@ -85,8 +83,7 @@ class Vec(val x: Float, val y: Float) {
     }
 
     fun convertToDpad(): Vec {
-        val n=this.normVector()
-        return Vec(if(n.x>0.38) 1f else if(n.x < -0.38f) -1f else 0f, if(n.y>0.38) 1f else if(n.y < -0.38f) -1f else 0f)
-
+        val n = this.normVector()
+        return Vec(if (n.x>0.38) 1f else if (n.x < -0.38f) -1f else 0f, if (n.y>0.38) 1f else if (n.y < -0.38f) -1f else 0f)
     }
 }

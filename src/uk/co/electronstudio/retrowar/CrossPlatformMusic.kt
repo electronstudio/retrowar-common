@@ -2,9 +2,6 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import uk.co.electronstudio.retrowar.Prefs
-
-
 
 abstract class CrossPlatformMusic {
     companion object {
@@ -13,8 +10,7 @@ abstract class CrossPlatformMusic {
                 return LongSongPlayer(androidFile)
             } else if (Gdx.app.type == Application.ApplicationType.iOS) {
                 return ShortSongPlayer(iOSFile)
-            }
-            else {
+            } else {
                 return ShortSongPlayer(desktopFile)
             }
         }
@@ -24,7 +20,6 @@ abstract class CrossPlatformMusic {
     abstract fun play()
     abstract fun stop()
     abstract fun dispose()
-
 
     class LongSongPlayer(val file: String) : CrossPlatformMusic() {
         val music = Gdx.audio.newMusic(Gdx.files.internal(file))
@@ -46,7 +41,6 @@ abstract class CrossPlatformMusic {
             music.stop()
             music.dispose()
         }
-
     }
 
     class ShortSongPlayer(val file: String) : CrossPlatformMusic() {

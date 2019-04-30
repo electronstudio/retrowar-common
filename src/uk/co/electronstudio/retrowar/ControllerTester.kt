@@ -29,28 +29,28 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
         font.draw(batch, "Controllers connected: ${App.app.controllers.getControllers().size}", 0f, 20f)
 
         var y = height
-        App.app.controllers.getControllers().forEachIndexed{index, controller->
-            val x = if(index % 2 == 0) 0f else width/2f
-            font.color=com.badlogic.gdx.graphics.Color.LIME
+        App.app.controllers.getControllers().forEachIndexed { index, controller ->
+            val x = if (index % 2 == 0) 0f else width / 2f
+            font.color = com.badlogic.gdx.graphics.Color.LIME
             font.draw(batch, controller.name.removePrefix("SDL GameController "), x, y, 256f, Align.left, false)
             drawController(controller, y, batch, x)
             (controller as SDL2Controller).rumble(
                 MathUtils.clamp(
-                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)/-1f,
+                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY) / -1f,
                     0f,
                     1f),
             MathUtils.clamp(
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)/-1f,
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY) / -1f,
                 0f,
                 1f),
             100
             )
-            y -=  if(index % 2 == 0) 0f else 50f
+            y -= if (index % 2 == 0) 0f else 50f
         }
     }
 
     private fun drawController(m: Controller, y: Float, batch: Batch, x: Float): Float {
-        font.color=com.badlogic.gdx.graphics.Color.WHITE
+        font.color = com.badlogic.gdx.graphics.Color.WHITE
         var y1 = y
         for (j in 0..31) {
             if (m.getButton(j)) {

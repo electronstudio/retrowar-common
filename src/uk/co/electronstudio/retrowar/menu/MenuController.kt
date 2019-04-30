@@ -105,7 +105,7 @@ class MenuController(
         when (s) {
 
             is MultiPrefMenuItem, is NumPrefMenuItem, is BinPrefMenuItem,
-            is MultiChoiceMenuItem, is BinMenuItem, is NumberMenuItem-> {
+            is MultiChoiceMenuItem, is BinMenuItem, is NumberMenuItem -> {
                 s.doAction()
                 Resources.BLING.play()
             }

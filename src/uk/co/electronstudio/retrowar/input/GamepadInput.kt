@@ -1,9 +1,7 @@
 package uk.co.electronstudio.retrowar.input
 
-import com.badlogic.gdx.controllers.Controller
 import org.libsdl.SDL
 import uk.co.electronstudio.retrowar.Prefs
-import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.utils.Vec
 import uk.co.electronstudio.sdl2gdx.SDL2Controller
 
@@ -14,44 +12,47 @@ import uk.co.electronstudio.sdl2gdx.SDL2Controller
  */
 internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
 
- //   var singleStickMode = true
+    //   var singleStickMode = true
     var lockedFireDirection: Vec? = null
 
-    var lastDirectionPushedOnLeftStick = Vec(0f,0f)
+    var lastDirectionPushedOnLeftStick = Vec(0f, 0f)
 
     override fun rumble(left: Float, right: Float, duration_ms: Int) {
-        controller.rumble(left, right, duration_ms)
+        val scale = when(Prefs.MultiChoicePref.RUMBLE.getNum()){
+            0 -> 1f
+            1 -> 0.5f
+            else -> 0f
+        }
+        controller.rumble(left*scale, right*scale, duration_ms)
     }
-
 
     override val movementVec: Vec
         get() {
 
-            val analog = Vec(
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)
-            ).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent()).clampMagnitude(1.0f)
+            val analog = Vec(controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
+                .clampMagnitude(1.0f)
 
             if (analog.isMoreOrLessZero()) {
                 return dpadAsStick()
             } else {
-                lastDirectionPushedOnLeftStick=analog
+                lastDirectionPushedOnLeftStick = analog
                 return analog
             }
 
-//            return when(controller.getPov(0)){ // TODO untested, not sure any SDL controllers even have pov?
-//                PovDirection.north -> Vec(0f, -1f)
-//                PovDirection.northEast -> Vec(1f, -1f)
-//                PovDirection.northWest -> Vec(-1f, -1f)
-//                PovDirection.south -> Vec(0f, 1f)
-//                PovDirection.southEast -> Vec(1f, 1f)
-//                PovDirection.southWest -> Vec(-1f, 1f)
-//                PovDirection.east -> Vec(1f, 0f)
-//                PovDirection.west -> Vec(-1f, 0f)
-//                else -> filterDeadzone(0.05f,
-//                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-//                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY))
-//            }
+            //            return when(controller.getPov(0)){ // TODO untested, not sure any SDL controllers even have pov?
+            //                PovDirection.north -> Vec(0f, -1f)
+            //                PovDirection.northEast -> Vec(1f, -1f)
+            //                PovDirection.northWest -> Vec(-1f, -1f)
+            //                PovDirection.south -> Vec(0f, 1f)
+            //                PovDirection.southEast -> Vec(1f, 1f)
+            //                PovDirection.southWest -> Vec(-1f, 1f)
+            //                PovDirection.east -> Vec(1f, 0f)
+            //                PovDirection.west -> Vec(-1f, 0f)
+            //                else -> filterDeadzone(0.05f,
+            //                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
+            //                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY))
+            //            }
         }
 
     private fun dpadAsStick(): Vec {
@@ -68,13 +69,10 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
         get() {
             // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
 
-
-
-            val analog = Vec(
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)
-                ).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent()).clampMagnitude(1.0f)
-            if (analog.isMoreOrLessZero()) {    //fixme this is unigame specific hack, should be moved there
+            val analog = Vec(controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX),
+                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
+                .clampMagnitude(1.0f)
+            if (analog.isMoreOrLessZero()) { // fixme this is unigame specific hack, should be moved there
                 if (rightBumper || A || B || X || Y) {
                     if (lockedFireDirection == null) {
                         lockedFireDirection = lastDirectionPushedOnLeftStick.normVector()
@@ -82,16 +80,12 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
                     return lockedFireDirection!!
                 } else {
                     lockedFireDirection = null
-                    return Vec(0f,0f)//lastDirectionPushedOnLeftStick
+                    return Vec(0f, 0f) // lastDirectionPushedOnLeftStick
                 }
             } else {
                 return analog
             }
         }
-
-
-
-
 
     override val leftTrigger: Float
         get() {

@@ -111,7 +111,7 @@ internal class StatefulController(val mappedController: MappedController) : Cont
     override fun buttonDown(controller: Controller?, buttonIndex: Int): Boolean {
 
         when (buttonIndex) {
-            mappedController.START,  mappedController.BACK,  mappedController.GUIDE -> littleButtonsPressed = true
+            mappedController.START, mappedController.BACK, mappedController.GUIDE -> littleButtonsPressed = true
             mappedController.A -> APressed = true
             mappedController.B -> BPressed = true
             mappedController.X -> XPressed = true

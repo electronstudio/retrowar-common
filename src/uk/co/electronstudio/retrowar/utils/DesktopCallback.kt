@@ -1,6 +1,5 @@
 package uk.co.electronstudio.retrowar.utils
 
-import com.badlogic.gdx.Files
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration
 import uk.co.electronstudio.retrowar.Callback
 
@@ -19,7 +18,6 @@ class DesktopCallback : Callback {
         config.useGL30 = true
         config.gles30ContextMajorVersion = 3
         config.gles30ContextMinorVersion = 3
-
 
         // //   config.useVsync(true)
         //     config.setIdleFPS(30)
