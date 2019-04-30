@@ -278,22 +278,26 @@ object Prefs {
         val default: Int = 50,
         val step: Int = 1
     ) {
-        SCREEN_SHAKE("screenshake", min = 0, max = 100, default = 30, step = 10), SHIP_SPEED("shipspeed",
+        SCREEN_SHAKE("screenshake", min = 0, max = 100, default = 30, step = 10),
+        SHIP_SPEED("shipspeed",
             min = 100,
             max = 500,
             default = 180,
             step = 10),
-        SHIP_ACC("shipacc", min = 100, max = 1000, default = 300, step = 10), BULLET_SPEED("bulletspeed",
+        SHIP_ACC("shipacc", min = 100, max = 1000, default = 300, step = 10),
+        BULLET_SPEED("bulletspeed",
             min = 100,
             max = 1000,
             default = 300,
             step = 10),
-        BULLET_RATE("bulletrate", min = 1, max = 100, default = 20), SHIP_HEALTH("shiphealth",
+        BULLET_RATE("bulletrate", min = 1, max = 100, default = 20),
+        SHIP_HEALTH("shiphealth",
             min = 1,
             max = 20,
             default = 10,
             step = 1),
-        SHIP_KNOCKBACK("shipgnockback", min = 0, max = 40, default = 10, step = 1), FX_VOLUME("fxvolume",
+        SHIP_KNOCKBACK("shipgnockback", min = 0, max = 40, default = 10, step = 1),
+        FX_VOLUME("fxvolume",
             min = 0,
             max = 10,
             default = 10,
@@ -303,7 +307,7 @@ object Prefs {
                 app.applyMusicVolume(asVolume())
             }
         },
-        DEADZONE("deadzone", min = 0, max = 25, default = 10, step = 1),
+        DEADZONE("deadzone", min = 0, max = 25, default = 15, step = 1),
         BUFFER("buffer", min = 0, max = 20, default = 6, step = 1);
 
         fun displayText(): String {
