@@ -101,12 +101,16 @@ open class GameSession(
         // game = clazz.primaryConstructor?.call()
         resetTimer()
         game = factory.create(this)
+        val level = factory.levels?.get(factory.level)
         app.submitAnalytics("sessionStart:${factory.name}")
+        level?.let {
+            app.submitAnalyticsProgress(factory.name, it.name)
+        }
     }
 
     private fun resetTimer() {
         readyTimer = if (Prefs.BinPref.DEBUG.isEnabled()) 1f else 40f
-        state = GameState.GETREADY
+        state = GameSession.GameState.GETREADY
     }
 
     fun createClient(connection: Connection) {
@@ -390,7 +394,7 @@ open class GameSession(
         }
 
         if (requestStateChangeMenuToPlay) {
-            state = GameState.PLAY
+            state = GameSession.GameState.PLAY
             requestStateChangeMenuToPlay = false
         }
 

@@ -47,6 +47,7 @@ import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
+import java.io.Reader
 import java.net.URL
 import kotlin.concurrent.thread
 
@@ -71,10 +72,6 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     var gameAnalytics: GameAnalytics? = null
 
     lateinit var controllers: SDL2ControllerManager
-
-//    val playerData = mutableListOf(PlayerData("Bob", com.badlogic.gdx.graphics.Color.BLUE, com.badlogic.gdx.graphics.Color.LIME,"", 0),
-//            PlayerData("Jon", com.badlogic.gdx.graphics.Color.RED, com.badlogic.gdx.graphics.Color.LIME,"", 0),
-//            PlayerData("George", com.badlogic.gdx.graphics.Color.PURPLE, com.badlogic.gdx.graphics.Color.LIME,"", 0))
 
     val players = mutableListOf<Player>()
 
@@ -124,7 +121,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         thread {
             try {
                 val whatismyip = URL("http://checkip.amazonaws.com")
-                val i = BufferedReader(InputStreamReader(whatismyip.openStream()))
+                val i = BufferedReader(InputStreamReader(whatismyip.openStream()) as Reader?)
                 ip = i.readLine()
             } catch (e: Throwable) {
             }
@@ -327,6 +324,12 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     open fun submitAnalytics(s: String) {
         gameAnalytics?.submitDesignEvent(s)
+        gameAnalytics?.flushQueueImmediately()
+    }
+
+    open fun submitAnalyticsProgress(game: String, level: String){
+        gameAnalytics?.submitProgressionEvent(GameAnalytics.ProgressionStatus.Start, game, level, "")
+        gameAnalytics?.submitProgressionEvent(GameAnalytics.ProgressionStatus.Complete, game, level, "")
         gameAnalytics?.flushQueueImmediately()
     }
 
