@@ -50,7 +50,13 @@ abstract class AbstractGameFactory(name: String = "", val levels: List<LevelLoad
 
     /** For mult-game tournaments ignore the settings in this factory and create a game with some
      * defaults appropriate for a tournament */
-    open fun createWithDefaultSettings(session: GameSession): Game {
+    open fun createWithTournamentSettings(session: GameSession): Game {
+        return create(session)
+    }
+
+    /** Override if you want to compile a stand-alone SimpleGame with different settings
+     * */
+    open fun createWithSimpleSettings(session: GameSession): Game {
         return create(session)
     }
 

@@ -93,7 +93,7 @@ open class SimpleTitleScreen(
         titleMenu.addAll(listOf(
             //   SubMenuItem("Start game", optionsMenu),
             ActionMenuItem("Start Game") {
-                val session = GameSession(factory)
+                val session = GameSession(factory, true)
                 App.app.configureSessionWithPreSelectedInputDevice(session)
                 App.app.screen = session
             },

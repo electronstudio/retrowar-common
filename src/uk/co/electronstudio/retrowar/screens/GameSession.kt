@@ -41,8 +41,8 @@ import java.util.ArrayList
  * to maintain the same players, scores, (network connections?)
  */
 open class GameSession(
-    val factory: AbstractGameFactory
-
+    val factory: AbstractGameFactory,
+    val useSimpleGameSettings: Boolean = false
     // val preSelectedInputDevice: InputDevice? = null
 ) : ScreenAdapter() {
 
@@ -100,7 +100,7 @@ open class GameSession(
         // val clazz = UniGame::class
         // game = clazz.primaryConstructor?.call()
         resetTimer()
-        game = factory.create(this)
+        game = if(useSimpleGameSettings) factory.createWithSimpleSettings(this) else factory.create(this)
         val level = factory.levels?.get(factory.level)
         app.submitAnalytics("sessionStart:${factory.name}")
         level?.let {
