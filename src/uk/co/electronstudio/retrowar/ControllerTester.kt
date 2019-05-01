@@ -7,7 +7,6 @@ import com.badlogic.gdx.controllers.PovDirection
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer.getAxis
 import com.badlogic.gdx.utils.Align
 import org.libsdl.SDL
 import uk.co.electronstudio.retrowar.screens.GameSession
