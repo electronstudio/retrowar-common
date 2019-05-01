@@ -59,7 +59,7 @@ class ControllerUI(
         } else {
             FONT.color = Color.WHITE
         }
-        FONT.draw(batch, controller.name.substringAfter("SDL GameController "), 0f, y)
+        FONT.draw(batch, controller.name.substringAfter("SDL GameController ").take(19), 0f, y)
         when (state) {
             State.SHOWING_UNASSIGNED, State.DONE_UNASSIGNED -> FONT.draw(batch, "[UNASSIGNED]", x + tab1, y)
             State.SHOWING_PLAYER_NAME, State.DONE_PLAYER -> {
