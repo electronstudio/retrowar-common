@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.*;
+import uk.co.electronstudio.retrowar.App;
 
 import java.lang.StringBuilder;
 import java.util.HashMap;
@@ -286,6 +287,7 @@ public class GameAnalytics {
     public void submitProgressionEvent(ProgressionStatus status, String progression01, String progression02,
                                        String progression03) {
         submitProgressionEvent(status, progression01, progression02, progression03, 0, 0);
+        log("Analytics", "progression "+progression01+" "+progression02);
     }
 
     public void submitProgressionEvent(ProgressionStatus status, String progression01, String progression02,
@@ -472,6 +474,7 @@ public class GameAnalytics {
 
             @Override
             public void failed(Throwable t) {
+                log(TAG, "Failed connect to GameAnalytics: "+t);
                 cancelled();
             }
 
