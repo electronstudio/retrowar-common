@@ -28,7 +28,7 @@ class ControllerUI(
     //   var playerData = PlayerData("", Color.RED, Color.BLUE, "", 0)
 
     val chars = "ABCDEFGHIJKLMNOPQRSTUVWXY0123456789!*_"
-    var stringBeingEdited = StringBuilder("A____________")
+    var stringBeingEdited = StringBuilder("A__________")
     var cursorPosition = 0
     var charArrayIndex = 0
     var colourBeingEdited1 = Resources.palette[2]
