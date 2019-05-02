@@ -62,7 +62,7 @@ abstract class SimpleGame @JvmOverloads constructor(
     }
 
     fun simpleHighScoreTable(): String = players.sortedDescending().joinToString("") {
-        "\n\n${it.name} ${it.score}"
+        (if(players.size<7) "\n" else "")+"\n${it.name} ${it.score}"
     }
 
     abstract fun doDrawing(batch: Batch)

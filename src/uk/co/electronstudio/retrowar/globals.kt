@@ -423,3 +423,5 @@ fun renderTileMapToTexture(map: TiledMap): TextureRegion {
 fun Sound.playAtOurVolume() {
     this.play(Prefs.NumPref.FX_VOLUME.asVolume())
 }
+
+fun Color.toMarkup() = "[#" + this.toString().toUpperCase() + "]"
