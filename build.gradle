@@ -193,10 +193,10 @@ bintray {
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/electronstudio/retrowar-common.git'
       version {
-          name = '0.19.2'
-          desc = '0.19.2 description'
+          name = '0.20.0'
+          desc = '0.20.0 description'
           released = new Date()
-          vcsTag = '0.19.2'
+          vcsTag = '0.20.0'
       }
     }
 }
