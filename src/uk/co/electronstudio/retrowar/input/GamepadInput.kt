@@ -33,26 +33,18 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
                 controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
                 .clampMagnitude(1.0f)
 
-            if (analog.isMoreOrLessZero()) {
-                return dpadAsStick()
-            } else {
+            val dpad = dpadAsStick()
+
+            if(dpad.isNotZero()){
+                lastDirectionPushedOnLeftStick = dpad
+                return dpad
+            }else if(analog.isNotZero()){
                 lastDirectionPushedOnLeftStick = analog
                 return analog
+            }else{
+                return Vec(0f,0f)
             }
 
-            //            return when(controller.getPov(0)){ // TODO untested, not sure any SDL controllers even have pov?
-            //                PovDirection.north -> Vec(0f, -1f)
-            //                PovDirection.northEast -> Vec(1f, -1f)
-            //                PovDirection.northWest -> Vec(-1f, -1f)
-            //                PovDirection.south -> Vec(0f, 1f)
-            //                PovDirection.southEast -> Vec(1f, 1f)
-            //                PovDirection.southWest -> Vec(-1f, 1f)
-            //                PovDirection.east -> Vec(1f, 0f)
-            //                PovDirection.west -> Vec(-1f, 0f)
-            //                else -> filterDeadzone(0.05f,
-            //                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-            //                    controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY))
-            //            }
         }
 
     private fun dpadAsStick(): Vec {

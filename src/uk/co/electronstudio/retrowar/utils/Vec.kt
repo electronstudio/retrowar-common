@@ -32,6 +32,8 @@ class Vec(val x: Float, val y: Float) {
         return (x < 0.001f && x > -0.001f && y < 0.001f && y > -0.001f)
     }
 
+    fun isNotZero() = !isMoreOrLessZero()
+
     override infix operator fun equals(other: Any?): Boolean {
         if (other is Vec) {
             if (MathUtils.isEqual(x, other.x) && (MathUtils.isEqual(y, other.y))) return true
