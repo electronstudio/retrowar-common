@@ -3,7 +3,6 @@ package uk.co.electronstudio.retrowar.input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
-import jdk.nashorn.internal.objects.NativeString.trim
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.PlayerData
 import uk.co.electronstudio.retrowar.Resources
@@ -28,11 +27,13 @@ class ControllerUI(
     //   var playerData = PlayerData("", Color.RED, Color.BLUE, "", 0)
 
     val chars = "ABCDEFGHIJKLMNOPQRSTUVWXY0123456789!*_"
-    var stringBeingEdited = StringBuilder("A__________")
+    var stringBeingEdited = StringBuilder("")
     var cursorPosition = 0
     var charArrayIndex = 0
-    var colourBeingEdited1 = Resources.palette[2]
-    var colourBeingEdited2 = Resources.palette[3]
+    var colourBeingEdited1 = Resources.palette[0]
+    var colourBeingEdited2 = Resources.palette[0]
+
+
 
     var playerDataArrayIndex = 0
 
@@ -44,6 +45,12 @@ class ControllerUI(
     }
 
     var state = State.SHOWING_UNASSIGNED
+
+    fun setNewPlayerDefaults(){
+        stringBeingEdited = StringBuilder("A".padEnd(11, '_'))
+        colourBeingEdited1 = Resources.palette[2]
+        colourBeingEdited2 = Resources.palette[3]
+    }
 
     fun player() = App.app.playerData[playerDataArrayIndex]
 
@@ -218,6 +225,7 @@ class ControllerUI(
                 State.SHOWING_NEW_PLAYER -> {
                     //  editName.s
                     cursorPosition = 0
+                    setNewPlayerDefaults()
                     state = State.EDITING_NAME
                 }
                 State.EDITING_NAME -> {
@@ -231,12 +239,21 @@ class ControllerUI(
                     state = State.EDITING_COLOUR2
                 }
                 State.EDITING_COLOUR2 -> {
-                    App.app.playerData.add(PlayerData(stringBeingEdited.toString().replace('_', ' ').trim(),
+                    val playerData = PlayerData(stringBeingEdited.toString().replace('_', ' ').trim(),
                         colourBeingEdited1,
                         colourBeingEdited2,
                         controller.name,
-                        0))
-                    playerDataArrayIndex = App.app.playerData.lastIndex
+                        0)
+                    val playerWithMatchingName = App.app.playerData.find { it.name == playerData.name }
+                    if(playerWithMatchingName==null) {
+                        App.app.playerData.add(playerData)
+                        playerDataArrayIndex = App.app.playerData.lastIndex
+                    }else{
+                        playerWithMatchingName.color=colourBeingEdited1
+                        playerWithMatchingName.color2=colourBeingEdited2
+                        playerDataArrayIndex = App.app.playerData.indexOf(playerWithMatchingName)
+                    }
+
                     state = State.DONE_PLAYER
                 }
                 State.DONE_PLAYER -> {
@@ -252,7 +269,12 @@ class ControllerUI(
                 State.SHOWING_UNASSIGNED -> {
                 }
                 State.SHOWING_PLAYER_NAME -> {
-                    // state = State.EDITING_COLOUR2
+                     stringBeingEdited = StringBuilder(player().name.padEnd(11, '_'))
+                     colourBeingEdited1 = player().color
+                     colourBeingEdited2 = player().color2
+                     cursorPosition=stringBeingEdited.length-1
+                     charArrayIndex = chars.indexOf(stringBeingEdited[cursorPosition])
+                     state = State.EDITING_COLOUR2
                 }
                 State.SHOWING_NEW_PLAYER -> {
                 }
