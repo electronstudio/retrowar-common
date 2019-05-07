@@ -199,7 +199,7 @@ open class GameSession(
         inGameControlOptions.add(BinPrefMenuItem("Type: ", Prefs.BinPref.ANALOG_CONTOLRS))
         inGameControlOptions.add(NumPrefMenuItem("Deadzone %", Prefs.NumPref.DEADZONE))
         inGameControlOptions.add(MultiPrefMenuItem("Rumble: ", Prefs.MultiChoicePref.RUMBLE))
-        inGameVideoOptions.add(BackMenuItem("<<<<"))
+        inGameControlOptions.add(BackMenuItem("<<<<"))
 
         inGameMenu.add(SubMenuItem("Controller Options", subMenu = inGameControlOptions))
 

@@ -17,9 +17,14 @@ class Vec(val x: Float, val y: Float) {
     operator fun component1() = x
     operator fun component2() = y
 
-    fun normVector(magnitude: Float = 1f): Vec {
+    fun normVector(magnitude: Float = 1f): Vec? {
         val oldMagnitude = magnitude()
+        if(oldMagnitude < 0.000000001f) return null
         return Vec(x / oldMagnitude, y / oldMagnitude) * magnitude
+    }
+
+    fun normVectorOrZero(magnitude: Float = 1f): Vec {
+       return normVector(magnitude) ?: Vec(0f,0f)
     }
 
     fun magnitude(): Float {
@@ -52,7 +57,7 @@ class Vec(val x: Float, val y: Float) {
         } else {
             val range = 1f - deadzone
             val scaleFactor = (magnitude - deadzone) / range
-            return normVector() * scaleFactor
+            return normVectorOrZero() * scaleFactor
         }
     }
 
@@ -63,7 +68,7 @@ class Vec(val x: Float, val y: Float) {
 
     fun clampMagnitude(max: Float): Vec =
         if (magnitude()>max)
-            normVector(magnitude = max)
+            normVector(magnitude = max) ?: this
         else
             this
 
@@ -72,11 +77,11 @@ class Vec(val x: Float, val y: Float) {
         if (magnitude <= deadzone) {
             return Vec(0f, 0f)
         } else if (magnitude>upperBound) {
-            return normVector(magnitude = upperBound)
+            return normVectorOrZero(magnitude = upperBound)
         } else {
             val range = upperBound - deadzone
             val scaleFactor = (magnitude - deadzone) / range
-            return normVector() * scaleFactor
+            return normVectorOrZero() * scaleFactor
         }
     }
 
@@ -85,7 +90,9 @@ class Vec(val x: Float, val y: Float) {
     }
 
     fun convertToDpad(): Vec {
-        val n = this.normVector()
+        val n = this.normVectorOrZero()
         return Vec(if (n.x>0.38) 1f else if (n.x < -0.38f) -1f else 0f, if (n.y>0.38) 1f else if (n.y < -0.38f) -1f else 0f)
     }
+
+    override fun toString() = "Vec($x, $y)"
 }

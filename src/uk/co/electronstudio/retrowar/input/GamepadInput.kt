@@ -69,11 +69,10 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
                     if (lockedFireDirection == null) {
                         lockedFireDirection = lastDirectionPushedOnLeftStick.normVector()
                     }
-                    return lockedFireDirection!!
                 } else {
                     lockedFireDirection = null
-                    return Vec(0f, 0f) // lastDirectionPushedOnLeftStick
                 }
+                return lockedFireDirection ?: Vec(0f,0f)
             } else {
                 return analog
             }

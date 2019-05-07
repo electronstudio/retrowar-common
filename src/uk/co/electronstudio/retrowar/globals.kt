@@ -37,6 +37,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.control.customizers.ImportCustomizer
 import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.NetworkInput
 import uk.co.electronstudio.retrowar.network.ClientPlayer
@@ -425,3 +427,21 @@ fun Sound.playAtOurVolume() {
 }
 
 fun Color.toMarkup() = "[#" + this.toString().toUpperCase() + "]"
+
+fun groovyCompilerConfig(): CompilerConfiguration{
+    val compilerConfiguration = CompilerConfiguration()
+    val importCustomizer = ImportCustomizer()
+    importCustomizer.addStarImports(
+        //"uk.co.electronstudio.retrowar",
+        "uk.co.electronstudio.retrowar.unigame",
+        "uk.co.electronstudio.retrowar.unigame.entities")
+    importCustomizer.addStaticStars("uk.co.electronstudio.retrowar.unigame.PowerupFactory",
+        "uk.co.electronstudio.retrowar.unigame.EngineType",
+        "uk.co.electronstudio.retrowar.GlobalsKt",
+        "uk.co.electronstudio.retrowar.unigame.Resources",
+        "GroovyHelpers")
+    importCustomizer.addImports("com.badlogic.gdx.math.MathUtils")
+
+    compilerConfiguration.addCompilationCustomizers(importCustomizer)
+    return compilerConfiguration
+}
