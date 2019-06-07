@@ -26,7 +26,7 @@ class ControllerUI(
 
     //   var playerData = PlayerData("", Color.RED, Color.BLUE, "", 0)
 
-    val chars = "ABCDEFGHIJKLMNOPQRSTUVWXY0123456789!*_"
+    val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!*_"
     var stringBeingEdited = StringBuilder("")
     var cursorPosition = 0
     var charArrayIndex = 0
@@ -112,8 +112,30 @@ class ControllerUI(
         }
     }
 
-    fun doInput() {
-        if (statefulController.isDownButtonJustPressed) {
+    var repeatTimerDown = 0f
+    var repeatTimerUp = 0f
+
+    val INITIAL_REPEAT_DELAY = 0.7f
+    val REPEAT_INTERVAL = 0.1f
+
+    fun doInput(delta: Float) {
+
+        if(statefulController.mappedController.LStickVerticalAxis() > 0.6f || statefulController.mappedController.dPadDown()){
+            repeatTimerDown+=delta
+        }else{
+            repeatTimerDown=-0f
+        }
+
+
+        if(statefulController.mappedController.LStickVerticalAxis() < -0.6f || statefulController.mappedController.dPadUp()){
+            repeatTimerUp+=delta
+        }else{
+            repeatTimerUp=-0f
+        }
+
+
+        if (statefulController.isDownButtonJustPressed || repeatTimerDown > INITIAL_REPEAT_DELAY ) {
+            repeatTimerDown-=REPEAT_INTERVAL
             when (state) {
                 State.SHOWING_UNASSIGNED -> {
                     state = State.SHOWING_NEW_PLAYER
@@ -163,7 +185,8 @@ class ControllerUI(
                 }
             }
         }
-        if (statefulController.isUpButtonJustPressed) {
+        if (statefulController.isUpButtonJustPressed || repeatTimerUp > INITIAL_REPEAT_DELAY ) {
+            repeatTimerUp-=REPEAT_INTERVAL
             when (state) {
                 State.SHOWING_UNASSIGNED -> {
                     state = State.SHOWING_NEW_PLAYER
@@ -230,7 +253,8 @@ class ControllerUI(
                 }
                 State.EDITING_NAME -> {
                     if (cursorPosition < stringBeingEdited.length - 1) {
-                        cursorPosition++ // fixme repeat previous character?
+                        cursorPosition++
+                        stringBeingEdited[cursorPosition] = chars[charArrayIndex]
                     } else {
                         state = State.EDITING_COLOUR1
                     }

@@ -24,7 +24,7 @@ internal class StatefulController(val mappedController: MappedController) : Cont
     var horCentered = true
     var vertCentered = true
 
-    val THRESHOLD = 0.3
+    val THRESHOLD = 0.6
     val THRESHOLD_H = 0.6
 
     init {

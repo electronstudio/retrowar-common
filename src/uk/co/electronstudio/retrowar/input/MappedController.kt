@@ -355,6 +355,22 @@ internal class MappedController(val controller: Controller) {
         return controller.getButton(Y)
     }
 
+    fun dPadUp(): Boolean {
+        return controller.getButton(DPAD_UP)
+    }
+
+    fun dPadDown(): Boolean {
+        return controller.getButton(DPAD_DOWN)
+    }
+
+    fun dPadLeft(): Boolean {
+        return controller.getButton(DPAD_LEFT)
+    }
+
+    fun dPadRight(): Boolean {
+        return controller.getButton(DPAD_RIGHT)
+    }
+
     fun lBumper(): Boolean {
         return controller.getButton(L_BUMPER)
     }
