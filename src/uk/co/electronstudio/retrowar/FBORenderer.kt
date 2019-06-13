@@ -22,10 +22,10 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
 
     private var cam: OrthographicCamera = setupCam(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
     private val shape = ShapeRenderer(5000, createDefaultShapeShader())
-    private val batch = SpriteBatch(1000, createDefaultShader())
+    private val batch = SpriteBatch(8191, createDefaultShader())
     private val mFBO = ManagedFBO()
 
-    private var fboBatch = SpriteBatch(100, createDefaultShader())
+    private var fboBatch = SpriteBatch(1000, createDefaultShader())
     private var glyphLayout = GlyphLayout()
 
     private var scaleFactor = 1f
@@ -60,7 +60,7 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         drawScanlines(shape, cam)
     }
 
-    fun beginFBO(): Batch {
+    fun beginFBO(): SpriteBatch {
         timer += Gdx.graphics.deltaTime
 
         if (fadeInEffect && timer < 3f) {

@@ -10,6 +10,14 @@ import com.badlogic.gdx.math.MathUtils
 class Vec(val x: Float, val y: Float) {
     constructor() : this(0f, 0f)
 
+    companion object{
+        inline fun fromPolar(degrees: Float, magnitude: Float): Vec{
+            val x = MathUtils.sinDeg(degrees) * magnitude
+            val y = MathUtils.cosDeg(degrees) * magnitude
+            return Vec(x,y)
+        }
+    }
+
     fun xy(): Pair<Float, Float> {
         return Pair(x, y)
     }
