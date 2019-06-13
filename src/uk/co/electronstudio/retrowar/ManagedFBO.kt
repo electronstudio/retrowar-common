@@ -28,6 +28,10 @@ class ManagedFBO {
     val projectionMatrix
         get() = fboCam.combined
 
+    fun dispose(){
+        fbo.dispose()
+    }
+
     fun resize(w: Float, h: Float, scale: Float) {
         width = Math.max(w / scale, 1f)
         height = Math.max(h / scale, 1f)

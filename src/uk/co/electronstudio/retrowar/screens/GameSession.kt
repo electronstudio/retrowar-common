@@ -81,7 +81,10 @@ open class GameSession(
 
     private var namesUsed = 0 // FIXME use this
 
+    var disposed = false
+
     override fun dispose() {
+        disposed = true
         super.dispose()
         game?.dispose()
     }
@@ -370,6 +373,11 @@ open class GameSession(
     }
 
     override fun render(deltaTime: Float) {
+        if(disposed) return
+        if(requestQuit){
+            reallyQuit()
+            return
+        }
         checkForPlayerJoins()
         checkForPlayerDisconnects()
         game?.renderAndClampFramerate()
@@ -493,7 +501,14 @@ open class GameSession(
         game?.postMessage(s)
     }
 
+    var requestQuit = false
+
     fun quit() {
+        requestQuit = true
+    }
+
+    fun reallyQuit() {
+        requestQuit = false
         log("gamesession quit")
         nextGame?.let {
             advanceToNextGame(it)

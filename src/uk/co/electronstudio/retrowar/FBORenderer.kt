@@ -34,6 +34,13 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     private var scaledHeight = 0f
     private var m = 0f
 
+    fun dispose(){
+        shape.dispose()
+        batch.dispose()
+        mFBO.dispose()
+        fboBatch.dispose()
+    }
+
     fun renderFBOtoScreen() {
         endFBO()
 
