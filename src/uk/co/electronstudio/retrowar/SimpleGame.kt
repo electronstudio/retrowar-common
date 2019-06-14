@@ -31,6 +31,8 @@ abstract class SimpleGame @JvmOverloads constructor(
         //   fontClear.data.markupEnabled = true
     }
 
+
+
     // render is called by libgdx once every frame (required)
     override fun render(deltaTime: Float) {
 
