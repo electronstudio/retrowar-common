@@ -15,6 +15,7 @@ import uk.co.electronstudio.retrowar.Game
 import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.PlayerData
 import uk.co.electronstudio.retrowar.Prefs
+import uk.co.electronstudio.retrowar.Resources
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.KeyboardMouseInput
@@ -483,7 +484,8 @@ open class GameSession(
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR.getString()
             3 -> Prefs.MultiChoicePref.PLAYER4_COLOR.getString()
-            else -> Prefs.MultiChoicePref.PLAYERGUEST_COLOR.getString()
+            4 -> Prefs.MultiChoicePref.PLAYERGUEST_COLOR.getString()
+            else -> Resources.palette.random().toString()
         }
     }
 
@@ -493,7 +495,8 @@ open class GameSession(
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR2.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR2.getString()
             3 -> Prefs.MultiChoicePref.PLAYER4_COLOR2.getString()
-            else -> Prefs.MultiChoicePref.PLAYERGUEST_COLOR2.getString()
+            4 -> Prefs.MultiChoicePref.PLAYERGUEST_COLOR2.getString()
+            else -> Resources.palette.random().toString()
         }
     }
 
