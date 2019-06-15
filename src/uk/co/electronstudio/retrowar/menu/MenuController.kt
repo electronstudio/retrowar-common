@@ -70,6 +70,9 @@ class MenuController(
         batch.begin()
         // fontClear.draw(batch, glyphLayout, 0f, y)
         drawFlashing(batch)
+        menus.peek().image?.let{
+            batch.draw(it, 0f, 0f)
+        }
         //   batch.end()
     }
 

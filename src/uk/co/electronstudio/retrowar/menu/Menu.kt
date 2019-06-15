@@ -1,5 +1,7 @@
 package uk.co.electronstudio.retrowar.menu
 
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import uk.co.electronstudio.retrowar.Resources
 import uk.co.electronstudio.retrowar.log
 import java.util.ArrayList
@@ -16,7 +18,9 @@ open class Menu(
     val bottomText: () -> String = { "" },
     val quitAction: () -> Unit = {},
     val doubleSpaced: Boolean = true, // Resources.FONT.data.down > -10,
-    val allItems: ArrayList<MenuItem> = ArrayList()) {
+    val allItems: ArrayList<MenuItem> = ArrayList(),
+    val image: Texture? = null
+){
     val pages: ArrayList<Page> = ArrayList()
     var currentPage: ArrayList<MenuItem>
 

@@ -180,10 +180,22 @@ open class GameSession(
 
     @SuppressWarnings
     fun standardMenu(): Menu {
+
+        val controller1 = Menu("Show controls - Controller", image = Resources.CONTROLLER2)
+        controller1.add(BackMenuItem("<<<<"))
+
+        val controller2 = Menu("Show controls - Dpad", image = Resources.CONTROLLER1)
+        controller2.add(BackMenuItem("<<<<"))
+
+        val controller3 = Menu("Show controls - Keyboard", image = Resources.CONTROLLER3)
+        controller3.add(BackMenuItem("<<<<"))
+
         val inGameMenu: Menu = Menu("MENU", quitAction = {
             requestStateChangeMenuToPlay()
         })
         val inGameVideoOptions = Menu("VIDEO")
+
+        val inGameViewControls = Menu("VIEW CONTROLS")
 
 
         // inGameOptions.add(BinPrefMenuItem("Display mode: ", Prefs.BinPref.FULLSCREEN))
@@ -200,12 +212,19 @@ open class GameSession(
         inGameMenu.add(SubMenuItem("Video Options", subMenu = inGameVideoOptions))
 
         val inGameControlOptions = Menu("CONTROLS")
-        inGameControlOptions.add(BinPrefMenuItem("Type: ", Prefs.BinPref.ANALOG_CONTOLRS))
-        inGameControlOptions.add(NumPrefMenuItem("Deadzone %", Prefs.NumPref.DEADZONE))
+        inGameControlOptions.add(BinPrefMenuItem("Control Type: ", Prefs.BinPref.ANALOG_CONTOLRS))
+        inGameControlOptions.add(NumPrefMenuItem("Deadzone % ", Prefs.NumPref.DEADZONE))
         inGameControlOptions.add(MultiPrefMenuItem("Rumble: ", Prefs.MultiChoicePref.RUMBLE))
         inGameControlOptions.add(BackMenuItem("<<<<"))
 
         inGameMenu.add(SubMenuItem("Controller Options", subMenu = inGameControlOptions))
+
+        inGameMenu.add(SubMenuItem("View controls", subMenu = inGameViewControls))
+
+        inGameViewControls.add(SubMenuItem("Controller", subMenu = controller1))
+        inGameViewControls.add(SubMenuItem("DPAD", subMenu = controller2))
+        inGameViewControls.add(SubMenuItem("Keyboard & Mouse", subMenu = controller3))
+        inGameViewControls.add(BackMenuItem("<<<<"))
 
         val quitMenu = Menu("QUIT?")
         quitMenu.add(BackMenuItem("No"))
