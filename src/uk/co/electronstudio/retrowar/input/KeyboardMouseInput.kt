@@ -14,9 +14,9 @@ import com.badlogic.gdx.Gdx.input
 internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
 
     override val leftTrigger: Float
-        get() = if(input.isButtonPressed(Buttons.MIDDLE) || input.isKeyPressed(Keys.SHIFT_LEFT)) 1f else 0f
+        get() = if(input.isButtonPressed(Buttons.MIDDLE) || input.isKeyPressed(Keys.SHIFT_LEFT)  || input.isKeyPressed(Keys.Z) ) 1f else 0f
     override val rightTrigger: Float
-        get() = if(input.isButtonPressed(Buttons.RIGHT)|| input.isKeyPressed(Keys.SHIFT_RIGHT)) 1f else 0f
+        get() = if(input.isButtonPressed(Buttons.RIGHT)|| input.isKeyPressed(Keys.SHIFT_RIGHT)  || input.isKeyPressed(Keys.SLASH)  ) 1f else 0f
 
     override val movementVec: Vec
         get() {

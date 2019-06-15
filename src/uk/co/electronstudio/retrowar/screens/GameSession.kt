@@ -401,7 +401,7 @@ open class GameSession(
                 createKBPlayer()
             }
             if (Prefs.BinPref.DEBUG.isEnabled() && input.isKeyJustPressed(Input.Keys.N)){
-                players[0].score += 10
+                if(players.isNotEmpty()) players[0].score += 10
             }
         }
 
