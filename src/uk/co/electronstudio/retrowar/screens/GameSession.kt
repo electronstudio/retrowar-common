@@ -532,6 +532,7 @@ open class GameSession(
     fun reallyQuit() {
         requestQuit = false
         log("gamesession quit")
+        App.app.steam?.incGamesPlayed()
         nextGame?.let {
             advanceToNextGame(it)
         } ?: metaGame?.let {

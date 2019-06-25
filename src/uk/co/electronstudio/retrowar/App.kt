@@ -21,7 +21,6 @@ package uk.co.electronstudio.retrowar
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Gdx.app
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
@@ -30,9 +29,8 @@ import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.utils.Json
 
 import com.codedisaster.steamworks.SteamAPI
-import com.codedisaster.steamworks.SteamApps
+import com.codedisaster.steamworks.SteamUser
 import com.codedisaster.steamworks.SteamUserStats
-import com.codedisaster.steamworks.SteamUserStatsCallback
 import de.golfgl.gdxgameanalytics.GameAnalytics
 import uk.co.electronstudio.retrowar.Prefs.BinPref
 import uk.co.electronstudio.retrowar.input.GamepadInput
@@ -51,6 +49,7 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.io.Reader
+import java.lang.Exception
 import java.net.URL
 import kotlin.concurrent.thread
 
@@ -68,8 +67,8 @@ import kotlin.concurrent.thread
  */
 abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
-    var steamStats: SteamUserStats? = null
-    var usingSteam: Boolean = false
+    var steam: Steam? = null
+
     /** Title screen */
     var title: Screen? = null
 
@@ -309,18 +308,13 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     protected fun initialiseSteam() {
         System.out.println("Initialise Steam client API ...")
-        SteamAPI.loadLibraries()
-        if(SteamAPI.init()){
-            SteamAPI.printDebugInfo(System.out)
-            usingSteam = true
-            steamStats?.requestCurrentStats()
-            steamStats = SteamUserStats(SteamStatsCallBack())
-            steamStats?.setAchievement("LOADED")
-            steamStats?.storeStats()
-        }else {
-            log("steam error")
-            SteamAPI.printDebugInfo(System.err)
+        try {
+            steam = Steam()
+        } catch (e: Exception){
+            log("couldnt initialize Steam $e")
         }
+
+
     }
 
     fun setScreenMode() {
