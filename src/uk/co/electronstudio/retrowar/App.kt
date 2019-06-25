@@ -321,9 +321,6 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
             log("steam error")
             SteamAPI.printDebugInfo(System.err)
         }
-
-
-
     }
 
     fun setScreenMode() {
