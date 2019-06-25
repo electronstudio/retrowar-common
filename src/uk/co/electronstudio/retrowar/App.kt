@@ -30,6 +30,9 @@ import com.badlogic.gdx.controllers.ControllerAdapter
 import com.badlogic.gdx.utils.Json
 
 import com.codedisaster.steamworks.SteamAPI
+import com.codedisaster.steamworks.SteamApps
+import com.codedisaster.steamworks.SteamUserStats
+import com.codedisaster.steamworks.SteamUserStatsCallback
 import de.golfgl.gdxgameanalytics.GameAnalytics
 import uk.co.electronstudio.retrowar.Prefs.BinPref
 import uk.co.electronstudio.retrowar.input.GamepadInput
@@ -65,6 +68,8 @@ import kotlin.concurrent.thread
  */
 abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
+    var steamStats: SteamUserStats? = null
+    var usingSteam: Boolean = false
     /** Title screen */
     var title: Screen? = null
 
@@ -304,13 +309,21 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     protected fun initialiseSteam() {
         System.out.println("Initialise Steam client API ...")
-
-        if (!SteamAPI.init()) {
+        SteamAPI.loadLibraries()
+        if(SteamAPI.init()){
+            SteamAPI.printDebugInfo(System.out)
+            usingSteam = true
+            steamStats?.requestCurrentStats()
+            steamStats = SteamUserStats(SteamStatsCallBack())
+            steamStats?.setAchievement("LOADED")
+            steamStats?.storeStats()
+        }else {
             log("steam error")
             SteamAPI.printDebugInfo(System.err)
         }
 
-        SteamAPI.printDebugInfo(System.out)
+
+
     }
 
     fun setScreenMode() {
