@@ -64,6 +64,8 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
 
         fboBatch.end()
 
+
+
         drawScanlines(shape, cam)
     }
 
