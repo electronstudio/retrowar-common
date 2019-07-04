@@ -140,10 +140,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     /** Setup network stuff, not currently working */
     protected fun initialiseNetwork() {
-        server = Server()
-        server?.initialise()
-        client = Client()
-        client?.initialise()
+//        server = Server()
+//        server?.initialise()
+//        client = Client()
+//        client?.initialise()
     }
 
     /** All the controllers currently connected */
