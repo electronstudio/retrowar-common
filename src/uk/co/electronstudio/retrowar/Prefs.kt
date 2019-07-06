@@ -358,7 +358,7 @@ object Prefs {
     enum class StringPref(val pref: String, val text: String = pref, val default: String = "") {
         SERVER("server", default = "1.1.1.1"),
         PLAYER_MORE("playermore", default = "PLAYER"),
-        PARSEC_USER("parsecuser", default="");
+        PARSEC_SESSIONID("parsecsessionid", default="");
 
         fun displayText(): String {
             return prefs.getString(pref, default)
