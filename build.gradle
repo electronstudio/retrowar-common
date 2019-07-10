@@ -34,6 +34,9 @@ task ktlintFormat(type: JavaExec) {
 }
 
 dependencies {
+    compile name: 'parsec'
+    compile group:'com.konghq', name:'unirest-java', version: '2.3.08'
+    compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
     compile 'io.sentry:sentry:1.7.3'
     compile 'org.slf4j:slf4j-simple:1.7.21'
     compile "com.code-disaster.steamworks4j:steamworks4j:1.8.0"

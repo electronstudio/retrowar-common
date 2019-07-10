@@ -72,6 +72,8 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     /** Title screen */
     var title: Screen? = null
 
+    var parsec: Parsec? = null
+
     /** If you are using GameAnalytics service set this, otherwise null */
     var gameAnalytics: GameAnalytics? = null
 

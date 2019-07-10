@@ -1,17 +1,16 @@
 package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
+import com.parsecgaming.parsec.ParsecLibrary
 import uk.co.electronstudio.retrowar.Prefs.BinPref.FPS
 
 /**
@@ -33,6 +32,10 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     private var scaledWidth = 0f
     private var scaledHeight = 0f
     private var m = 0f
+
+    private val parsecBuffer: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, WIDTH.toInt(), HEIGHT.toInt(), false)
+    private val parsecCam: OrthographicCamera = OrthographicCamera(WIDTH, HEIGHT)
+    private val parsecBatch = SpriteBatch(1000, createDefaultShader())
 
     fun dispose(){
         shape.dispose()
@@ -64,6 +67,27 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
 
         fboBatch.end()
 
+        val foos = arrayListOf(Resources.CONTROLLER1.textureObjectHandle, Resources.CONTROLLER2.textureObjectHandle, Resources.CONTROLLER3.textureObjectHandle)
+
+
+        parsecCam.update()
+        parsecBatch.projectionMatrix = parsecCam.combined
+        parsecBuffer.begin()
+        parsecBatch.begin()
+        parsecBatch.draw(mFBO.texture, -WIDTH/2f, -HEIGHT/2f, 0f, 0f,
+                //      mFBO.width, mFBO.height,
+                WIDTH, HEIGHT, 1f, 1f, 0f, 0, 0, mFBO.width.toInt(), mFBO.height.toInt(),
+                //  WIDTH.toInt(), HEIGHT.toInt(),
+                false, true)
+        parsecBatch.end()
+        parsecBuffer.end()
+
+
+        val parsec = App.app.parsec
+        if(parsec != null && parsec.serverID>-1 && !parsec.desktopMode) {
+            //ParsecLibrary.ParsecHostGLSubmitFrame(parsec.parsec, mFBO.texture.textureObjectHandle)
+            ParsecLibrary.ParsecHostGLSubmitFrame(parsec.parsec, parsecBuffer.colorBufferTexture.textureObjectHandle)
+        }
 
 
         drawScanlines(shape, cam)
