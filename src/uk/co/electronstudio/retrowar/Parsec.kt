@@ -1,37 +1,45 @@
 package uk.co.electronstudio.retrowar
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GLTexture
 import com.parsecgaming.parsec.*
 import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
-import kong.unirest.JsonNode
 import kong.unirest.Unirest
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 
 
 class Parsec {
 
     enum class State(val msg: String) {
-        STOPPED("STOPPED"), STARTING("[YELLOW]STARTING[]"), HOSTING_DESKTOP("[GREEN]HOSTING (D)[]"), HOSTING_GAME("[GREEN]HOSTING (G)[]"), INVALID_SESSION_ID(
+        STOPPED("STOPPED"), HOSTING_DESKTOP("[GREEN]HOSTING (D)[]"), HOSTING_GAME("[GREEN]HOSTING (G)[]"), INVALID_SESSION_ID(
                 "[RED]INVALID SESSION ID\nPLEASE LOGIN AGAIN[]")
     }
 
     @Volatile
     var state: State = State.STOPPED
 
+    val messages = ConcurrentLinkedQueue<String>()
+
 
     private val parsecPointer: Pointer?
-    @Volatile
-    private var serverID = -1
+   // @Volatile
+   // private var serverID = -1
     @Volatile
     private var statusCode = 0
-    @Volatile
-    private var desktopMode = false
+   // @Volatile
+   // private var desktopMode = false
     @Volatile
     var parsecRef: PointerByReference = PointerByReference()
 
+    val opaque: Pointer = Memory(4)
+
     val guests = ConcurrentHashMap<Int, String>()
+
+
+    val parsecTrue = 1.toByte()
 
     val gst = object : ParsecHostCallbacks.guestStateChange_callback {
         override fun apply(guest: ParsecGuest?, opaque: Pointer?) {
@@ -39,15 +47,30 @@ class Parsec {
                 val name = String(guest.name)
                 val attemptID = String(guest.attemptID)
                 log("Parsec", "guestStateChange ${guest?.id} $attemptID $name ${guest?.state}")
-                if (guest.state == ParsecLibrary.ParsecGuestState.GUEST_CONNECTED) {
-                    guests.put(guest.id, name)
-                }
-                if (guest.state == ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED) {
-                    guests.remove(guest.id)
+                when(guest.state) {
+                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTED -> {
+                        guests.put(guest.id, name)
+                        messages.add("$name connected")
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED -> {
+                        guests.remove(guest.id)
+                        messages.add("$name disconnected")
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTING -> {}
+                    ParsecLibrary.ParsecGuestState.GUEST_FAILED -> {
+                        messages.add("$name failed to connect")
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_WAITING -> {
+                        val m = Memory(guest.attemptID.size.toLong())
+                        m.write(0, guest.attemptID, 0, guest.attemptID.size)
+                        ParsecLibrary.ParsecHostAllowGuest(getPointer(), m, parsecTrue)
+                    }
                 }
             }
         }
     }
+
+    fun getPointer() = parsecPointer
 
     val udc = object : ParsecHostCallbacks.userData_callback {
         override fun apply(guest: ParsecGuest?, id: Int, text: Pointer?, opaque: Pointer?) {
@@ -61,8 +84,11 @@ class Parsec {
     val sic = object : ParsecHostCallbacks.serverID_callback {
         override fun apply(hostID: Int, serverID: Int, opaque: Pointer?) {
             log("Parsec", "serverID $hostID $serverID")
-            this@Parsec.serverID = serverID
-            state = if (desktopMode) State.HOSTING_DESKTOP else State.HOSTING_GAME
+            //this@Parsec.serverID = serverID
+            //state = if (desktopMode) State.HOSTING_DESKTOP else State.HOSTING_GAME
+            Gdx.app.postRunnable {
+                Prefs.NumPref.PARSEC_LAST_SERVER_ID.setNum(serverID)
+            }
         }
     }
 
@@ -73,9 +99,9 @@ class Parsec {
         }
     }
 
-    val cbs = ParsecHostCallbacks(gst, udc, sic, isi)
+    private val parsecHostCallbacks = ParsecHostCallbacks(gst, udc, sic, isi)
 
-    val phc = ParsecLibrary.ParsecHostDefaults()
+    private val parsecHostConfig = ParsecLibrary.ParsecHostDefaults()
 
     val plc = object : ParsecLibrary.ParsecLogCallback {
         override fun apply(level: Int, msg: Pointer?, opaque: Pointer?) {
@@ -83,11 +109,18 @@ class Parsec {
         }
     }
 
+    val parsecConfig = ParsecLibrary.ParsecDefaults()
 
     init {
 
 
-        statusCode = ParsecLibrary.ParsecInit(null, null, parsecRef)
+        parsecHostConfig.encoderFPS=60
+        parsecHostConfig.maxGuests=15
+
+
+        parsecConfig.upnp=1
+
+        statusCode = ParsecLibrary.ParsecInit(parsecConfig, null, parsecRef)
 
 
         //println("pbr ${pbr.value}")
@@ -103,59 +136,68 @@ class Parsec {
         //            pointer.write(0, data, 0, data.size);
         //            pointer.setByte(data.size.toLong(), 0);
         //            val b = ByteBuffer.wrap(data)
-        //            val cbs: ParsecHostCallbacks = ParsecHostCallbacks()
+        //            val parsecHostCallbacks: ParsecHostCallbacks = ParsecHostCallbacks()
 
         //     ParsecLibrary.ParsecHostGLSubmitFrame(pbr.value, Resources.CONTROLLER1.textureObjectHandle)
     }
 
     fun pollInput() {
-        val guest = ParsecGuest()
-        val msg = ParsecMessage()
-        while(true) {
-            val result = ParsecLibrary.ParsecHostPollInput(parsecPointer, 10, guest, msg)
-            if (result.toInt() == 0) {
-                break
-            }else{
-                //log("message received ${msg.type}")
-                when(msg.type){
-                    ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
-                        msg.field1.setType(ParsecGamepadButtonMessage::class.java)
-                        val id = msg.field1.gamepadButton.id
-                        val button = msg.field1.gamepadButton.button
-                        val pressed = msg.field1.gamepadButton.pressed
-                        log("button $id $button $pressed")
-                    }
-                    ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
-                        msg.field1.setType(ParsecGamepadAxisMessage::class.java)
-                        val axis = msg.field1.gamepadAxis.axis
-                        val id = msg.field1.gamepadAxis.id
-                        val value = msg.field1.gamepadAxis.value
-                        log("axis $id $axis $value")
-                    }
-                    else -> {
-                        log("msg type ${msg.type}")
-                    }
+        var guest = ParsecGuest()
+        var msg = ParsecMessage()
+        //ar count=0
+        while (ParsecLibrary.ParsecHostPollInput(parsecPointer, 0, guest, msg).toInt() == 1) {
+            //count++
+            //log("msgs $count")
+            //log("message received ${msg.type}")
+            when (msg.type) {
+                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
+                    msg.field1.setType(ParsecGamepadButtonMessage::class.java)
+                    val id = msg.field1.gamepadButton.id
+                    val button = msg.field1.gamepadButton.button
+                    val pressed = msg.field1.gamepadButton.pressed
+                    log("button $id $button $pressed")
                 }
-
+                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
+                    msg.field1.setType(ParsecGamepadAxisMessage::class.java)
+                    val axis = msg.field1.gamepadAxis.axis
+                    val id = msg.field1.gamepadAxis.id
+                    val value = msg.field1.gamepadAxis.value
+                    log("axis $id $axis $value")
+                }
+                else -> {
+                    log("msg type ${msg.type}")
+                }
             }
+            //guest = ParsecGuest()
+            //msg = ParsecMessage()
+
         }
     }
+
+    val nameString = "RetroWar: 8-Bit Party Battle"
+    val name = Memory((nameString.length + 1).toLong()).also {
+        it.setString(0, nameString)
+    }
+
 
     fun hostDesktopStart(id: String) {
         log("Parsec", "hostDesktopstart $id")
         if (state == State.STOPPED || state == State.INVALID_SESSION_ID) {
-            desktopMode = true
-            val m = Memory((id.length + 1).toLong()) // WARNING: assumes ascii-only string
-            m.setString(0, id)
+            ///desktopMode = true
+            val sessionId = Memory((id.length + 1).toLong()) // WARNING: assumes ascii-only string
+            sessionId.setString(0, id)
+
             statusCode = ParsecLibrary.ParsecHostStart(parsecPointer,
                     ParsecLibrary.ParsecHostMode.HOST_DESKTOP,
-                    phc,
-                    cbs,
-                    null,
-                    null,
-                    m,
-                    0);
-            state = State.STARTING
+                    parsecHostConfig,
+                    parsecHostCallbacks,
+                    opaque,
+                    name,
+                    sessionId,
+                    Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum())
+            if(statusCode>=0) {
+                state = State.HOSTING_DESKTOP
+            }
             log("parsec", "ParsecHostStar result $statusCode")
         }
     }
@@ -163,18 +205,20 @@ class Parsec {
     fun hostGameStart(id: String) {
         log("Parsec", "hostGamestart $id")
         if (state == State.STOPPED || state == State.INVALID_SESSION_ID) {
-            desktopMode = false
-            val m = Memory((id.length + 1).toLong()) // WARNING: assumes ascii-only string
-            m.setString(0, id)
+           // desktopMode = false
+            val sessionId = Memory((id.length + 1).toLong()) // WARNING: assumes ascii-only string
+            sessionId.setString(0, id)
             statusCode = ParsecLibrary.ParsecHostStart(parsecPointer,
                     ParsecLibrary.ParsecHostMode.HOST_GAME,
-                    phc,
-                    cbs,
-                    null,
-                    null,
-                    m,
-                    1);
-            state = State.STARTING
+                    parsecHostConfig,
+                    parsecHostCallbacks,
+                    opaque,
+                    name,
+                    sessionId,
+                    Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum())
+            if(statusCode>=0) {
+                state = State.HOSTING_GAME
+            }
             log("parsec", "ParsecHostStar result $statusCode")
         }
     }
@@ -214,10 +258,14 @@ class Parsec {
 
 
     fun stop() {
-        ParsecLibrary.ParsecHostStop(parsecPointer)
-        serverID = -1
-        statusCode = 0
-        state = State.STOPPED
+        Thread {
+            statusCode = 0
+            state = State.STOPPED
+            ParsecLibrary.ParsecHostStop(parsecPointer)
+            //serverID = -1
+
+        }.start()
+
     }
 
     fun status(): String = if (statusCode < 0) "[RED]ERROR $statusCode[]" else "${state.msg}"

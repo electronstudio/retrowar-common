@@ -279,6 +279,7 @@ object Prefs {
         val default: Int = 50,
         val step: Int = 1
     ) {
+        PARSEC_LAST_SERVER_ID("parsecserverid", default = 0),
         SCREEN_SHAKE("screenshake", min = 0, max = 100, default = 30, step = 10),
         SHIP_SPEED("shipspeed",
             min = 100,
@@ -326,6 +327,12 @@ object Prefs {
 
         fun getNum(): Int {
             return prefs.getInteger(pref, default)
+        }
+
+        fun setNum(num : Int){
+            prefs.putInteger(pref, num)
+            prefs.flush()
+            log("pref $name set to $num")
         }
 
         fun increase() {
