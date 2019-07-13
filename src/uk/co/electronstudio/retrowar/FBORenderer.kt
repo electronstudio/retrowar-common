@@ -84,6 +84,7 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         App.app.parsec?.apply {
             if(state==Parsec.State.HOSTING_GAME) {
                 submitFrame(parsecBuffer.colorBufferTexture)
+                pollInput()
             }
         }
 
