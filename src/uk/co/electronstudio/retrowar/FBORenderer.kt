@@ -67,8 +67,6 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
 
         fboBatch.end()
 
-        val foos = arrayListOf(Resources.CONTROLLER1.textureObjectHandle, Resources.CONTROLLER2.textureObjectHandle, Resources.CONTROLLER3.textureObjectHandle)
-
 
         parsecCam.update()
         parsecBatch.projectionMatrix = parsecCam.combined
@@ -83,15 +81,17 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         parsecBuffer.end()
 
 
-        val parsec = App.app.parsec
-        if(parsec != null && parsec.serverID>-1 && !parsec.desktopMode) {
-            //ParsecLibrary.ParsecHostGLSubmitFrame(parsec.parsec, mFBO.texture.textureObjectHandle)
-            ParsecLibrary.ParsecHostGLSubmitFrame(parsec.parsec, parsecBuffer.colorBufferTexture.textureObjectHandle)
+        App.app.parsec?.apply {
+            if(state==Parsec.State.HOSTING_GAME) {
+                submitFrame(parsecBuffer.colorBufferTexture)
+            }
         }
+
 
 
         drawScanlines(shape, cam)
     }
+
 
     fun beginFBO(): SpriteBatch {
         timer += Gdx.graphics.deltaTime
