@@ -50,6 +50,7 @@ class Parsec {
                 when(guest.state) {
                     ParsecLibrary.ParsecGuestState.GUEST_CONNECTED -> {
                         guests.put(guest.id, name)
+                        //ParsecController()
                         messages.add("$name connected")
                     }
                     ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED -> {
@@ -74,9 +75,11 @@ class Parsec {
 
     val udc = object : ParsecHostCallbacks.userData_callback {
         override fun apply(guest: ParsecGuest?, id: Int, text: Pointer?, opaque: Pointer?) {
-            println("PARSEC USERDATA")
-            log("Parsec",
-                    "userdata $id ${text?.getString(0)} ${guest?.id} ${guest?.attemptID} ${guest?.name} ${guest?.state}")
+            if (guest != null) {
+                val name = String(guest.name)
+                messages.add("$name: ${text?.getString(0)}")
+                log("Parsec", "userdata $id ${text?.getString(0)} ${guest?.id} ${guest?.attemptID} ${name} ${guest?.state}")
+            }
         }
 
     }

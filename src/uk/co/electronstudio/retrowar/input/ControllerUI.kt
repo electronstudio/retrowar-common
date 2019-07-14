@@ -3,23 +3,20 @@ package uk.co.electronstudio.retrowar.input
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
-import uk.co.electronstudio.retrowar.App
-import uk.co.electronstudio.retrowar.PlayerData
-import uk.co.electronstudio.retrowar.Resources
+import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.Resources.Companion.FONT
 import uk.co.electronstudio.retrowar.Resources.Companion.palette
-import uk.co.electronstudio.retrowar.log
-import uk.co.electronstudio.sdl2gdx.SDL2Controller
+import uk.co.electronstudio.sdl2gdx.RumbleController
 import java.lang.StringBuilder
 
 class ControllerUI(
-    val controller: SDL2Controller,
-    val x: Float,
-    val y: Float,
-    val tab1: Float,
-    val tab2: Float,
-    val tab3: Float,
-    val tab4: Float
+        val controller: RumbleController,
+        val x: Float,
+        val y: Float,
+        val tab1: Float,
+        val tab2: Float,
+        val tab3: Float,
+        val tab4: Float
 ) {
 
     private val statefulController = StatefulController(MappedController(controller))
