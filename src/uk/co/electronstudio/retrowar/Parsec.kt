@@ -7,8 +7,11 @@ import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
 import kong.unirest.Unirest
+import sun.audio.AudioPlayer.player
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+
+
 
 
 class Parsec {
@@ -46,15 +49,18 @@ class Parsec {
             if (guest != null) {
                 val name = String(guest.name)
                 val attemptID = String(guest.attemptID)
-                log("Parsec", "guestStateChange ${guest?.id} $attemptID $name ${guest?.state}")
+                log("Parsec", "guestStateChange ${guest.id} $attemptID $name ${guest.state}")
                 when(guest.state) {
                     ParsecLibrary.ParsecGuestState.GUEST_CONNECTED -> {
                         guests.put(guest.id, name)
+                        val controller = ParsecController(guest.id, name)
+                        App.app.parsecControllers.put(guest.id, controller)
                         //ParsecController()
                         messages.add("$name connected")
                     }
                     ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED -> {
                         guests.remove(guest.id)
+                        App.app.parsecControllers.remove(guest.id)
                         messages.add("$name disconnected")
                     }
                     ParsecLibrary.ParsecGuestState.GUEST_CONNECTING -> {}
@@ -78,7 +84,7 @@ class Parsec {
             if (guest != null) {
                 val name = String(guest.name)
                 messages.add("$name: ${text?.getString(0)}")
-                log("Parsec", "userdata $id ${text?.getString(0)} ${guest?.id} ${guest?.attemptID} ${name} ${guest?.state}")
+                log("Parsec", "userdata $id ${text?.getString(0)} ${guest.id} ${guest.attemptID} ${name} ${guest.state}")
             }
         }
 
@@ -142,35 +148,35 @@ class Parsec {
         //            val parsecHostCallbacks: ParsecHostCallbacks = ParsecHostCallbacks()
 
         //     ParsecLibrary.ParsecHostGLSubmitFrame(pbr.value, Resources.CONTROLLER1.textureObjectHandle)
-    }
 
+        if (Gdx.app != null) {
+            Gdx.app.postRunnable(object : Runnable {
+                override fun run() {
+                    if(state!=State.HOSTING_GAME) return
+                    try {
+                        pollInput()
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+
+                    Gdx.app.postRunnable(this)
+                }
+            })
+        }
+    }
+    val guest = ParsecGuest()
+    val msg = ParsecMessage()
     fun pollInput() {
-        var guest = ParsecGuest()
-        var msg = ParsecMessage()
+
         //ar count=0
         while (ParsecLibrary.ParsecHostPollInput(parsecPointer, 0, guest, msg).toInt() == 1) {
             //count++
             //log("msgs $count")
             //log("message received ${msg.type}")
-            when (msg.type) {
-                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
-                    msg.field1.setType(ParsecGamepadButtonMessage::class.java)
-                    val id = msg.field1.gamepadButton.id
-                    val button = msg.field1.gamepadButton.button
-                    val pressed = msg.field1.gamepadButton.pressed
-                    log("button $id $button $pressed")
-                }
-                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
-                    msg.field1.setType(ParsecGamepadAxisMessage::class.java)
-                    val axis = msg.field1.gamepadAxis.axis
-                    val id = msg.field1.gamepadAxis.id
-                    val value = msg.field1.gamepadAxis.value
-                    log("axis $id $axis $value")
-                }
-                else -> {
-                    log("msg type ${msg.type}")
-                }
-            }
+            val controller = App.app.parsecControllers[guest.id]
+            controller?.processMessage(msg)
+
+
             //guest = ParsecGuest()
             //msg = ParsecMessage()
 

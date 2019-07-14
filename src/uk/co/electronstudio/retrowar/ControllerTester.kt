@@ -58,10 +58,13 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f) // clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        font.draw(batch, "Controllers connected: ${Controllers.getControllers().size}", 0f, 20f)
+        font.draw(batch, "Controllers connected: ${Controllers.getControllers().size} + ${App.app.parsecControllers.size}", 0f, 20f)
 
         var y = height
-        Controllers.getControllers().forEachIndexed { index, controller ->
+
+        val controllers = Controllers.getControllers() + App.app.parsecControllers.values
+
+        controllers.forEachIndexed { index, controller ->
             val x = if (index % 2 == 0) 0f else width / 2f
             font.color = com.badlogic.gdx.graphics.Color.LIME
             font.draw(batch, controller.name.removePrefix("SDL GameController "), x, y, 256f, Align.left, false)

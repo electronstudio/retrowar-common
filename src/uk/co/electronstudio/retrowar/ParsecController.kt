@@ -1,0 +1,151 @@
+package uk.co.electronstudio.retrowar
+
+import com.badlogic.gdx.controllers.ControllerListener
+import com.badlogic.gdx.controllers.PovDirection
+import com.badlogic.gdx.math.Vector3
+import com.parsecgaming.parsec.ParsecGamepadAxisMessage
+import com.parsecgaming.parsec.ParsecGamepadButtonMessage
+import com.parsecgaming.parsec.ParsecLibrary
+import com.parsecgaming.parsec.ParsecMessage
+import uk.co.electronstudio.sdl2gdx.RumbleController
+
+
+val SDL_CONTROLLER_AXIS_INVALID = -1
+val SDL_CONTROLLER_AXIS_LEFTX = 0
+val SDL_CONTROLLER_AXIS_LEFTY = 1
+val SDL_CONTROLLER_AXIS_RIGHTX = 2
+val SDL_CONTROLLER_AXIS_RIGHTY = 3
+val SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4
+val SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5
+val SDL_CONTROLLER_AXIS_MAX = 6
+
+/**
+ * The list of buttons available from a controller
+ */
+
+val SDL_CONTROLLER_BUTTON_INVALID = -1
+val SDL_CONTROLLER_BUTTON_A = 0
+val SDL_CONTROLLER_BUTTON_B = 1
+val SDL_CONTROLLER_BUTTON_X = 2
+val SDL_CONTROLLER_BUTTON_Y = 3
+val SDL_CONTROLLER_BUTTON_BACK = 4
+val SDL_CONTROLLER_BUTTON_GUIDE = 5
+val SDL_CONTROLLER_BUTTON_START = 6
+val SDL_CONTROLLER_BUTTON_LEFTSTICK = 7
+val SDL_CONTROLLER_BUTTON_RIGHTSTICK = 8
+val SDL_CONTROLLER_BUTTON_LEFTSHOULDER = 9
+val SDL_CONTROLLER_BUTTON_RIGHTSHOULDER = 10
+val SDL_CONTROLLER_BUTTON_DPAD_UP = 11
+val SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12
+val SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
+val SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
+val SDL_CONTROLLER_BUTTON_MAX = 15
+
+
+val SDL_HAT_CENTERED = 0x00
+val SDL_HAT_UP = 0x01
+val SDL_HAT_RIGHT = 0x02
+val SDL_HAT_DOWN = 0x04
+val SDL_HAT_LEFT = 0x08
+val SDL_HAT_RIGHTUP = SDL_HAT_RIGHT or SDL_HAT_UP
+val SDL_HAT_RIGHTDOWN = SDL_HAT_RIGHT or SDL_HAT_DOWN
+val SDL_HAT_LEFTUP = SDL_HAT_LEFT or SDL_HAT_UP
+val SDL_HAT_LEFTDOWN = SDL_HAT_LEFT or SDL_HAT_DOWN
+
+val zero = Vector3(0f, 0f, 0f)
+
+class ParsecController(id: Int, name: String): RumbleController {
+
+
+
+    val buttonState = BooleanArray(15)
+    val axisState = FloatArray(6)
+
+    override fun rumble(leftMagnitude: Float, rightMagnitude: Float, duration_ms: Int): Boolean {
+        return false
+    }
+
+    override fun getAxis(axisCode: Int): Float {
+        return axisState[axisCode]
+    }
+
+    override fun getName(): String {
+        return "ParsecController $name"
+    }
+
+    override fun addListener(listener: ControllerListener?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun removeListener(listener: ControllerListener?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
+    override fun getAccelerometer(accelerometerCode: Int): Vector3 {
+        return zero
+    }
+
+
+    override fun setAccelerometerSensitivity(sensitivity: Float) {
+    }
+
+    override fun getButton(buttonCode: Int): Boolean {
+        return buttonState[buttonCode]
+    }
+
+    override fun getPov(povCode: Int): PovDirection {
+        return when{
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_UP] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_RIGHT] -> PovDirection.northEast
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_UP] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_LEFT] -> PovDirection.northWest
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_DOWN] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_RIGHT] -> PovDirection.southEast
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_DOWN] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_LEFT] -> PovDirection.southWest
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_UP] -> PovDirection.north
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_RIGHT] -> PovDirection.east
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_DOWN] -> PovDirection.south
+            buttonState[SDL_CONTROLLER_BUTTON_DPAD_LEFT] -> PovDirection.west
+            else -> PovDirection.center
+        }
+    }
+
+    override fun getSliderY(sliderCode: Int): Boolean {
+        return false
+    }
+
+    override fun getSliderX(sliderCode: Int): Boolean {
+        return false
+    }
+
+    fun processMessage(msg: ParsecMessage) {
+        when (msg.type) {
+            ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
+                msg.field1.setType(ParsecGamepadButtonMessage::class.java)
+                val id = msg.field1.gamepadButton.id
+                val button = msg.field1.gamepadButton.button
+                val pressed = msg.field1.gamepadButton.pressed
+                setButton(button, pressed.toInt())
+                log("button $id $button $pressed")
+            }
+            ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
+                msg.field1.setType(ParsecGamepadAxisMessage::class.java)
+                val axis = msg.field1.gamepadAxis.axis
+                val id = msg.field1.gamepadAxis.id
+                val value = msg.field1.gamepadAxis.value
+                setAxis(axis, value)
+                log("axis $id $axis $value")
+            }
+            else -> {
+                log("msg type ${msg.type}")
+            }
+        }
+    }
+
+    private fun setAxis(axis: Int, value: Short) {
+        axisState[axis] = value.toFloat() / Short.MAX_VALUE.toFloat()
+    }
+
+    private fun setButton(button: Int, pressed: Int) {
+        buttonState[button] = (pressed==1)
+    }
+
+}

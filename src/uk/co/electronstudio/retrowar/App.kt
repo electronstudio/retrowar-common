@@ -66,6 +66,7 @@ import kotlin.concurrent.thread
  */
 abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
+
     var steam: Steam? = null
 
     /** Title screen */
@@ -102,6 +103,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     var playerData = mutableListOf<PlayerData>()
     val controllerMappings = mutableMapOf<RumbleController, PlayerData>()
+    val parsecControllers = mutableMapOf<Int, ParsecController>()
 
     fun loadPlayerData() {
         try {
