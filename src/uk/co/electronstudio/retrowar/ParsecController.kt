@@ -54,7 +54,7 @@ val SDL_HAT_LEFTDOWN = SDL_HAT_LEFT or SDL_HAT_DOWN
 
 val zero = Vector3(0f, 0f, 0f)
 
-class ParsecController(id: Int, name: String): RumbleController {
+class ParsecController(val id: Int, val guestName: String): RumbleController {
 
 
 
@@ -70,7 +70,7 @@ class ParsecController(id: Int, name: String): RumbleController {
     }
 
     override fun getName(): String {
-        return "ParsecController $name"
+        return "ParsecController $guestName"
     }
 
     override fun addListener(listener: ControllerListener?) {
@@ -122,17 +122,18 @@ class ParsecController(id: Int, name: String): RumbleController {
                 msg.field1.setType(ParsecGamepadButtonMessage::class.java)
                 val id = msg.field1.gamepadButton.id
                 val button = msg.field1.gamepadButton.button
-                val pressed = msg.field1.gamepadButton.pressed
-                setButton(button, pressed.toInt())
+                val pressed = msg.field1.gamepadButton.pressed.toInt()
                 log("button $id $button $pressed")
+                setButton(button, pressed.toInt())
             }
             ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
                 msg.field1.setType(ParsecGamepadAxisMessage::class.java)
                 val axis = msg.field1.gamepadAxis.axis
                 val id = msg.field1.gamepadAxis.id
                 val value = msg.field1.gamepadAxis.value
+                //log("axis $id $axis $value")
                 setAxis(axis, value)
-                log("axis $id $axis $value")
+
             }
             else -> {
                 log("msg type ${msg.type}")
@@ -141,11 +142,13 @@ class ParsecController(id: Int, name: String): RumbleController {
     }
 
     private fun setAxis(axis: Int, value: Short) {
-        axisState[axis] = value.toFloat() / Short.MAX_VALUE.toFloat()
+        if(axis<axisState.size)axisState[axis] = value.toFloat() / Short.MAX_VALUE.toFloat()
+        else error("Parsec controller axis out of bounds $axis")
     }
 
     private fun setButton(button: Int, pressed: Int) {
-        buttonState[button] = (pressed==1)
+        if(button<buttonState.size) buttonState[button] = (pressed==1)
+        else error("Parsec controller button out of bounds $button")
     }
 
 }

@@ -87,7 +87,7 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
     private fun drawController(m: Controller, y: Float, batch: Batch, x: Float): Float {
         font.color = com.badlogic.gdx.graphics.Color.WHITE
         var y1 = y
-        for (j in 0..31) {
+        for (j in 0..14) {
             if (m.getButton(j)) {
                 y1 -= 8f
                 val mapping: String = when (j) {
@@ -114,7 +114,7 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
             }
         }
 
-        for (j in 0..31) {
+        for (j in 0..5) {
             if (m.getAxis(j) != 0f) {
                 y1 -= 8f
                 val mapping: String = when (j) {
@@ -129,16 +129,16 @@ class ControllerTester(session: GameSession) : SimpleGame(session, 640f, 360f, f
                 font.draw(batch, "$mapping: ${m.getAxis(j)} ", x, y1, 256f, Align.left, false)
             }
         }
-        for (j in 0..31) {
-            if (m.getPov(j) != PovDirection.center) {
+
+            if (m.getPov(0) != PovDirection.center) {
                 y1 -= 8f
-                val mapping: String = when (j) {
-                    // m.DPAD -> "DPAD"
-                    else -> "UNKNOWN DPAD $j"
-                }
-                font.draw(batch, "$mapping ${m.getPov(j)}", x, y1, 256f, Align.left, false)
+//                val mapping: String = when (0) {
+//                    // m.DPAD -> "DPAD"
+//                    else -> "UNKNOWN DPAD $j"
+//                }
+                font.draw(batch, "POV ${m.getPov(0)}", x, y1, 256f, Align.left, false)
             }
-        }
+
         //            try {
         //                for (j in 0..31) {
         //                    y -= 8f

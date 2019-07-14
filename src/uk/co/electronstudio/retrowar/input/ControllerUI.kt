@@ -262,9 +262,10 @@ class ControllerUI(
                 State.EDITING_COLOUR2 -> {
                     val playerData = PlayerData(stringBeingEdited.toString().replace('_', ' ').trim(),
                         colourBeingEdited1,
-                        colourBeingEdited2,
-                        controller.name,
-                        0)
+                        colourBeingEdited2
+                       // controller.name,
+                    //    0
+                    )
                     val playerWithMatchingName = App.app.playerData.find { it.name == playerData.name }
                     if(playerWithMatchingName==null) {
                         App.app.playerData.add(playerData)

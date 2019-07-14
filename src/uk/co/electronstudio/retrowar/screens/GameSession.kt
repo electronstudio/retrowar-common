@@ -333,6 +333,12 @@ open class GameSession(
             usedControllers.add(controller)
         }
 
+        app.parsecControllers.values.forEach{
+            val playerData = PlayerData(it.guestName)
+            createControllerPlayer(it, playerData)
+            usedControllers.add(it)
+        }
+
         //            if (Gdx.app.type == Application.ApplicationType.Android) {
         //                createTouchscreenPlayer()
         //            }
