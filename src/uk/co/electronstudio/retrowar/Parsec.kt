@@ -150,17 +150,17 @@ class Parsec {
         //     ParsecLibrary.ParsecHostGLSubmitFrame(pbr.value, Resources.CONTROLLER1.textureObjectHandle)
 
 
-//            Gdx.app.postRunnable(object : Runnable {
-//                override fun run() {
-//                    try {
-//                        if(state==State.HOSTING_GAME) pollInput()
-//                    } catch (e: Throwable) {
-//                        e.printStackTrace()
-//                    }
-//
-//                    Gdx.app.postRunnable(this)
-//                }
-//            })
+            Gdx.app.postRunnable(object : Runnable {
+                override fun run() {
+                    try {
+                        if(state==State.HOSTING_GAME) pollInput()
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+
+                    Gdx.app.postRunnable(this)
+                }
+            })
 
     }
     //@Volatile
@@ -173,31 +173,31 @@ class Parsec {
         //ar count=0
         while (ParsecLibrary.ParsecHostPollInput(parsecPointer, 0, guest, msg).toInt() == 1) {
 
-            //val controller = App.app.parsecControllers[guest.id]
-            //controller?.processMessage(msg)
+            val controller = App.app.parsecControllers[guest.id]
+            controller?.processMessage(msg)
 
-            when (msg.type) {
-                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
-                    msg.field1.setType(ParsecGamepadButtonMessage::class.java)
-                    val id = msg.field1.gamepadButton.id
-                    val button = msg.field1.gamepadButton.button
-                    val pressed = msg.field1.gamepadButton.pressed
-                    log("button $id $button $pressed")
-
-                }
-                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
-                    msg.field1.setType(ParsecGamepadAxisMessage::class.java)
-                    val axis = msg.field1.gamepadAxis.axis
-                    val id = msg.field1.gamepadAxis.id
-                    val value = msg.field1.gamepadAxis.value
-                    log("axis $id $axis $value")
-                }
-                ParsecLibrary.ParsecMessageType.MESSAGE_MOUSE_MOTION ->{}
-                else -> {
-                    log("msg type ${msg.type}")
-                }
-
-            }
+//            when (msg.type) {
+//                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
+//                    msg.field1.setType(ParsecGamepadButtonMessage::class.java)
+//                    val id = msg.field1.gamepadButton.id
+//                    val button = msg.field1.gamepadButton.button
+//                    val pressed = msg.field1.gamepadButton.pressed
+//                    log("button $id $button $pressed")
+//
+//                }
+//                ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
+//                    msg.field1.setType(ParsecGamepadAxisMessage::class.java)
+//                    val axis = msg.field1.gamepadAxis.axis
+//                    val id = msg.field1.gamepadAxis.id
+//                    val value = msg.field1.gamepadAxis.value
+//                    log("axis $id $axis $value")
+//                }
+//                ParsecLibrary.ParsecMessageType.MESSAGE_MOUSE_MOTION ->{}
+//                else -> {
+//                    log("msg type ${msg.type}")
+//                }
+//
+//            }
             //guest = ParsecGuest()
             //msg = ParsecMessage()
 

@@ -105,6 +105,8 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     val controllerMappings = mutableMapOf<RumbleController, PlayerData>()
     val parsecControllers = mutableMapOf<Int, ParsecController>()
 
+    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ parsecControllers.values
+
     fun loadPlayerData() {
         try {
             val file = Gdx.files.external(".prefs/retrowar.players.json")

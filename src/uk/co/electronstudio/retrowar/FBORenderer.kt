@@ -87,7 +87,7 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
             }
         }
 
-        App.app.parsec?.pollInput()
+       // App.app.parsec?.pollInput()
 
 
         drawScanlines(shape, cam)

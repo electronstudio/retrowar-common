@@ -267,7 +267,7 @@ open class GameSession(
 
         val id = players.size
 
-        log("create player $id")
+        log("create player $id $input ${playerData?.name} ${playerData?.color}")
 
         val namePref = nextPlayerName()
 
@@ -281,6 +281,8 @@ open class GameSession(
             }
 
         players.add(player)
+
+        log("added player, players now ${players.size}")
 
         postMessage("${player.name} JOINED!")
 
@@ -334,7 +336,7 @@ open class GameSession(
         }
 
         app.parsecControllers.values.forEach{
-            val playerData = PlayerData(it.guestName)
+            val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
             createControllerPlayer(it, playerData)
             usedControllers.add(it)
         }
@@ -386,7 +388,12 @@ open class GameSession(
     }
 
     fun checkForPlayerDisconnects() {
-        players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
+        val removals = players.filter {  it.input is GamepadInput && !app.getAllControllersIncludingParsec().contains(it.input.controller)}
+        for (player in removals){
+            players.remove(player)
+            postMessage("${player.name} disconnected")
+        }
+        //players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
     }
 
     override fun resize(width: Int, height: Int) {

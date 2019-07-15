@@ -123,7 +123,7 @@ class ParsecController(val id: Int, val guestName: String): RumbleController {
                 val id = msg.field1.gamepadButton.id
                 val button = msg.field1.gamepadButton.button
                 val pressed = msg.field1.gamepadButton.pressed.toInt()
-                log("button $id $button $pressed")
+//                log("button $id $button $pressed")
                 setButton(button, pressed.toInt())
             }
             ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
@@ -131,12 +131,16 @@ class ParsecController(val id: Int, val guestName: String): RumbleController {
                 val axis = msg.field1.gamepadAxis.axis
                 val id = msg.field1.gamepadAxis.id
                 val value = msg.field1.gamepadAxis.value
-                //log("axis $id $axis $value")
-                setAxis(axis, value)
+//                if(axis== SDL_CONTROLLER_AXIS_LEFTX) {
+//                    log("axis $id $axis $value")
+//                }
+                if(value.toInt() != 0) {
+                    setAxis(axis, value)
+                }
 
             }
             else -> {
-                log("msg type ${msg.type}")
+               // log("msg type ${msg.type}")
             }
         }
     }
