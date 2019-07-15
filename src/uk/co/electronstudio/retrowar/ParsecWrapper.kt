@@ -17,7 +17,7 @@ import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
 
 
-class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: Int? = null ){
+class ParsecWrapper(val callbacks: ParsecWrapperCallbacks, upnp: Boolean? = null, clientPort: Int? = null, serverPort: Int? = null ){
     val parsecPointer: Pointer?
 
     val parsecRef: PointerByReference = PointerByReference()
@@ -27,8 +27,66 @@ class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: 
 
     val parsecConfig = ParsecLibrary.ParsecDefaults()
 
+    val plc = object : ParsecLibrary.ParsecLogCallback {
+        override fun apply(level: Int, msg: Pointer?, opaque: Pointer?) {
+            callbacks.log(level, if(msg!=null)msg.getString(0)else "")
+        }
+    }
+
+    val gst = object : ParsecHostCallbacks.guestStateChange_callback {
+        override fun apply(guest: ParsecGuest?, opaque: Pointer?) {
+            if (guest != null) {
+
+                val name = String(guest.name)
+                when (guest.state) {
+                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTED -> {
+                        callbacks.guestConnected(guest.id, name, guest.attemptID)
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED -> {
+                        callbacks.guestDisconnected(guest.id, name, guest.attemptID)
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTING -> {
+                        callbacks.guestConnecting(guest.id, name, guest.attemptID)
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_FAILED -> {
+                        callbacks.guestFailed(guest.id, name, guest.attemptID)
+                    }
+                    ParsecLibrary.ParsecGuestState.GUEST_WAITING -> {
+                        callbacks.guestWaiting(guest.id, name, guest.attemptID)
+                    }
+                }
+            }
+        }
+    }
+
+    val udc = object : ParsecHostCallbacks.userData_callback {
+        override fun apply(guest: ParsecGuest?, id: Int, text: Pointer?, opaque: Pointer?) {
+            if (guest != null) {
+               callbacks.userData(guest, id, if(text != null) text.getString(0) else "")
+            }
+        }
+
+    }
+
+    val sic = object : ParsecHostCallbacks.serverID_callback {
+        override fun apply(hostID: Int, serverID: Int, opaque: Pointer?) {
+
+            callbacks.serverId(hostID, serverID)
+
+        }
+    }
+
+    val isi = object : ParsecHostCallbacks.invalidSessionID_callback {
+        override fun apply(opaque: Pointer?) {
+           callbacks.invalidSessionId()
+        }
+    }
+
+    private val parsecHostCallbacks = ParsecHostCallbacks(gst, udc, sic, isi)
+
     init {
 
+        ParsecLibrary.ParsecSetLogCallback(plc, null)
 
 
         upnp?.let { parsecConfig.upnp = if (upnp) 1 else 0 }
@@ -57,8 +115,7 @@ class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: 
 
 
 
-    fun hostStart(mode: Int, parsecHostConfig: ParsecHostConfig, nameString: String, sessionId: String, serverId: Int,
-                  parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
+    fun hostStart(mode: Int, parsecHostConfig: ParsecHostConfig, nameString: String, sessionId: String, serverId: Int, opaque: Pointer) : Int{
         val sessionIdM = Memory((sessionId.length + 1).toLong()) // WARNING: assumes ascii-only string
         sessionIdM.setString(0, sessionId)
 
@@ -77,14 +134,12 @@ class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: 
         return statusCode
     }
 
-    fun hostStartDesktop(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int,
-                  parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
-        return hostStart( ParsecLibrary.ParsecHostMode.HOST_DESKTOP, parsecHostConfig, name, sessionId, serverId, parsecHostCallbacks, opaque)
+    fun hostStartDesktop(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int, opaque: Pointer) : Int{
+        return hostStart( ParsecLibrary.ParsecHostMode.HOST_DESKTOP, parsecHostConfig, name, sessionId, serverId, opaque)
     }
 
-    fun hostStartGame(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int,
-                         parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
-        return hostStart( ParsecLibrary.ParsecHostMode.HOST_GAME, parsecHostConfig, name, sessionId, serverId, parsecHostCallbacks, opaque)
+    fun hostStartGame(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int, opaque: Pointer) : Int{
+        return hostStart( ParsecLibrary.ParsecHostMode.HOST_GAME, parsecHostConfig, name, sessionId, serverId, opaque)
     }
 
     fun hostStop() {
@@ -95,6 +150,12 @@ class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: 
 
     fun submitFrame(textureObjectHandle: Int) {
         ParsecLibrary.ParsecHostGLSubmitFrame(parsecPointer, textureObjectHandle)
+    }
+
+    fun hostAllowGuest(attemptID: ByteArray, allow: Boolean) {
+        val m = Memory(attemptID.size.toLong())
+        m.write(0, attemptID, 0, attemptID.size)
+        ParsecLibrary.ParsecHostAllowGuest(parsecPointer, m, if (allow) 1.toByte() else 0.toByte())
     }
 
 
@@ -166,6 +227,17 @@ class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: 
         data class GamepadUnpluggedEvent(override val guestId: Int, val id: Int): InputEvent()
     }
 
+    interface ParsecWrapperCallbacks{
+        fun log(level: Int, msg: String)
+        fun userData(guest: ParsecGuest, id: Int, text: String)
+        fun serverId(hostID: Int, serverID: Int)
+        fun invalidSessionId()
+        fun guestConnected(id: Int, name: String, attemptID: ByteArray)
+        fun guestDisconnected(id: Int, name: String, attemptID: ByteArray)
+        fun guestConnecting(id: Int, name: String, attemptID: ByteArray)
+        fun guestFailed(id: Int, name: String, attemptID: ByteArray)
+        fun guestWaiting(id: Int, name: String, attemptID: ByteArray)
+    }
 
 
 }

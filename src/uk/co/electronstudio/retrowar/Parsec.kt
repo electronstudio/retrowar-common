@@ -10,7 +10,12 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
-class Parsec {
+class Parsec : ParsecWrapper.ParsecWrapperCallbacks {
+
+
+    val nameString = "RetroWar: 8-Bit Party Battle"
+
+
 
     enum class State(val msg: String) {
         STOPPED("STOPPED"), HOSTING_DESKTOP("[GREEN]HOSTING (D)[]"), HOSTING_GAME("[GREEN]HOSTING (G)[]"), INVALID_SESSION_ID(
@@ -22,14 +27,7 @@ class Parsec {
 
     val messages = ConcurrentLinkedQueue<String>()
 
-    private val parsec = ParsecWrapper()
-
-
-    // @Volatile
-    // private var serverID = -1
-
-    // @Volatile
-    // private var desktopMode = false
+    private val parsec = ParsecWrapper(this)
 
 
     val opaque: Pointer = Memory(4)
@@ -37,101 +35,19 @@ class Parsec {
     val guests = ConcurrentHashMap<Int, String>()
 
 
-    val parsecTrue = 1.toByte()
 
-    val gst = object : ParsecHostCallbacks.guestStateChange_callback {
-        override fun apply(guest: ParsecGuest?, opaque: Pointer?) {
-            if (guest != null) {
-                val name = String(guest.name)
-                val attemptID = String(guest.attemptID)
-                log("Parsec", "guestStateChange ${guest.id} $attemptID $name ${guest.state}")
-                when (guest.state) {
-                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTED -> {
-                        guests.put(guest.id, name)
-                        val controller = ParsecController(guest.id, name)
-                        App.app.parsecControllers.put(guest.id, controller)
-                        //ParsecController()
-                        messages.add("$name connected")
-                    }
-                    ParsecLibrary.ParsecGuestState.GUEST_DISCONNECTED -> {
-                        guests.remove(guest.id)
-                        App.app.parsecControllers.remove(guest.id)
-                        messages.add("$name disconnected")
-                    }
-                    ParsecLibrary.ParsecGuestState.GUEST_CONNECTING -> {
-                    }
-                    ParsecLibrary.ParsecGuestState.GUEST_FAILED -> {
-                        messages.add("$name failed to connect")
-                    }
-                    ParsecLibrary.ParsecGuestState.GUEST_WAITING -> {
-                        val m = Memory(guest.attemptID.size.toLong())
-                        m.write(0, guest.attemptID, 0, guest.attemptID.size)
-                        ParsecLibrary.ParsecHostAllowGuest(getPointer(), m, parsecTrue)
-                    }
-                }
-            }
-        }
-    }
 
     fun getPointer() = parsec.parsecPointer
 
-    val udc = object : ParsecHostCallbacks.userData_callback {
-        override fun apply(guest: ParsecGuest?, id: Int, text: Pointer?, opaque: Pointer?) {
-            if (guest != null) {
-                val name = String(guest.name)
-                messages.add("$name: ${text?.getString(0)}")
-                log("Parsec",
-                    "userdata $id ${text?.getString(0)} ${guest.id} ${guest.attemptID} ${name} ${guest.state}")
-            }
-        }
-
-    }
-
-    val sic = object : ParsecHostCallbacks.serverID_callback {
-        override fun apply(hostID: Int, serverID: Int, opaque: Pointer?) {
-            log("Parsec", "serverID $hostID $serverID")
-            //this@Parsec.serverID = serverID
-            //state = if (desktopMode) State.HOSTING_DESKTOP else State.HOSTING_GAME
-            Gdx.app.postRunnable {
-                Prefs.NumPref.PARSEC_LAST_SERVER_ID.setNum(serverID)
-            }
-        }
-    }
-
-    val isi = object : ParsecHostCallbacks.invalidSessionID_callback {
-        override fun apply(opaque: Pointer?) {
-            log("Parsec", "invalidSessionID")
-            state = State.INVALID_SESSION_ID
-        }
-    }
-
-    private val parsecHostCallbacks = ParsecHostCallbacks(gst, udc, sic, isi)
 
     private val parsecHostConfig = ParsecLibrary.ParsecHostDefaults()
-
-    val plc = object : ParsecLibrary.ParsecLogCallback {
-        override fun apply(level: Int, msg: Pointer?, opaque: Pointer?) {
-            log("Parsec", "log ${msg?.getString(0)}")
-        }
-    }
 
 
     init {
 
-        parsecHostConfig.encoderFPS=60
-        parsecHostConfig.maxGuests=15
+        parsecHostConfig.encoderFPS = 60
+        parsecHostConfig.maxGuests = 15
 
-
-        ParsecLibrary.ParsecSetLogCallback(plc, null)
-
-        //            val data = Native.toByteArray(myString);
-        //            val pointer = Memory((data.size + 1).toLong());
-        //            pointer.write(0, data, 0, data.size);
-        //            pointer.setByte(data.size.toLong(), 0);
-        //            val b = ByteBuffer.wrap(data)
-        //            val parsecHostCallbacks: ParsecHostCallbacks = ParsecHostCallbacks()
-
-        //     ParsecLibrary.ParsecHostGLSubmitFrame(pbr.value, Resources.CONTROLLER1.textureObjectHandle)
 
 
         Gdx.app.postRunnable(object : Runnable {
@@ -161,12 +77,9 @@ class Parsec {
         }
 
 
-
-
     }
 
 
-    val nameString = "RetroWar: 8-Bit Party Battle"
 
 
 
@@ -177,7 +90,6 @@ class Parsec {
                 nameString,
                 id,
                 Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum(),
-                parsecHostCallbacks,
                 opaque)
             log("parsec", "ParsecHostStar result $statusCode")
 
@@ -195,7 +107,6 @@ class Parsec {
                 nameString,
                 id,
                 Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum(),
-                parsecHostCallbacks,
                 opaque)
             log("parsec", "ParsecHostStar result $statusCode")
 
@@ -203,7 +114,6 @@ class Parsec {
                 state = State.HOSTING_GAME
             }
 
-            log("parsec", "ParsecHostStar result $statusCode")
         }
     }
 
@@ -234,7 +144,7 @@ class Parsec {
         parsec.hostStop()
     }
 
-    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR $parsec.statusCode[]" else "${state.msg}"
+    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR ${parsec.statusCode}[]" else "${state.msg}"
 
     fun submitFrame(texture: GLTexture) {
         if (state == State.HOSTING_GAME) {
@@ -243,11 +153,57 @@ class Parsec {
     }
 
 
-    //      val status = ParsecHostStatus()
-    //      ParsecLibrary.ParsecHostGetStatus(parsec, status)
-    //        if(status.invalidSessionID.toUInt().toInt()==0){
-    //            return "INVALID SESSION ID"
-    //        }
+    override fun guestConnected(id: Int, name: String, attemptID: ByteArray) {
+        guests.put(id, name)
+        val controller = ParsecController(id, name)
+        App.app.parsecControllers.put(id, controller)
+        //ParsecController()
+        messages.add("$name connected")
+    }
+
+    override fun guestDisconnected(id: Int, name: String, attemptID: ByteArray) {
+        guests.remove(id)
+        App.app.parsecControllers.remove(id)
+        messages.add("$name disconnected")
+    }
+
+    override fun guestConnecting(id: Int, name: String, attemptID: ByteArray) {
+
+    }
+
+    override fun guestFailed(id: Int, name: String, attemptID: ByteArray) {
+        messages.add("$name failed to connect")
+    }
+
+    override fun guestWaiting(id: Int, name: String, attemptID: ByteArray) {
+        parsec.hostAllowGuest(attemptID, true)
+    }
+
+    override fun invalidSessionId() {
+        log("Parsec", "invalidSessionID")
+        state = Parsec.State.INVALID_SESSION_ID
+    }
+
+    override fun serverId(hostID: Int, serverID: Int) {
+        log("Parsec", "serverID $hostID $serverID")
+        Gdx.app.postRunnable {
+            Prefs.NumPref.PARSEC_LAST_SERVER_ID.setNum(serverID)
+        }
+    }
+
+    override fun userData(guest: ParsecGuest, id: Int, text: String) {
+        val name = String(guest.name)
+        messages.add("$name: ${text}")
+        log("Parsec", "userdata $id ${text} ${guest.id} ${guest.attemptID} ${name} ${guest.state}")
+
+    }
+
+
+
+    override fun log(level: Int, msg: String) {
+        log("Parsec", "log $msg")
+    }
+
 
 
 }
