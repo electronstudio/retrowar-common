@@ -54,8 +54,7 @@ val SDL_HAT_LEFTDOWN = SDL_HAT_LEFT or SDL_HAT_DOWN
 
 val zero = Vector3(0f, 0f, 0f)
 
-class ParsecController(val id: Int, val guestName: String): RumbleController {
-
+class ParsecController(val id: Int, val guestName: String) : RumbleController {
 
 
     val buttonState = BooleanArray(15)
@@ -95,7 +94,7 @@ class ParsecController(val id: Int, val guestName: String): RumbleController {
     }
 
     override fun getPov(povCode: Int): PovDirection {
-        return when{
+        return when {
             buttonState[SDL_CONTROLLER_BUTTON_DPAD_UP] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_RIGHT] -> PovDirection.northEast
             buttonState[SDL_CONTROLLER_BUTTON_DPAD_UP] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_LEFT] -> PovDirection.northWest
             buttonState[SDL_CONTROLLER_BUTTON_DPAD_DOWN] && buttonState[SDL_CONTROLLER_BUTTON_DPAD_RIGHT] -> PovDirection.southEast
@@ -116,42 +115,30 @@ class ParsecController(val id: Int, val guestName: String): RumbleController {
         return false
     }
 
-    fun processMessage(msg: ParsecMessage) {
-        when (msg.type) {
-            ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
-                msg.field1.setType(ParsecGamepadButtonMessage::class.java)
-                val id = msg.field1.gamepadButton.id
-                val button = msg.field1.gamepadButton.button
-                val pressed = msg.field1.gamepadButton.pressed.toInt()
-//                log("button $id $button $pressed")
-                setButton(button, pressed.toInt())
-            }
-            ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
-                msg.field1.setType(ParsecGamepadAxisMessage::class.java)
-                val axis = msg.field1.gamepadAxis.axis
-                val id = msg.field1.gamepadAxis.id
-                val value = msg.field1.gamepadAxis.value
-//                if(axis== SDL_CONTROLLER_AXIS_LEFTX) {
-//                    log("axis $id $axis $value")
-//                }
-                if(value.toInt() != 0) {
-                    setAxis(axis, value)
+    fun processMessage(event: ParsecWrapper.InputEvent) {
+        when (event) {
+            is ParsecWrapper.InputEvent.GamepadButtonEvent -> {
+                if (event.button in 1..14) {
+                    setButton(event.button, event.pressed)
                 }
-
             }
-            else -> {
-               // log("msg type ${msg.type}")
+            is ParsecWrapper.InputEvent.GamepadAxisEvent -> {
+                if (event.value.toInt() != 0) {
+                    setAxis(event.axis, event.value)
+                }
             }
         }
+
     }
 
+
     private fun setAxis(axis: Int, value: Short) {
-        if(axis<axisState.size)axisState[axis] = value.toFloat() / Short.MAX_VALUE.toFloat()
+        if (axis < axisState.size) axisState[axis] = value.toFloat() / Short.MAX_VALUE.toFloat()
         else error("Parsec controller axis out of bounds $axis")
     }
 
-    private fun setButton(button: Int, pressed: Int) {
-        if(button<buttonState.size) buttonState[button] = (pressed==1)
+    private fun setButton(button: Int, pressed: Boolean) {
+        if (button < buttonState.size) buttonState[button] = pressed
         else error("Parsec controller button out of bounds $button")
     }
 

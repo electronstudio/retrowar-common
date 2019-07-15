@@ -2,21 +2,39 @@ package uk.co.electronstudio.retrowar
 
 import com.parsecgaming.parsec.ParsecGamepadAxisMessage
 import com.parsecgaming.parsec.ParsecGamepadButtonMessage
+import com.parsecgaming.parsec.ParsecGamepadUnplugMessage
 import com.parsecgaming.parsec.ParsecGuest
+import com.parsecgaming.parsec.ParsecHostCallbacks
+import com.parsecgaming.parsec.ParsecHostConfig
+import com.parsecgaming.parsec.ParsecKeyboardMessage
 import com.parsecgaming.parsec.ParsecLibrary
 import com.parsecgaming.parsec.ParsecMessage
+import com.parsecgaming.parsec.ParsecMouseButtonMessage
+import com.parsecgaming.parsec.ParsecMouseMotionMessage
+import com.parsecgaming.parsec.ParsecMouseWheelMessage
+import com.sun.jna.Memory
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
 
 
-class ParsecWrapper{
+class ParsecWrapper(upnp: Boolean? = null, clientPort: Int? = null, serverPort: Int? = null ){
     val parsecPointer: Pointer?
 
     val parsecRef: PointerByReference = PointerByReference()
     @Volatile
     var statusCode = 0
 
+
+    val parsecConfig = ParsecLibrary.ParsecDefaults()
+
     init {
+
+
+
+        upnp?.let { parsecConfig.upnp = if (upnp) 1 else 0 }
+        clientPort?.let { parsecConfig.clientPort = it }
+        serverPort?.let { parsecConfig.serverPort= it }
+
         statusCode = ParsecLibrary.ParsecInit(parsecConfig, null, parsecRef)
 
 
@@ -31,45 +49,121 @@ class ParsecWrapper{
     fun hostPollInput(): List<InputEvent>{
         val events = arrayListOf<InputEvent>()
         while (ParsecLibrary.ParsecHostPollInput(parsecPointer, 0, guest, msg).toInt() == 1) {
-            events.add(InputEvent(guest, msg))
+            val e = InputEvent.build(guest, msg)
+            if(e!=null) events.add(e)
         }
         return events
     }
 
 
 
+    fun hostStart(mode: Int, parsecHostConfig: ParsecHostConfig, nameString: String, sessionId: String, serverId: Int,
+                  parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
+        val sessionIdM = Memory((sessionId.length + 1).toLong()) // WARNING: assumes ascii-only string
+        sessionIdM.setString(0, sessionId)
+
+        val name = Memory((nameString.length + 1).toLong()).also {
+            it.setString(0, nameString)
+        }
+
+        statusCode = ParsecLibrary.ParsecHostStart(parsecPointer,
+            mode,
+            parsecHostConfig,
+            parsecHostCallbacks,
+            opaque,
+            name,
+            sessionIdM,
+            serverId)
+        return statusCode
+    }
+
+    fun hostStartDesktop(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int,
+                  parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
+        return hostStart( ParsecLibrary.ParsecHostMode.HOST_DESKTOP, parsecHostConfig, name, sessionId, serverId, parsecHostCallbacks, opaque)
+    }
+
+    fun hostStartGame(parsecHostConfig: ParsecHostConfig, name: String, sessionId: String, serverId: Int,
+                         parsecHostCallbacks: ParsecHostCallbacks, opaque: Pointer) : Int{
+        return hostStart( ParsecLibrary.ParsecHostMode.HOST_GAME, parsecHostConfig, name, sessionId, serverId, parsecHostCallbacks, opaque)
+    }
+
+    fun hostStop() {
+        statusCode = 0
+        ParsecLibrary.ParsecHostStop(parsecPointer)
+
+    }
+
+    fun submitFrame(textureObjectHandle: Int) {
+        ParsecLibrary.ParsecHostGLSubmitFrame(parsecPointer, textureObjectHandle)
+    }
+
+
     abstract class InputEvent private constructor(){
         abstract val guestId: Int
         companion object {
             @JvmStatic
-            fun build(guest: ParsecGuest, msg: ParsecMessage): InputEvent {
+            fun build(guest: ParsecGuest, msg: ParsecMessage): InputEvent? {
                 when (msg.type) {
                     ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_BUTTON -> {
                         msg.field1.setType(ParsecGamepadButtonMessage::class.java)
                         val id = msg.field1.gamepadButton.id
                         val button = msg.field1.gamepadButton.button
-                        val pressed = msg.field1.gamepadButton.pressed
-                        return ButtonInputEvent(guest.id, id, button, pressed.toInt() == 1)
+                        val pressed = (msg.field1.gamepadButton.pressed.toInt() == 1)
+                        return GamepadButtonEvent(guest.id, id, button, pressed)
                     }
                     ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_AXIS -> {
                         msg.field1.setType(ParsecGamepadAxisMessage::class.java)
                         val axis = msg.field1.gamepadAxis.axis
                         val id = msg.field1.gamepadAxis.id
                         val value = msg.field1.gamepadAxis.value
-                        setAxis(axis, value)
-                        log("axis $id $axis $value")
+                        return GamepadAxisEvent(guest.id, id, axis, value)
+                    }
+                    ParsecLibrary.ParsecMessageType.MESSAGE_KEYBOARD -> {
+                        msg.field1.setType(ParsecKeyboardMessage::class.java)
+                        val pressed = (msg.field1.keyboard.pressed.toInt() == 1)
+                        val code = msg.field1.keyboard.code
+                        val mod = msg.field1.keyboard.mod
+                        return KeyboardEvent(guest.id, pressed, code, mod)
+                    }
+                    ParsecLibrary.ParsecMessageType.MESSAGE_MOUSE_BUTTON -> {
+                        msg.field1.setType(ParsecMouseButtonMessage::class.java)
+                        val pressed = (msg.field1.mouseButton.pressed.toInt() == 1)
+                        val button = msg.field1.mouseButton.button
+                        return MouseButtonEvent(guest.id, pressed, button)
+                    }
+                    ParsecLibrary.ParsecMessageType.MESSAGE_MOUSE_WHEEL -> {
+                        msg.field1.setType(ParsecMouseWheelMessage::class.java)
+                        val x = msg.field1.mouseWheel.x
+                        val y = msg.field1.mouseWheel.y
+                        return MouseWheelEvent(guest.id, x, y)
+                    }
+                    ParsecLibrary.ParsecMessageType.MESSAGE_MOUSE_MOTION -> {
+                        msg.field1.setType(ParsecMouseMotionMessage::class.java)
+                        val relative = (msg.field1.mouseMotion.relative.toInt() == 1)
+                        val x = msg.field1.mouseMotion.x
+                        val y = msg.field1.mouseMotion.y
+                        return MouseMotionEvent(guest.id, relative, x, y)
+                    }
+                    ParsecLibrary.ParsecMessageType.MESSAGE_GAMEPAD_UNPLUG -> {
+                        msg.field1.setType(ParsecGamepadUnplugMessage::class.java)
+                        val id = msg.field1.gamepadUnplug.id
+                        return GamepadUnpluggedEvent(guest.id, id)
                     }
                     else -> {
-
-                        log("msg type ${msg.type}")
+                        error("uknown msg type ${msg.type}")
+                        return null
                     }
                 }
-                return ButtonInputEvent(guest, msg)
             }
         }
 
-        data class ButtonInputEvent(override val guestId: Int, val id: Int, val button: Int, val pressed: Boolean): InputEvent(){}
-        data class
+        data class GamepadButtonEvent(override val guestId: Int, val id: Int, val button: Int, val pressed: Boolean): InputEvent()
+        data class GamepadAxisEvent(override val guestId: Int, val id: Int, val axis: Int, val value: Short): InputEvent()
+        data class KeyboardEvent(override val guestId: Int, val pressed: Boolean, val code: Int, val mod: Int): InputEvent()
+        data class MouseButtonEvent(override val guestId: Int, val pressed: Boolean, val button: Int): InputEvent()
+        data class MouseWheelEvent(override val guestId: Int, val x: Int, val y: Int): InputEvent()
+        data class MouseMotionEvent(override val guestId: Int, val relative: Boolean, val x: Int, val y: Int): InputEvent()
+        data class GamepadUnpluggedEvent(override val guestId: Int, val id: Int): InputEvent()
     }
 
 
