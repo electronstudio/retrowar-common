@@ -5,11 +5,14 @@ import com.badlogic.gdx.graphics.GLTexture
 import com.parsecgaming.parsec.*
 
 import kong.unirest.Unirest
+import uk.co.electronstudio.parsec.InputEvent
+import uk.co.electronstudio.parsec.ParsecHostListener
+import uk.co.electronstudio.parsec.ParsecLogListener
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
-class Parsec : ParsecWrapper.ParsecHostListener, ParsecWrapper.ParsecLogListener {
+class Parsec : ParsecHostListener, ParsecLogListener {
 
 
     val nameString = "RetroWar: 8-Bit Party Battle"
@@ -26,7 +29,7 @@ class Parsec : ParsecWrapper.ParsecHostListener, ParsecWrapper.ParsecLogListener
 
     val messages = ConcurrentLinkedQueue<String>()
 
-    private val parsec = ParsecWrapper(this)
+    private val parsec = uk.co.electronstudio.parsec.Parsec(this)
 
 
 
@@ -68,7 +71,7 @@ class Parsec : ParsecWrapper.ParsecHostListener, ParsecWrapper.ParsecLogListener
         for (event in parsec.hostPollInput()) {
             val controller = App.app.parsecControllers[event.guestId]
             when (event) {
-                is ParsecWrapper.InputEvent.GamepadButtonEvent -> {
+                is InputEvent.GamepadButtonEvent -> {
                     controller?.buttonState
                 }
             }

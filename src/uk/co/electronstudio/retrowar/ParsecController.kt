@@ -7,6 +7,7 @@ import com.parsecgaming.parsec.ParsecGamepadAxisMessage
 import com.parsecgaming.parsec.ParsecGamepadButtonMessage
 import com.parsecgaming.parsec.ParsecLibrary
 import com.parsecgaming.parsec.ParsecMessage
+import uk.co.electronstudio.parsec.InputEvent
 import uk.co.electronstudio.sdl2gdx.RumbleController
 
 
@@ -115,14 +116,14 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
         return false
     }
 
-    fun processMessage(event: ParsecWrapper.InputEvent) {
+    fun processMessage(event: InputEvent) {
         when (event) {
-            is ParsecWrapper.InputEvent.GamepadButtonEvent -> {
+            is InputEvent.GamepadButtonEvent -> {
                 if (event.button in 1..14) {
                     setButton(event.button, event.pressed)
                 }
             }
-            is ParsecWrapper.InputEvent.GamepadAxisEvent -> {
+            is InputEvent.GamepadAxisEvent -> {
                 if (event.value.toInt() != 0) {
                     setAxis(event.axis, event.value)
                 }
