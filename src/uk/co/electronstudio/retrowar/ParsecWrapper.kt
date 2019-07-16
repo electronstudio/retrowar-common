@@ -33,6 +33,8 @@ class ParsecWrapper(val logListener: ParsecLogListener, upnp: Boolean? = null, c
         }
     }
 
+    lateinit var parsecHostCallbacks: ParsecHostCallbacks   // reference kept to make sure it doesnt get GCed
+
 
     private fun createCallBacks(callbacks: ParsecHostListener): ParsecHostCallbacks {
 
@@ -128,10 +130,12 @@ class ParsecWrapper(val logListener: ParsecLogListener, upnp: Boolean? = null, c
             it.setString(0, nameString)
         }
 
+        parsecHostCallbacks = createCallBacks(parsecHostListener)
+
         statusCode = ParsecLibrary.ParsecHostStart(parsecPointer,
             mode,
             parsecHostConfig,
-            createCallBacks(parsecHostListener),
+            parsecHostCallbacks,
             opaque,
             name,
             sessionIdM,
@@ -235,7 +239,6 @@ class ParsecWrapper(val logListener: ParsecLogListener, upnp: Boolean? = null, c
     }
 
     interface ParsecHostListener{
-
         fun userData(guest: ParsecGuest, id: Int, text: String)
         fun serverId(hostID: Int, serverID: Int)
         fun invalidSessionId()
