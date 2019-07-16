@@ -3,14 +3,13 @@ package uk.co.electronstudio.retrowar
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GLTexture
 import com.parsecgaming.parsec.*
-import com.sun.jna.Memory
-import com.sun.jna.Pointer
+
 import kong.unirest.Unirest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
-class Parsec : ParsecWrapper.ParsecWrapperCallbacks {
+class Parsec : ParsecWrapper.ParsecHostListener, ParsecWrapper.ParsecLogListener {
 
 
     val nameString = "RetroWar: 8-Bit Party Battle"
@@ -30,7 +29,7 @@ class Parsec : ParsecWrapper.ParsecWrapperCallbacks {
     private val parsec = ParsecWrapper(this)
 
 
-    val opaque: Pointer = Memory(4)
+
 
     val guests = ConcurrentHashMap<Int, String>()
 
@@ -84,13 +83,8 @@ class Parsec : ParsecWrapper.ParsecWrapperCallbacks {
 
 
     fun hostDesktopStart(id: String) {
-        log("Parsec", "hostDesktopstart $id")
         if (state == State.STOPPED || state == State.INVALID_SESSION_ID) {
-            val statusCode = parsec.hostStartDesktop(parsecHostConfig,
-                nameString,
-                id,
-                Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum(),
-                opaque)
+            val statusCode = parsec.hostStartDesktop(parsecHostConfig, this, nameString, id, Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum())
             log("parsec", "ParsecHostStar result $statusCode")
 
             if (statusCode >= 0) {
@@ -101,13 +95,8 @@ class Parsec : ParsecWrapper.ParsecWrapperCallbacks {
     }
 
     fun hostGameStart(id: String) {
-        log("Parsec", "hostGamestart $id")
         if (state == State.STOPPED || state == State.INVALID_SESSION_ID) {
-            val statusCode = parsec.hostStartGame(parsecHostConfig,
-                nameString,
-                id,
-                Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum(),
-                opaque)
+            val statusCode = parsec.hostStartGame(parsecHostConfig, this, nameString, id, Prefs.NumPref.PARSEC_LAST_SERVER_ID.getNum())
             log("parsec", "ParsecHostStar result $statusCode")
 
             if (statusCode >= 0) {
