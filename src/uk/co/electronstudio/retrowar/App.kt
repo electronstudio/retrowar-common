@@ -328,6 +328,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
             Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
         } else {
             Gdx.graphics.setWindowedMode(832, 512)
+            Gdx.graphics.setUndecorated(false)
+            Gdx.graphics.setTitle("RetroWar")
+            Gdx.graphics.setResizable(true)
         }
         Gdx.graphics.setVSync(BinPref.VSYNC.isEnabled())
     }
