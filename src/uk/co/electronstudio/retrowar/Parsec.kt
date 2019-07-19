@@ -3,6 +3,7 @@ package uk.co.electronstudio.retrowar
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GLTexture
 import com.parsecgaming.parsec.*
+import com.sun.jna.Memory
 
 import kong.unirest.Unirest
 import uk.co.electronstudio.parsec.InputEvent
@@ -52,22 +53,22 @@ class Parsec : ParsecHostListener, ParsecLogListener {
 
 
 
-        Gdx.app.postRunnable(object : Runnable {
-            override fun run() {
-                try {
-                    if (state == State.HOSTING_GAME) pollInput()
-                } catch (e: Throwable) {
-                    e.printStackTrace()
-                }
-
-                Gdx.app.postRunnable(this)
-            }
-        })
+//        Gdx.app.postRunnable(object : Runnable {
+//            override fun run() {
+//                try {
+//                    if (state == State.HOSTING_GAME) pollInput()
+//                } catch (e: Throwable) {
+//                    e.printStackTrace()
+//                }
+//
+//                Gdx.app.postRunnable(this)
+//            }
+//        })
 
     }
 
     fun pollInput() {
-
+        if(state != State.HOSTING_GAME) return
         for (event in parsec.hostPollInput()) {
             val controller = App.app.parsecControllers[event.guestId]
             when (event) {
@@ -144,6 +145,13 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         }
     }
 
+    fun submitAudio(rate: Int, pcm: ByteArray, samples: Int) {
+        if (state == State.HOSTING_GAME) {
+            val buffer = Memory(pcm.size.toLong())
+            buffer.write(0L, pcm, 0, pcm.size)
+            ParsecLibrary.ParsecHostSubmitAudio(parsec.parsecPointer, ParsecLibrary.ParsecPCMFormat.PCM_FORMAT_INT16, rate, buffer, samples)
+        }
+    }
 
     override fun guestConnected(id: Int, name: String, attemptID: ByteArray) {
         guests.put(id, name)

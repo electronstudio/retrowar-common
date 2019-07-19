@@ -185,9 +185,13 @@ interface Callback {
     fun setForegroundFPS(foregroundFPS: Int)
 
     fun setBackgroundFPS(backgroundFPS: Int)
+   // fun audio()
 }
 
 class EmptyCallback : Callback {
+    //override fun audio() {
+//
+  //  }
 
     override fun setForegroundFPS(foregroundFPS: Int) {
     }

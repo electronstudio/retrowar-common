@@ -203,7 +203,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         log("swapscreen dispose")
         val s = app.screen
         app.setScreen(screen)
-        s.dispose()
+        //s.dispose()
     }
 
     /** Displays a new screen and save old one for later*/
