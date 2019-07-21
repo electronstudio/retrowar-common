@@ -71,11 +71,6 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         if(state != State.HOSTING_GAME) return
         for (event in parsec.hostPollInput()) {
             val controller = App.app.parsecControllers[event.guestId]
-            when (event) {
-                is InputEvent.GamepadButtonEvent -> {
-                    controller?.buttonState
-                }
-            }
             controller?.processMessage(event)
         }
 
