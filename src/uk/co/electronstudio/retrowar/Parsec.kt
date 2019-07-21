@@ -22,7 +22,7 @@ class Parsec : ParsecHostListener, ParsecLogListener {
 
     enum class State(val msg: String) {
         STOPPED("STOPPED"), HOSTING_DESKTOP("[GREEN]HOSTING (D)[]"), HOSTING_GAME("[GREEN]HOSTING (G)[]"), INVALID_SESSION_ID(
-            "[RED]INVALID SESSION ID\nPLEASE LOGIN AGAIN[]")
+            "[RED]INVALID SESSION ID\nPLEASE LOGIN AGAIN[]")  //fixme sealed classes would be nicer than enum
     }
 
     @Volatile
@@ -30,7 +30,7 @@ class Parsec : ParsecHostListener, ParsecLogListener {
 
     val messages = ConcurrentLinkedQueue<String>()
 
-    private val parsec = uk.co.electronstudio.parsec.Parsec(this)
+    private val parsec = uk.co.electronstudio.parsec.Parsec(this, true, 9000, 8000)
 
 
 
