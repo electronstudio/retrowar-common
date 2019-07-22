@@ -10,7 +10,7 @@ import uk.co.electronstudio.sdl2gdx.RumbleController
  * Maps a controller to an input
  * Now assumes all controllers are SDL mappings
  */
-internal class GamepadInput(val controller: RumbleController) : InputDevice() {
+open class GamepadInput(val controller: RumbleController) : InputDevice() {
 
     val SDL_CONTROLLER_AXIS_INVALID = -1
     val SDL_CONTROLLER_AXIS_LEFTX = 0

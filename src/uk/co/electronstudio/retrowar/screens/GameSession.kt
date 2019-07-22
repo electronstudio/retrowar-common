@@ -149,7 +149,13 @@ open class GameSession(
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createControllerPlayer(controller: RumbleController, playerData: PlayerData?) {
+    private fun createParsecPlayer(controller: ParsecController, playerData: PlayerData?): Player{
+        val player = createControllerPlayer(controller, playerData)
+        controller.player = player
+        return player
+    }
+
+    private fun createControllerPlayer(controller: RumbleController, playerData: PlayerData?): Player {
 
 //        val c = controller.javaClass
 //        val m = c.methods.find { it.name.equals("rumble") }
@@ -159,7 +165,7 @@ open class GameSession(
             controller.rumble(0.0f, 0.5f, 5000)
        // }
         val gamepad = GamepadInput(controller)
-        createPlayer(gamepad, playerData)
+        return createPlayer(gamepad, playerData)
     }
 
     //    var touchscreenInput: TouchscreenInput? = null
@@ -337,7 +343,7 @@ open class GameSession(
 
         app.parsecControllers.values.forEach{
             val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
-            createControllerPlayer(it, playerData)
+            val player = createParsecPlayer(it, playerData)
             usedControllers.add(it)
         }
 

@@ -6,23 +6,10 @@ import com.badlogic.gdx.math.Vector3
 import com.parsecgaming.parsec.ParsecGamepadAxisMessage
 import com.parsecgaming.parsec.ParsecGamepadButtonMessage
 import com.parsecgaming.parsec.ParsecLibrary
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_A
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_D
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_E
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_ENTER
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_KP_2
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_KP_4
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_KP_6
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_KP_8
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_LCTRL
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_N
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_RCTRL
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_S
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_SPACE
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_TAB
-import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.KEY_W
+import com.parsecgaming.parsec.ParsecLibrary.ParsecKeycode.*
 import com.parsecgaming.parsec.ParsecMessage
 import uk.co.electronstudio.parsec.InputEvent
+import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.sdl2gdx.RumbleController
 
 
@@ -77,6 +64,7 @@ val zero = Vector3(0f, 0f, 0f)
 
 class ParsecController(val id: Int, val guestName: String) : RumbleController {
 
+    var player: Player? = null
 
     val buttonState = BooleanArray(15)
     val axisState = FloatArray(6)
@@ -149,34 +137,65 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
                 }
             }
             is InputEvent.KeyboardEvent -> {
+                log("key ${event.code} ${event.pressed}")
                 setKey(event.code, event.pressed)
             }
             is InputEvent.MouseButtonEvent -> {
-
+                when (event.button) {
+                    ParsecLibrary.ParsecMouseButton.MOUSE_L -> buttonState[SDL_CONTROLLER_BUTTON_A] = event.pressed
+                    ParsecLibrary.ParsecMouseButton.MOUSE_MIDDLE -> axisState[SDL_CONTROLLER_AXIS_TRIGGERLEFT] = if (event.pressed) 1f else 0f
+                    ParsecLibrary.ParsecMouseButton.MOUSE_R -> axisState[SDL_CONTROLLER_AXIS_TRIGGERRIGHT] = if (event.pressed) 1f else 0f
+                }
             }
             is InputEvent.MouseMotionEvent -> {
-                log("mouse motion ${event.relative} ${event.x} $event.y")
+                //log("mouse motion ${event.relative} ${event.x} ${event.y}")
+                val session = App.app.screen
+                val player = this.player
+                if (session is GameSession){
+                    val game = session.game
+                    if (game != null && game is Game.UsesMouseAsInputDevice && player != null) {
+                        val vec =  game.getMouseFromGameCoordsFlipY(player, event.x.toFloat(), event.y.toFloat())
+                        axisState[SDL_CONTROLLER_AXIS_RIGHTX] = vec.x
+                        axisState[SDL_CONTROLLER_AXIS_RIGHTY] = vec.y
+                    }
+                }
             }
         }
 
     }
 
     private fun setKey(code: Int, pressed: Boolean) {
-        val gamepadButton = when(code){
-            KEY_W, KEY_KP_8 -> SDL_CONTROLLER_BUTTON_DPAD_UP
-            KEY_S, KEY_KP_2 -> SDL_CONTROLLER_BUTTON_DPAD_DOWN
-            KEY_A, KEY_KP_4 -> SDL_CONTROLLER_BUTTON_DPAD_LEFT
-            KEY_D, KEY_KP_6 -> SDL_CONTROLLER_BUTTON_DPAD_RIGHT
-            KEY_SPACE -> SDL_CONTROLLER_BUTTON_A
-            KEY_ENTER -> SDL_CONTROLLER_BUTTON_B
-            KEY_LCTRL -> SDL_CONTROLLER_BUTTON_X
-            KEY_RCTRL -> SDL_CONTROLLER_BUTTON_Y
-            KEY_TAB -> SDL_CONTROLLER_BUTTON_LEFTSHOULDER
-            KEY_E -> SDL_CONTROLLER_BUTTON_RIGHTSHOULDER
-            else -> -1
-        }
-        if (gamepadButton != -1){
-            buttonState[gamepadButton] = pressed
+        when (code) {
+            KEY_LSHIFT, KEY_Z ->
+                axisState[SDL_CONTROLLER_AXIS_TRIGGERLEFT] = if (pressed) 1f else 0f
+
+            KEY_RSHIFT, KEY_SLASH ->
+                axisState[SDL_CONTROLLER_AXIS_TRIGGERRIGHT] = if (pressed) 1f else 0f
+
+            KEY_UP -> axisState[SDL_CONTROLLER_AXIS_RIGHTY] = if (pressed) -1f else 0f
+            KEY_DOWN -> axisState[SDL_CONTROLLER_AXIS_RIGHTY] = if (pressed) 1f else 0f
+            KEY_LEFT -> axisState[SDL_CONTROLLER_AXIS_RIGHTX] = if (pressed) -1f else 0f
+            KEY_RIGHT -> axisState[SDL_CONTROLLER_AXIS_RIGHTX] = if (pressed) 1f else 0f
+            else -> {
+                val gamepadButton = when (code) {
+                    KEY_W, KEY_KP_8 -> SDL_CONTROLLER_BUTTON_DPAD_UP
+                    KEY_S, KEY_KP_2 -> SDL_CONTROLLER_BUTTON_DPAD_DOWN
+                    KEY_A, KEY_KP_4 -> SDL_CONTROLLER_BUTTON_DPAD_LEFT
+                    KEY_D, KEY_KP_6 -> SDL_CONTROLLER_BUTTON_DPAD_RIGHT
+                    KEY_SPACE -> SDL_CONTROLLER_BUTTON_A
+                    KEY_ENTER -> SDL_CONTROLLER_BUTTON_B
+                    KEY_LCTRL -> SDL_CONTROLLER_BUTTON_X
+                    KEY_RCTRL -> SDL_CONTROLLER_BUTTON_Y
+                    KEY_TAB -> SDL_CONTROLLER_BUTTON_LEFTSHOULDER
+                    KEY_E -> SDL_CONTROLLER_BUTTON_RIGHTSHOULDER
+                    else -> -1
+                }
+                if(gamepadButton != -1) {
+                    buttonState[gamepadButton] = pressed
+                }else{
+                    log("parsec key input $code")
+                }
+            }
         }
     }
 
