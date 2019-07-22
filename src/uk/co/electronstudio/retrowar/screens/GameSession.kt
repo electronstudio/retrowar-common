@@ -138,14 +138,13 @@ open class GameSession(
         postMessage("${client.id} disconnected")
     }
 
-    var keyboardPlayer: Player? = null
 
     fun createKBPlayer() {
         if (KBinUse && !Prefs.BinPref.DEBUG.isEnabled()) return
         KBinUse = true
 
         val i = KeyboardMouseInput(this)
-        keyboardPlayer = createPlayer(i, null) // FIXME keyboard player never has any name data
+        createPlayer(i, null) // FIXME keyboard player never has any name data
 
         //  val ship = createCharacter(i, player)
     }
@@ -281,6 +280,7 @@ open class GameSession(
             }
 
         players.add(player)
+        input.player = player
 
         log("added player, players now ${players.size}")
 

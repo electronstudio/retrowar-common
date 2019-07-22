@@ -6,6 +6,7 @@ import uk.co.electronstudio.retrowar.screens.GameSession
 
 import uk.co.electronstudio.retrowar.utils.Vec
 import com.badlogic.gdx.Gdx.input
+import sun.audio.AudioPlayer.player
 
 
 /**
@@ -81,9 +82,9 @@ internal class KeyboardMouseInput(val session: GameSession) : InputDevice() {
             }
 
             val game = session.game
-            if (game != null && game is Game.UsesMouseAsInputDevice) {
-                val m = game.getMouse()
-                return m
+            val player = this.player
+            if (game != null && game is Game.UsesMouseAsInputDevice && player != null) {
+                return  game.getMouse(player)
             }
             return Vec(0f, 0f)
         }

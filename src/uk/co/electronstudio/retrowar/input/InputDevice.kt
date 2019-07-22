@@ -1,5 +1,6 @@
 package uk.co.electronstudio.retrowar.input
 
+import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.utils.Vec
 
 /**
@@ -33,7 +34,7 @@ abstract class InputDevice {
             return (A || B || X || Y) || rightBumper
         }
 
-    var entity: Int = -1
+    var player: Player? = null
 
 //    internal fun filterDeadzone(deadzone: Float = 0.1f, axisX: Float, axisY: Float, outerCircle: Float = 1f): Vec {
 //        val v = Vec(axisX, axisY)

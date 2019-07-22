@@ -24,8 +24,7 @@ open class Player(@Transient val input: InputDevice, val name: String, val color
     /**
      * If your game uses entities you can store the one representing the Player's sprite here.
      */
-    // var entityId: Int = -1
-
+    var entityId: Int? = null
     /**
      * If your game keeps score you can store it here
      */
