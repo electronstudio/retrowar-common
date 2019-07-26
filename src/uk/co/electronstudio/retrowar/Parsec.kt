@@ -73,10 +73,12 @@ class Parsec : ParsecHostListener, ParsecLogListener {
             val controller = App.app.parsecControllers[event.guestId]
             controller?.processMessage(event)
         }
-
-
     }
 
+    fun pollHostEvents(){
+        if(state != State.HOSTING_GAME && state != State.HOSTING_DESKTOP) return
+        parsec.runHostCallbacks()
+    }
 
 
 
@@ -154,16 +156,18 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         App.app.parsecControllers.put(id, controller)
         //ParsecController()
         messages.add("$name connected")
+        log("Parsec","$name connected")
     }
 
     override fun guestDisconnected(id: Int, name: String, attemptID: ByteArray) {
         guests.remove(id)
         App.app.parsecControllers.remove(id)
         messages.add("$name disconnected")
+        log("Parsec","$name disconnected")
     }
 
     override fun guestConnecting(id: Int, name: String, attemptID: ByteArray) {
-
+        log("Parsec","$name connecting...")
     }
 
     override fun guestFailed(id: Int, name: String, attemptID: ByteArray) {

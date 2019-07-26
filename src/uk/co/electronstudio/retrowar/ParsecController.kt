@@ -69,6 +69,11 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
     val buttonState = BooleanArray(15)
     val axisState = FloatArray(6)
 
+
+    var x: Int = 0
+    var y: Int = 0
+
+
     override fun rumble(leftMagnitude: Float, rightMagnitude: Float, duration_ms: Int): Boolean {
         return false
     }
@@ -127,14 +132,16 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
     fun processMessage(event: InputEvent) {
         when (event) {
             is InputEvent.GamepadButtonEvent -> {
-                if (event.button in 1..14) {
+                log("button ${event.button} ${event.pressed}")
+                if (event.button in 0..14) {
                     setButton(event.button, event.pressed)
                 }
             }
             is InputEvent.GamepadAxisEvent -> {
-                if (event.value.toInt() != 0) {
+                log("axis ${event.axis} ${event.value}")
+                //if (event.value.toInt() != 0) {
                     setAxis(event.axis, event.value)
-                }
+                //}
             }
             is InputEvent.KeyboardEvent -> {
                 log("key ${event.code} ${event.pressed}")
@@ -142,23 +149,32 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
             }
             is InputEvent.MouseButtonEvent -> {
                 when (event.button) {
-                    ParsecLibrary.ParsecMouseButton.MOUSE_L -> buttonState[SDL_CONTROLLER_BUTTON_A] = event.pressed
+                    ParsecLibrary.ParsecMouseButton.MOUSE_L -> {
+                        buttonState[SDL_CONTROLLER_BUTTON_A] = event.pressed
+                        if(event.pressed){
+                        val session = App.app.screen
+                        val player = this.player
+                        if (session is GameSession){
+                            val game = session.game
+                            if (game != null && game is Game.UsesMouseAsInputDevice && player != null) {
+                                val vec =  game.getMouseFromGameCoordsFlipY(player, x.toFloat(), y.toFloat())
+                                axisState[SDL_CONTROLLER_AXIS_RIGHTX] = vec.x
+                                axisState[SDL_CONTROLLER_AXIS_RIGHTY] = vec.y
+                            }
+                        }}else{
+                            axisState[SDL_CONTROLLER_AXIS_RIGHTX] = 0f
+                            axisState[SDL_CONTROLLER_AXIS_RIGHTY] = 0f
+                        }
+                    }
                     ParsecLibrary.ParsecMouseButton.MOUSE_MIDDLE -> axisState[SDL_CONTROLLER_AXIS_TRIGGERLEFT] = if (event.pressed) 1f else 0f
                     ParsecLibrary.ParsecMouseButton.MOUSE_R -> axisState[SDL_CONTROLLER_AXIS_TRIGGERRIGHT] = if (event.pressed) 1f else 0f
                 }
             }
+
             is InputEvent.MouseMotionEvent -> {
                 //log("mouse motion ${event.relative} ${event.x} ${event.y}")
-                val session = App.app.screen
-                val player = this.player
-                if (session is GameSession){
-                    val game = session.game
-                    if (game != null && game is Game.UsesMouseAsInputDevice && player != null) {
-                        val vec =  game.getMouseFromGameCoordsFlipY(player, event.x.toFloat(), event.y.toFloat())
-                        axisState[SDL_CONTROLLER_AXIS_RIGHTX] = vec.x
-                        axisState[SDL_CONTROLLER_AXIS_RIGHTY] = vec.y
-                    }
-                }
+                x=event.x
+                y=event.y
             }
         }
 

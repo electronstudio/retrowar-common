@@ -124,6 +124,7 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     fun resize(width: Int, height: Int) {
         log("FBOrenderer resize")
         // mFBO.resizeToScreenSize(WIDTH, HEIGHT, scaleFactor, m)
+        Prefs.BinPref.VSYNC.apply()
 
         cam = setupCam(width.toFloat(), height.toFloat())
     }
