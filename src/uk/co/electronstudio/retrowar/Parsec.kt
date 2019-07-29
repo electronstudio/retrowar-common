@@ -136,7 +136,7 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         parsec.hostStop()
     }
 
-    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR ${parsec.statusCode}[]" else "${state.msg}\n${guests.size} CONNECTIONS"
+    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR ${parsec.statusCode}[]" else "${state.msg}\n\n${guests.size} CONNECTIONS"
 
     fun submitFrame(texture: GLTexture) {
         if (state == State.HOSTING_GAME) {
@@ -158,6 +158,8 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         App.app.parsecControllers.put(id, controller)
         //ParsecController()
         messages.add("$name connected")
+        //parsec.sendMessage(id, "Welcome $name")
+
         log("Parsec","$name connected")
     }
 
