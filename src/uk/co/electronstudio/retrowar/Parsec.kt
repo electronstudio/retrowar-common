@@ -103,10 +103,12 @@ class Parsec : ParsecHostListener, ParsecLogListener {
             if (statusCode >= 0) {
                 state = State.HOSTING_GAME
             }
-
         }
     }
 
+    fun dispose(){
+        parsec.dispose()
+    }
 
     //    fun login(email: String, password: String, tfa: String) {
     //        val text = "{\"email\": \"$email\", \"password\": \"$password\", \"tfa\": \"$tfa\"}"
@@ -134,7 +136,7 @@ class Parsec : ParsecHostListener, ParsecLogListener {
         parsec.hostStop()
     }
 
-    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR ${parsec.statusCode}[]" else "${state.msg}"
+    fun status(): String = if (parsec.statusCode < 0) "[RED]ERROR ${parsec.statusCode}[]" else "${state.msg}\n${guests.size} CONNECTIONS"
 
     fun submitFrame(texture: GLTexture) {
         if (state == State.HOSTING_GAME) {

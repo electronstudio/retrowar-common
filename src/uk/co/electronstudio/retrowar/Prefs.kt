@@ -51,7 +51,7 @@ object Prefs {
 
     /** @suppress */
     enum class MultiChoicePref(val pref: String, vararg val choices: String, val default: Int = 0) {
-        SERVER_MODE("serverMode","COMPATIBLE (DESKTOP CAPTURE)", "FULL INTEGRATION (EXPERIMENTAL"),
+        SERVER_MODE("serverMode","COMPATIBLE (DESKTOP CAPTURE)", "FULL INTEGRATION"),
         PARTICLES("particles", "ON", "OFF", "EXCESSIVE"),
         RUMBLE("rumble", "HIGH", "LOW", "OFF"),
         INPUT("input", "RAW INPUT", "XINPUT", "DIRECT INPUT"),

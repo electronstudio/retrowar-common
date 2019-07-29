@@ -138,7 +138,7 @@ class ParsecController(val id: Int, val guestName: String) : RumbleController {
                 }
             }
             is InputEvent.GamepadAxisEvent -> {
-                log("axis ${event.axis} ${event.value}")
+                //log("axis ${event.axis} ${event.value}")
                 //if (event.value.toInt() != 0) {
                     setAxis(event.axis, event.value)
                 //}
