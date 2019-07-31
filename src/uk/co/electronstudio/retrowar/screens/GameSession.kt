@@ -37,9 +37,9 @@ import java.util.ArrayList
  * to maintain the same players, scores, (network connections?)
  */
 open class GameSession(
-    val factory: AbstractGameFactory,
-    val useSimpleGameSettings: Boolean = false
-    // val preSelectedInputDevice: InputDevice? = null
+        val factory: AbstractGameFactory,
+        val useSimpleGameSettings: Boolean = false
+        // val preSelectedInputDevice: InputDevice? = null
 ) : ScreenAdapter() {
 
     var game: Game? = null
@@ -85,6 +85,8 @@ open class GameSession(
         game?.dispose()
     }
 
+    var playersJoined = 0
+
     init {
 
         //  if(client) setNetworkRoleToClient()
@@ -99,7 +101,7 @@ open class GameSession(
         // val clazz = UniGame::class
         // game = clazz.primaryConstructor?.call()
         resetTimer()
-        game = if(useSimpleGameSettings) factory.createWithSimpleSettings(this) else factory.create(this)
+        game = if (useSimpleGameSettings) factory.createWithSimpleSettings(this) else factory.create(this)
         val level = factory.levels?.get(factory.level)
         app.submitAnalytics("sessionStart:${factory.name}")
         level?.let {
@@ -149,7 +151,7 @@ open class GameSession(
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createParsecPlayer(controller: ParsecController, playerData: PlayerData?): Player{
+    private fun createParsecPlayer(controller: ParsecController, playerData: PlayerData?): Player {
         val player = createControllerPlayer(controller, playerData)
         controller.player = player
         return player
@@ -161,9 +163,9 @@ open class GameSession(
 //        val m = c.methods.find { it.name.equals("rumble") }
 //        m!!.invoke(controller, 1f, 1f, 500)
 
-       // if (controller is RumbleController) {
-            controller.rumble(0.0f, 0.5f, 5000)
-       // }
+        // if (controller is RumbleController) {
+        controller.rumble(0.0f, 0.5f, 5000)
+        // }
         val gamepad = GamepadInput(controller)
         return createPlayer(gamepad, playerData)
     }
@@ -257,11 +259,12 @@ open class GameSession(
         log("create network player $id")
 
         val player = Player(input = NetworkInput(),
-            name = name,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))
+                name = name,
+                color = Color.valueOf((nextPlayerColor())),
+                color2 = Color.valueOf(nextPlayerColor2()))
 
         players.add(player)
+        playersJoined++
 
         postMessage("${player.name} JOINED!")
 
@@ -277,15 +280,17 @@ open class GameSession(
         val namePref = nextPlayerName()
 
         val player =
-            if (playerData == null) {
-            Player(input = input,
-            name = namePref,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2())) } else {
-                Player(input, playerData.name, playerData.color, playerData.color2)
-            }
+                if (playerData == null) {
+                    Player(input = input,
+                            name = namePref,
+                            color = Color.valueOf((nextPlayerColor())),
+                            color2 = Color.valueOf(nextPlayerColor2()))
+                } else {
+                    Player(input, playerData.name, playerData.color, playerData.color2)
+                }
 
         players.add(player)
+        playersJoined++
         input.player = player
 
         log("added player, players now ${players.size}")
@@ -308,10 +313,10 @@ open class GameSession(
             else -> Prefs.StringPref.PLAYER_MORE.getString() + (id + 1)
         }
         val player = ClientPlayer(input = input,
-            name = namePref,
-            localId = id,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))
+                name = namePref,
+                localId = id,
+                color = Color.valueOf((nextPlayerColor())),
+                color2 = Color.valueOf(nextPlayerColor2()))
         clientPlayers.add(player)
 
         // postMessage("${player.name} JOINED!")
@@ -341,11 +346,6 @@ open class GameSession(
             usedControllers.add(controller)
         }
 
-        app.parsecControllers.values.forEach{
-            val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
-            val player = createParsecPlayer(it, playerData)
-            usedControllers.add(it)
-        }
 
         //            if (Gdx.app.type == Application.ApplicationType.Android) {
         //                createTouchscreenPlayer()
@@ -393,9 +393,20 @@ open class GameSession(
         }
     }
 
+    private fun checkForParsecJoins() {
+        app.parsecControllers.values.forEach {
+            if (!usedControllers.contains(it)) {
+                val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
+                val player = createParsecPlayer(it, playerData)
+                usedControllers.add(it)
+            }
+        }
+    }
+
+
     fun checkForPlayerDisconnects() {
-        val removals = players.filter {  it.input is GamepadInput && !app.getAllControllersIncludingParsec().contains(it.input.controller)}
-        for (player in removals){
+        val removals = players.filter { it.input is GamepadInput && !app.getAllControllersIncludingParsec().contains(it.input.controller) }
+        for (player in removals) {
             players.remove(player)
             postMessage("${player.name} disconnected")
         }
@@ -407,13 +418,18 @@ open class GameSession(
     }
 
     override fun render(deltaTime: Float) {
-        if(disposed) return
-        if(requestQuit){
+        if (disposed) return
+        if (requestQuit) {
             reallyQuit()
             return
         }
         checkForPlayerJoins()
+        checkForParsecJoins()
         checkForPlayerDisconnects()
+
+        val message = app.parsec?.messages?.poll()
+        if(message!=null) postMessage(message)
+
         game?.renderAndClampFramerate()
 
         if (state == GameSession.GameState.GETREADY) {
@@ -433,8 +449,8 @@ open class GameSession(
             if (input.isKeyJustPressed(Input.Keys.SPACE)) {
                 createKBPlayer()
             }
-            if (Prefs.BinPref.DEBUG.isEnabled() && input.isKeyJustPressed(Input.Keys.N)){
-                if(players.isNotEmpty()) players[0].score += 10
+            if (Prefs.BinPref.DEBUG.isEnabled() && input.isKeyJustPressed(Input.Keys.N)) {
+                if (players.isNotEmpty()) players[0].score += 10
             }
         }
 
@@ -463,6 +479,7 @@ open class GameSession(
                     val input = NetworkInput(clientId = connection.id)
                     val p = Player(input, obj.name, obj.color, obj.color2)
                     players.add(p)
+                    playersJoined++
                     remotePlayers.put(connection.id, p)
                     networkInputs.put(connection.id, input)
                 }
@@ -489,6 +506,7 @@ open class GameSession(
         }
     }
 
+
     override fun hide() {
         game?.hide()
 
@@ -502,17 +520,11 @@ open class GameSession(
     // FIXME pre-create array of 16 players and pop the top one when player needed
 
     fun nextPlayerName(): String {
-        return when (players.size) {
-//            0 -> Prefs.StringPref.PLAYER1.getString()
-//            1 -> Prefs.StringPref.PLAYER2.getString()
-//            2 -> Prefs.StringPref.PLAYER3.getString()
-//            3 -> Prefs.StringPref.PLAYER4.getString()
-            else -> Prefs.StringPref.PLAYER_MORE.getString() + (players.size + 1)
-        }
+        return Prefs.StringPref.PLAYER_MORE.getString() + (playersJoined + 1)
     }
 
     fun nextPlayerColor(): String {
-        return when (players.size) {
+        return when (playersJoined) {
             0 -> Prefs.MultiChoicePref.PLAYER1_COLOR.getString()
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR.getString()
@@ -523,7 +535,7 @@ open class GameSession(
     }
 
     fun nextPlayerColor2(): String {
-        return when (players.size) {
+        return when (playersJoined) {
             0 -> Prefs.MultiChoicePref.PLAYER1_COLOR2.getString()
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR2.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR2.getString()

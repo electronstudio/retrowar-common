@@ -69,7 +69,11 @@ class Parsec : ParsecHostListener, ParsecLogListener {
 
     fun pollInput() {
         if(state != State.HOSTING_GAME) return
-        for (event in parsec.hostPollInput()) {
+        val events = parsec.hostPollInput()
+        if(events.size>0){
+            log(("events: ${events.size}"))
+        }
+        for (event in events) {
             val controller = App.app.parsecControllers[event.guestId]
             controller?.processMessage(event)
         }
@@ -195,8 +199,10 @@ class Parsec : ParsecHostListener, ParsecLogListener {
     }
 
     override fun userData(guest: ParsecGuest, id: Int, text: String) {
-        val name = String(guest.name)
-        messages.add("$name: ${text}")
+        val name = String(guest.name.takeWhile { it != 0.toByte() }.toByteArray())
+        if(id==0) {
+            messages.add("$name: ${text}")
+        }
         log("Parsec", "userdata $id ${text} ${guest.id} ${guest.attemptID} ${name} ${guest.state}")
 
     }
