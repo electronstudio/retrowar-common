@@ -2,7 +2,6 @@ package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.*
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.FrameBuffer
@@ -10,7 +9,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
-import com.parsecgaming.parsec.ParsecLibrary
 import uk.co.electronstudio.retrowar.Prefs.BinPref.FPS
 
 /**
@@ -81,11 +79,10 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         parsecBuffer.end()
 
 
-        App.app.parsec?.apply {
-            if(state==Parsec.State.HOSTING_GAME) {
-                submitFrame(parsecBuffer.colorBufferTexture)
-            }
-        }
+
+        App.app.parsec?.submitFrame(parsecBuffer.colorBufferTexture)
+
+
 
        // App.app.parsec?.pollInput()
 

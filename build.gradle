@@ -34,38 +34,21 @@ task ktlintFormat(type: JavaExec) {
 }
 
 dependencies {
-    compile name: 'parsec'
-    compile group:'com.konghq', name:'unirest-java', version: '2.3.08'
-    compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
-    compile 'io.sentry:sentry:1.7.3'
-    compile 'org.slf4j:slf4j-simple:1.7.21'
-    compile "com.code-disaster.steamworks4j:steamworks4j:1.8.0"
-   // compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-   // compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
-    compile "net.mostlyoriginal.artemis-odb:contrib-core:2.2.0"
-    compile "net.mostlyoriginal.artemis-odb:contrib-eventbus:2.2.0"
-    compile "net.mostlyoriginal.artemis-odb:contrib-plugin-profiler:2.2.0"
-    ktlint 'com.github.shyiko:ktlint:0.30.0'
-    compile "net.onedaybeard.artemis:artemis-odb:2.1.0"
-    compile "net.onedaybeard.artemis:artemis-odb-serializer-kryo:2.1.0"
-    compile("com.esotericsoftware:kryo:4.0.2")
-    compile("com.esotericsoftware:kryonet:2.22.0-RC1") {
+    implementation 'io.sentry:sentry:1.7.3'
+    implementation "com.code-disaster.steamworks4j:steamworks4j:1.8.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    implementation "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
+    ktlint 'com.github.shyiko:ktlint:0.34.2'
+    implementation("com.esotericsoftware:kryo:4.0.2")
+    implementation("com.esotericsoftware:kryonet:2.22.0-RC1") {
         exclude module: 'kryo'
     }
-    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-//    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-  // compile "uk.co.electronstudio.sdl2gdx:sdl2gdx:1.0.1-jimbly"
-
-//    compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
-    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-    compile 'com.beust:klaxon:0.30'
-    // https://mvnrepository.com/artifact/org.codehaus.groovy/groovy-all
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.6'
-    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
+    api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+    implementation 'com.beust:klaxon:0.30'
+    implementation group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.7'
+    //compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0'
 
 }
 

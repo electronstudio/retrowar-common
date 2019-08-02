@@ -151,7 +151,7 @@ open class GameSession(
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createParsecPlayer(controller: ParsecController, playerData: PlayerData?): Player {
+    private fun createParsecPlayer(controller: NetworkController, playerData: PlayerData?): Player {
         val player = createControllerPlayer(controller, playerData)
         controller.player = player
         return player
@@ -394,7 +394,7 @@ open class GameSession(
     }
 
     private fun checkForParsecJoins() {
-        app.parsecControllers.values.forEach {
+        app.networkControllers.values.forEach {
             if (!usedControllers.contains(it)) {
                 val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
                 val player = createParsecPlayer(it, playerData)
@@ -427,7 +427,7 @@ open class GameSession(
         checkForParsecJoins()
         checkForPlayerDisconnects()
 
-        val message = app.parsec?.messages?.poll()
+        val message = app.parsec?.pollMessages()
         if(message!=null) postMessage(message)
 
         game?.renderAndClampFramerate()

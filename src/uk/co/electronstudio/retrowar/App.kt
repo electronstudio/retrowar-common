@@ -26,7 +26,6 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
-import com.badlogic.gdx.controllers.ControllerManager
 import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.utils.Json
 
@@ -72,7 +71,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     /** Title screen */
     var title: Screen? = null
 
-    var parsec: Parsec? = null
+    //var parsec: Parsec? = null
+    open val parsec: ParsecI? = null
+
 
     /** If you are using GameAnalytics service set this, otherwise null */
     var gameAnalytics: GameAnalytics? = null
@@ -103,9 +104,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     var playerData = mutableListOf<PlayerData>()
     val controllerMappings = mutableMapOf<RumbleController, PlayerData>()
-    val parsecControllers = mutableMapOf<Int, ParsecController>()
+    val networkControllers = mutableMapOf<Int, NetworkController>()
 
-    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ parsecControllers.values
+    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ networkControllers.values
 
     fun loadPlayerData() {
         try {
