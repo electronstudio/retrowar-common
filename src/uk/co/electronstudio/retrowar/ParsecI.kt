@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 interface ParsecI {
     abstract fun submitFrame(colorBufferTexture: GLTexture)
 
-    abstract fun pollMessages(): String
+    abstract fun pollMessages(): String?
     abstract fun dispose()
 
 
