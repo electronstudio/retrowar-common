@@ -139,8 +139,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     /** Uses the Callback to set max FPS, if the platform supports it */
     fun setFPS(f: Int) {
-        callback.setForegroundFPS(f)
-        callback.setBackgroundFPS(f)
+        if(callback.FPSsupported()) {
+            callback.setForegroundFPS(f)
+            callback.setBackgroundFPS(f)
+        }
     }
 
     /** Setup network stuff, not currently working */

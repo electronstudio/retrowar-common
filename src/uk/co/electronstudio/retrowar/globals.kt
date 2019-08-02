@@ -186,7 +186,8 @@ interface Callback {
     fun setForegroundFPS(foregroundFPS: Int)
 
     fun setBackgroundFPS(backgroundFPS: Int)
-   // fun audio()
+    fun FPSsupported(): Boolean
+    // fun audio()
 }
 
 class EmptyCallback : Callback {
@@ -198,6 +199,10 @@ class EmptyCallback : Callback {
     }
 
     override fun setBackgroundFPS(backgroundFPS: Int) {
+    }
+
+    override fun FPSsupported(): Boolean {
+        return false
     }
 }
 
