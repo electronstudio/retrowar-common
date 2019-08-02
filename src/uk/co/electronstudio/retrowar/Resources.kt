@@ -43,9 +43,9 @@ class Resources {
         // var defaultLocale = java.util.Locale.getDefault()
         //  var locale = Locale.Builder().setLocale(defaultLocale).setVariant("PROFANE").build()
 
-        val CONTROLLER1: Texture = Texture("controller1.png")
-        val CONTROLLER2: Texture = Texture("controller2.png")
-        val CONTROLLER3: Texture = Texture("controller3.png")
+        val CONTROLLER1: Texture = Texture(Gdx.files.classpath("uk/co/electronstudio/retrowar/controller1.png"))
+        val CONTROLLER2: Texture = Texture(Gdx.files.classpath("uk/co/electronstudio/retrowar/controller2.png"))
+        val CONTROLLER3: Texture = Texture(Gdx.files.classpath("uk/co/electronstudio/retrowar/controller3.png"))
 
         var TEXT = I18NBundle.createBundle(load("uk/co/electronstudio/retrowar/i18n/RetroWar", "i18n/RetroWar"))
         @JvmStatic

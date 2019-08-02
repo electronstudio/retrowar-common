@@ -26,11 +26,10 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.controllers.Controller
 import com.badlogic.gdx.controllers.ControllerAdapter
+import com.badlogic.gdx.controllers.Controllers
 import com.badlogic.gdx.utils.Json
 
-import com.codedisaster.steamworks.SteamAPI
-import com.codedisaster.steamworks.SteamUser
-import com.codedisaster.steamworks.SteamUserStats
+
 import de.golfgl.gdxgameanalytics.GameAnalytics
 import uk.co.electronstudio.retrowar.Prefs.BinPref
 import uk.co.electronstudio.retrowar.input.GamepadInput
@@ -43,8 +42,7 @@ import uk.co.electronstudio.retrowar.network.Client
 import uk.co.electronstudio.retrowar.network.Server
 import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.retrowar.utils.RetroShader
-import uk.co.electronstudio.sdl2gdx.SDL2Controller
-import uk.co.electronstudio.sdl2gdx.SDL2ControllerManager
+import uk.co.electronstudio.sdl2gdx.RumbleController
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -67,21 +65,26 @@ import kotlin.concurrent.thread
  */
 abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
+
     var steam: Steam? = null
 
     /** Title screen */
     var title: Screen? = null
 
+    //var parsec: Parsec? = null
+    open val parsec: ParsecI? = null
+
+
     /** If you are using GameAnalytics service set this, otherwise null */
     var gameAnalytics: GameAnalytics? = null
 
-    lateinit var controllers: SDL2ControllerManager
+    //lateinit var controllers: ControllerManager
 
-    val players = mutableListOf<Player>()
+    //val players = mutableListOf<Player>()
 
-    fun findPlayerAssociatedWithController(c: SDL2Controller): Player? {
-        return players.filter { it.input is GamepadInput && it.input.controller == c }.firstOrNull()
-    }
+    //fun findPlayerAssociatedWithController(c: SDL2Controller): Player? {
+    //    return players.filter { it.input is GamepadInput && it.input.controller == c }.firstOrNull()
+    //}
 
     companion object {
         /** A static reference to the singleton Application */
@@ -100,7 +103,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     }
 
     var playerData = mutableListOf<PlayerData>()
-    val controllerMappings = mutableMapOf<SDL2Controller, PlayerData>()
+    val controllerMappings = mutableMapOf<RumbleController, PlayerData>()
+    val networkControllers = mutableMapOf<Int, NetworkController>()
+
+    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ networkControllers.values
 
     fun loadPlayerData() {
         try {
@@ -134,8 +140,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
 
     /** Uses the Callback to set max FPS, if the platform supports it */
     fun setFPS(f: Int) {
-        callback.setForegroundFPS(f)
-        callback.setBackgroundFPS(f)
+        if(callback.FPSsupported()) {
+            callback.setForegroundFPS(f)
+            callback.setBackgroundFPS(f)
+        }
     }
 
     /** Setup network stuff, not currently working */
@@ -198,7 +206,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         log("swapscreen dispose")
         val s = app.screen
         app.setScreen(screen)
-        s.dispose()
+        //s.dispose()
     }
 
     /** Displays a new screen and save old one for later*/
@@ -251,24 +259,25 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
      * Populates mappedControllers
      */
     protected fun initialiseControllers() {
-        if (::controllers.isInitialized && controllers != null) {
-            controllers.close()
-        }
-        controllers = SDL2ControllerManager(
-        when (Prefs.MultiChoicePref.INPUT.getNum()) {
-            0 -> SDL2ControllerManager.InputPreference.RAW_INPUT
-            1 -> SDL2ControllerManager.InputPreference.XINPUT
-            2 -> SDL2ControllerManager.InputPreference.DIRECT_INPUT
-            else -> SDL2ControllerManager.InputPreference.XINPUT
-        }
-        )
-        println("Detected ${controllers.getControllers().size} controllers")
+//        if (::controllers.isInitialized && controllers != null) {
+//            controllers.close()
+//        }
+//        controllers = Controllers.managers.get(Gdx.app)
+//                SDL2ControllerManager(
+//        when (Prefs.MultiChoicePref.INPUT.getNum()) {
+//            0 -> SDL2ControllerManager.InputPreference.RAW_INPUT
+//            1 -> SDL2ControllerManager.InputPreference.XINPUT
+//            2 -> SDL2ControllerManager.InputPreference.DIRECT_INPUT
+//            else -> SDL2ControllerManager.InputPreference.XINPUT
+//        }
+//        )
+//        println("Detected ${controllers.getControllers().size} controllers")
 
-        controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
+        Controllers.getControllers().map(::MappedController).mapTo(statefulControllers, ::StatefulController)
 
         // mappedControllers.mapTo(statefulControllers, ::StatefulController)
 
-        controllers.addListener(object : ControllerAdapter() {
+        Controllers.addListener(object : ControllerAdapter() {
             override fun connected(controller: Controller) {
                 val c = MappedController(controller)
                 // mappedControllers.add(c)
@@ -321,7 +330,10 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         if (BinPref.FULLSCREEN.isEnabled()) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.displayMode)
         } else {
-            Gdx.graphics.setWindowedMode(832, 512)
+            Gdx.graphics.setWindowedMode(1920, 1080)
+            Gdx.graphics.setUndecorated(false)
+            Gdx.graphics.setTitle("RetroWar")
+            Gdx.graphics.setResizable(true)
         }
         Gdx.graphics.setVSync(BinPref.VSYNC.isEnabled())
     }
@@ -344,9 +356,9 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
      */
     fun configureSessionWithPreSelectedInputDevice(session: GameSession) {
         if (Gdx.app.type == Application.ApplicationType.Desktop) {
-            val controller1 = controllers.getControllers().firstOrNull()
+            val controller1 = Controllers.getControllers().firstOrNull()
             if (controller1 != null) {
-                session.preSelectedInputDevice = GamepadInput(controller1 as SDL2Controller)
+                session.preSelectedInputDevice = GamepadInput(controller1 as RumbleController)
             } else {
                 session.preSelectedInputDevice = KeyboardMouseInput(session)
                 session.KBinUse = true

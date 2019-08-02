@@ -20,7 +20,9 @@ abstract class Game(val session: GameSession) {
         /**
          * Get mouse co-ords from GDX input and convert them into a joystick vector
          */
-        fun getMouse(): Vec
+        fun getMouse(player: Player): Vec
+        fun getMouseFromGameCoords(player: Player, x: Float, y: Float) : Vec
+        fun getMouseFromGameCoordsFlipY(player: Player, x: Float, y: Float): Vec
     }
 
     /* Maximum FPS we can handle, useful so physics doesnt break at extreme framerates */

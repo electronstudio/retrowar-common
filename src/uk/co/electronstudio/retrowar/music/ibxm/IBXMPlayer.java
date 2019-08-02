@@ -115,13 +115,15 @@ public class IBXMPlayer {
                                 gBuf[mixIdx] = twoBytesToShort(b1, b2);
                             }
                             long t = System.nanoTime();
+                            //Gdx.app.log("IBMX","write samples");
                             audioDevice.writeSamples(gBuf, 0, outIdx);
                             long t2 = System.nanoTime() - t;
-                            //   Gdx.app.log("IBMX","latency "+  audioDevice.getLatency()+" writing took "+t2/1000000 );
+                            //Gdx.app.log("IBMX","latency "+  audioDevice.getLatency()+" writing took "+t2/1000000 );
 
 
                         }
                         //	audioLine.drain();
+
                         Gdx.app.log("IBXM", "thread done");
                     } catch (Exception e) {
                         log(e.toString());
@@ -137,10 +139,11 @@ public class IBXMPlayer {
 
     public synchronized void stop() {
         playing = false;
-        try {
-            if (playThread != null) playThread.join();
-        } catch (InterruptedException e) {
-        }
+//        try {
+//            if (playThread != null) playThread.join();
+//        } catch (InterruptedException e) {
+//            log("IBXM interrupted");
+//        }
 
     }
 

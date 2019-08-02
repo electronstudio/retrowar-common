@@ -7,7 +7,8 @@ import uk.co.electronstudio.retrowar.screens.SimpleTitleScreen
  * Most standalone games will use this as their main GDX or Android Application class
  * It sets up a simple title screen and menus
  */
-class SimpleApp(
+
+class SimpleApp @JvmOverloads constructor(
     callback: Callback,
     val name: String,
     val factoryClass: Class<out AbstractGameFactory>,

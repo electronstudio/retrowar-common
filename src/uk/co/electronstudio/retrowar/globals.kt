@@ -43,6 +43,7 @@ import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.NetworkInput
 import uk.co.electronstudio.retrowar.network.ClientPlayer
 import uk.co.electronstudio.retrowar.utils.sqrt
+import java.lang.RuntimeException
 import java.util.ArrayList
 import kotlin.math.roundToInt
 
@@ -185,14 +186,23 @@ interface Callback {
     fun setForegroundFPS(foregroundFPS: Int)
 
     fun setBackgroundFPS(backgroundFPS: Int)
+    fun FPSsupported(): Boolean
+    // fun audio()
 }
 
 class EmptyCallback : Callback {
+    //override fun audio() {
+//
+  //  }
 
     override fun setForegroundFPS(foregroundFPS: Int) {
     }
 
     override fun setBackgroundFPS(backgroundFPS: Int) {
+    }
+
+    override fun FPSsupported(): Boolean {
+        return false
     }
 }
 
@@ -231,12 +241,17 @@ inline fun <reified T> matrix2d(height: Int, width: Int, init: (Int, Int) -> Arr
 fun Float.round(): Float = roundToInt().toFloat()
 
 fun createDefaultShader(): ShaderProgram {
-    if (Gdx.app.type == Application.ApplicationType.Android) {
-        ShaderProgram.prependFragmentCode = ""
-        ShaderProgram.prependVertexCode = ""
-        return createDefaultShaderGL2()
+    when(Gdx.app.type){
+        Application.ApplicationType.Android, Application.ApplicationType.iOS ->{
+            ShaderProgram.prependFragmentCode = ""
+            ShaderProgram.prependVertexCode = ""
+            return createDefaultShaderGL2()
+        }
+        Application.ApplicationType.Desktop -> {
+            return createDefaultShaderGL3()
+        }
+        else -> { throw RuntimeException("Unknown GDX Application type ${Gdx.app.type}")}
     }
-    return createDefaultShaderGL3()
 }
 
 fun createDefaultShaderGL3(): ShaderProgram {
@@ -333,20 +348,24 @@ fun createDefaultShapeShader(
     hasColors: Boolean = true,
     numTexCoords: Int = 0
 ): ShaderProgram {
-    if (Gdx.app.type == Application.ApplicationType.Android) {
-        ShaderProgram.prependFragmentCode = ""
-        ShaderProgram.prependVertexCode = ""
-        return ImmediateModeRenderer20.createDefaultShader(hasNormals, hasColors, numTexCoords)
-    } else {
-
-        val vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords)
-        val fragmentShader = createFragmentShader(hasColors, numTexCoords)
-        ShaderProgram.prependFragmentCode = "#version 330\n"
-        ShaderProgram.prependVertexCode = "#version 330\n"
-        val shader = ShaderProgram(vertexShader, fragmentShader)
-        if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
-        return shader
+    when(Gdx.app.type){
+        Application.ApplicationType.Android, Application.ApplicationType.iOS ->{
+            ShaderProgram.prependFragmentCode = ""
+            ShaderProgram.prependVertexCode = ""
+            return ImmediateModeRenderer20.createDefaultShader(hasNormals, hasColors, numTexCoords)
+        }
+        Application.ApplicationType.Desktop -> {
+            val vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords)
+            val fragmentShader = createFragmentShader(hasColors, numTexCoords)
+            ShaderProgram.prependFragmentCode = "#version 330\n"
+            ShaderProgram.prependVertexCode = "#version 330\n"
+            val shader = ShaderProgram(vertexShader, fragmentShader)
+            if (shader.isCompiled == false) throw IllegalArgumentException("Error compiling shader: " + shader.log)
+            return shader
+        }
+        else -> { throw RuntimeException("Unknown GDX Application type ${Gdx.app.type}")}
     }
+
 }
 
 fun createDefaultShaderGL2(): ShaderProgram {

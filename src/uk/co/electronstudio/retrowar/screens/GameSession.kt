@@ -5,22 +5,16 @@ import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.controllers.Controller
+import com.badlogic.gdx.controllers.Controllers
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
-import uk.co.electronstudio.retrowar.AbstractGameFactory
-import uk.co.electronstudio.retrowar.App
+import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.App.Companion.app
-import uk.co.electronstudio.retrowar.Game
-import uk.co.electronstudio.retrowar.Player
-import uk.co.electronstudio.retrowar.PlayerData
-import uk.co.electronstudio.retrowar.Prefs
-import uk.co.electronstudio.retrowar.Resources
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.InputDevice
 import uk.co.electronstudio.retrowar.input.KeyboardMouseInput
 import uk.co.electronstudio.retrowar.input.NetworkInput
-import uk.co.electronstudio.retrowar.log
 import uk.co.electronstudio.retrowar.menu.ActionMenuItem
 import uk.co.electronstudio.retrowar.menu.BackMenuItem
 import uk.co.electronstudio.retrowar.menu.BinPrefMenuItem
@@ -30,7 +24,8 @@ import uk.co.electronstudio.retrowar.menu.NumPrefMenuItem
 import uk.co.electronstudio.retrowar.menu.SubMenuItem
 import uk.co.electronstudio.retrowar.network.ClientGameSession
 import uk.co.electronstudio.retrowar.network.ClientPlayer
-import uk.co.electronstudio.sdl2gdx.SDL2Controller
+import uk.co.electronstudio.sdl2gdx.RumbleController
+
 import java.util.ArrayList
 
 /**
@@ -42,9 +37,9 @@ import java.util.ArrayList
  * to maintain the same players, scores, (network connections?)
  */
 open class GameSession(
-    val factory: AbstractGameFactory,
-    val useSimpleGameSettings: Boolean = false
-    // val preSelectedInputDevice: InputDevice? = null
+        val factory: AbstractGameFactory,
+        val useSimpleGameSettings: Boolean = false
+        // val preSelectedInputDevice: InputDevice? = null
 ) : ScreenAdapter() {
 
     var game: Game? = null
@@ -90,6 +85,8 @@ open class GameSession(
         game?.dispose()
     }
 
+    var playersJoined = 0
+
     init {
 
         //  if(client) setNetworkRoleToClient()
@@ -104,7 +101,7 @@ open class GameSession(
         // val clazz = UniGame::class
         // game = clazz.primaryConstructor?.call()
         resetTimer()
-        game = if(useSimpleGameSettings) factory.createWithSimpleSettings(this) else factory.create(this)
+        game = if (useSimpleGameSettings) factory.createWithSimpleSettings(this) else factory.create(this)
         val level = factory.levels?.get(factory.level)
         app.submitAnalytics("sessionStart:${factory.name}")
         level?.let {
@@ -143,29 +140,34 @@ open class GameSession(
         postMessage("${client.id} disconnected")
     }
 
-    var keyboardPlayer: Player? = null
 
     fun createKBPlayer() {
         if (KBinUse && !Prefs.BinPref.DEBUG.isEnabled()) return
         KBinUse = true
 
         val i = KeyboardMouseInput(this)
-        keyboardPlayer = createPlayer(i, null) // FIXME keyboard player never has any name data
+        createPlayer(i, null) // FIXME keyboard player never has any name data
 
         //  val ship = createCharacter(i, player)
     }
 
-    private fun createControllerPlayer(controller: SDL2Controller, playerData: PlayerData?) {
+    private fun createParsecPlayer(controller: NetworkController, playerData: PlayerData?): Player {
+        val player = createControllerPlayer(controller, playerData)
+        controller.player = player
+        return player
+    }
+
+    private fun createControllerPlayer(controller: RumbleController, playerData: PlayerData?): Player {
 
 //        val c = controller.javaClass
 //        val m = c.methods.find { it.name.equals("rumble") }
 //        m!!.invoke(controller, 1f, 1f, 500)
 
-        if (controller is SDL2Controller) {
-            controller.rumble(0.0f, 0.5f, 5000)
-        }
+        // if (controller is RumbleController) {
+        controller.rumble(0.0f, 0.5f, 5000)
+        // }
         val gamepad = GamepadInput(controller)
-        createPlayer(gamepad, playerData)
+        return createPlayer(gamepad, playerData)
     }
 
     //    var touchscreenInput: TouchscreenInput? = null
@@ -257,11 +259,12 @@ open class GameSession(
         log("create network player $id")
 
         val player = Player(input = NetworkInput(),
-            name = name,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))
+                name = name,
+                color = Color.valueOf((nextPlayerColor())),
+                color2 = Color.valueOf(nextPlayerColor2()))
 
         players.add(player)
+        playersJoined++
 
         postMessage("${player.name} JOINED!")
 
@@ -272,20 +275,25 @@ open class GameSession(
 
         val id = players.size
 
-        log("create player $id")
+        log("create player $id $input ${playerData?.name} ${playerData?.color}")
 
         val namePref = nextPlayerName()
 
         val player =
-            if (playerData == null) {
-            Player(input = input,
-            name = namePref,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2())) } else {
-                Player(input, playerData.name, playerData.color, playerData.color2)
-            }
+                if (playerData == null) {
+                    Player(input = input,
+                            name = namePref,
+                            color = Color.valueOf((nextPlayerColor())),
+                            color2 = Color.valueOf(nextPlayerColor2()))
+                } else {
+                    Player(input, playerData.name, playerData.color, playerData.color2)
+                }
 
         players.add(player)
+        playersJoined++
+        input.player = player
+
+        log("added player, players now ${players.size}")
 
         postMessage("${player.name} JOINED!")
 
@@ -305,10 +313,10 @@ open class GameSession(
             else -> Prefs.StringPref.PLAYER_MORE.getString() + (id + 1)
         }
         val player = ClientPlayer(input = input,
-            name = namePref,
-            localId = id,
-            color = Color.valueOf((nextPlayerColor())),
-            color2 = Color.valueOf(nextPlayerColor2()))
+                name = namePref,
+                localId = id,
+                color = Color.valueOf((nextPlayerColor())),
+                color2 = Color.valueOf(nextPlayerColor2()))
         clientPlayers.add(player)
 
         // postMessage("${player.name} JOINED!")
@@ -333,10 +341,11 @@ open class GameSession(
             createPlayer(it, null)
         }
 
-        app.controllerMappings.forEach { controller, playerData ->
+        app.controllerMappings.forEach { (controller, playerData) ->
             createControllerPlayer(controller, playerData)
             usedControllers.add(controller)
         }
+
 
         //            if (Gdx.app.type == Application.ApplicationType.Android) {
         //                createTouchscreenPlayer()
@@ -368,7 +377,7 @@ open class GameSession(
 //    }
 
     fun checkForPlayerJoins() {
-        val controllers = App.app.controllers.controllers as com.badlogic.gdx.utils.Array<SDL2Controller>
+        val controllers = Controllers.getControllers() as com.badlogic.gdx.utils.Array<RumbleController>
         controllers.forEach {
             val p = preSelectedInputDevice
             if (p == null || p !is GamepadInput || p.controller != it) {
@@ -384,8 +393,24 @@ open class GameSession(
         }
     }
 
+    private fun checkForParsecJoins() {
+        app.networkControllers.values.forEach {
+            if (!usedControllers.contains(it)) {
+                val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
+                val player = createParsecPlayer(it, playerData)
+                usedControllers.add(it)
+            }
+        }
+    }
+
+
     fun checkForPlayerDisconnects() {
-        players.removeAll { it.input is GamepadInput && !App.app.controllers.getControllers().contains(it.input.controller) }
+        val removals = players.filter { it.input is GamepadInput && !app.getAllControllersIncludingParsec().contains(it.input.controller) }
+        for (player in removals) {
+            players.remove(player)
+            postMessage("${player.name} disconnected")
+        }
+        //players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -393,13 +418,18 @@ open class GameSession(
     }
 
     override fun render(deltaTime: Float) {
-        if(disposed) return
-        if(requestQuit){
+        if (disposed) return
+        if (requestQuit) {
             reallyQuit()
             return
         }
         checkForPlayerJoins()
+        checkForParsecJoins()
         checkForPlayerDisconnects()
+
+        val message = app.parsec?.pollMessages()
+        if(message!=null) postMessage(message)
+
         game?.renderAndClampFramerate()
 
         if (state == GameSession.GameState.GETREADY) {
@@ -419,8 +449,8 @@ open class GameSession(
             if (input.isKeyJustPressed(Input.Keys.SPACE)) {
                 createKBPlayer()
             }
-            if (Prefs.BinPref.DEBUG.isEnabled() && input.isKeyJustPressed(Input.Keys.N)){
-                if(players.isNotEmpty()) players[0].score += 10
+            if (Prefs.BinPref.DEBUG.isEnabled() && input.isKeyJustPressed(Input.Keys.N)) {
+                if (players.isNotEmpty()) players[0].score += 10
             }
         }
 
@@ -449,6 +479,7 @@ open class GameSession(
                     val input = NetworkInput(clientId = connection.id)
                     val p = Player(input, obj.name, obj.color, obj.color2)
                     players.add(p)
+                    playersJoined++
                     remotePlayers.put(connection.id, p)
                     networkInputs.put(connection.id, input)
                 }
@@ -475,6 +506,7 @@ open class GameSession(
         }
     }
 
+
     override fun hide() {
         game?.hide()
 
@@ -488,17 +520,11 @@ open class GameSession(
     // FIXME pre-create array of 16 players and pop the top one when player needed
 
     fun nextPlayerName(): String {
-        return when (players.size) {
-//            0 -> Prefs.StringPref.PLAYER1.getString()
-//            1 -> Prefs.StringPref.PLAYER2.getString()
-//            2 -> Prefs.StringPref.PLAYER3.getString()
-//            3 -> Prefs.StringPref.PLAYER4.getString()
-            else -> Prefs.StringPref.PLAYER_MORE.getString() + (players.size + 1)
-        }
+        return Prefs.StringPref.PLAYER_MORE.getString() + (playersJoined + 1)
     }
 
     fun nextPlayerColor(): String {
-        return when (players.size) {
+        return when (playersJoined) {
             0 -> Prefs.MultiChoicePref.PLAYER1_COLOR.getString()
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR.getString()
@@ -509,7 +535,7 @@ open class GameSession(
     }
 
     fun nextPlayerColor2(): String {
-        return when (players.size) {
+        return when (playersJoined) {
             0 -> Prefs.MultiChoicePref.PLAYER1_COLOR2.getString()
             1 -> Prefs.MultiChoicePref.PLAYER2_COLOR2.getString()
             2 -> Prefs.MultiChoicePref.PLAYER3_COLOR2.getString()

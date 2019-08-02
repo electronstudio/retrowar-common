@@ -1,16 +1,47 @@
 package uk.co.electronstudio.retrowar.input
 
-import org.libsdl.SDL
+
 import uk.co.electronstudio.retrowar.Prefs
 import uk.co.electronstudio.retrowar.utils.Vec
-import uk.co.electronstudio.sdl2gdx.SDL2Controller
+import uk.co.electronstudio.sdl2gdx.RumbleController
 
 /**
  * Created by Richard on 13/08/2016.
  * Maps a controller to an input
  * Now assumes all controllers are SDL mappings
  */
-internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
+open class GamepadInput(val controller: RumbleController) : InputDevice() {
+
+    val SDL_CONTROLLER_AXIS_INVALID = -1
+    val SDL_CONTROLLER_AXIS_LEFTX = 0
+    val SDL_CONTROLLER_AXIS_LEFTY = 1
+    val SDL_CONTROLLER_AXIS_RIGHTX = 2
+    val SDL_CONTROLLER_AXIS_RIGHTY = 3
+    val SDL_CONTROLLER_AXIS_TRIGGERLEFT = 4
+    val SDL_CONTROLLER_AXIS_TRIGGERRIGHT = 5
+    val SDL_CONTROLLER_AXIS_MAX = 6
+
+    /**
+     * The list of buttons available from a controller
+     */
+
+    val SDL_CONTROLLER_BUTTON_INVALID = -1
+    val SDL_CONTROLLER_BUTTON_A = 0
+    val SDL_CONTROLLER_BUTTON_B = 1
+    val SDL_CONTROLLER_BUTTON_X = 2
+    val SDL_CONTROLLER_BUTTON_Y = 3
+    val SDL_CONTROLLER_BUTTON_BACK = 4
+    val SDL_CONTROLLER_BUTTON_GUIDE = 5
+    val SDL_CONTROLLER_BUTTON_START = 6
+    val SDL_CONTROLLER_BUTTON_LEFTSTICK = 7
+    val SDL_CONTROLLER_BUTTON_RIGHTSTICK = 8
+    val SDL_CONTROLLER_BUTTON_LEFTSHOULDER = 9
+    val SDL_CONTROLLER_BUTTON_RIGHTSHOULDER = 10
+    val SDL_CONTROLLER_BUTTON_DPAD_UP = 11
+    val SDL_CONTROLLER_BUTTON_DPAD_DOWN = 12
+    val SDL_CONTROLLER_BUTTON_DPAD_LEFT = 13
+    val SDL_CONTROLLER_BUTTON_DPAD_RIGHT = 14
+    val SDL_CONTROLLER_BUTTON_MAX = 15
 
     //   var singleStickMode = true
     var lockedFireDirection: Vec? = null
@@ -29,8 +60,8 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
     override val movementVec: Vec
         get() {
 
-            val analog = Vec(controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_LEFTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
+            val analog = Vec(controller.getAxis(SDL_CONTROLLER_AXIS_LEFTX),
+                controller.getAxis(SDL_CONTROLLER_AXIS_LEFTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
                 .clampMagnitude(1.0f)
 
             val dpad = dpadAsStick()
@@ -48,11 +79,11 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
         }
 
     private fun dpadAsStick(): Vec {
-        val x = if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_LEFT)) -1f
-        else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) 1f
+        val x = if (controller.getButton(SDL_CONTROLLER_BUTTON_DPAD_LEFT)) -1f
+        else if (controller.getButton(SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) 1f
         else 0f
-        val y = if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_UP)) -1f
-        else if (controller.getButton(SDL.SDL_CONTROLLER_BUTTON_DPAD_DOWN)) 1f
+        val y = if (controller.getButton(SDL_CONTROLLER_BUTTON_DPAD_UP)) -1f
+        else if (controller.getButton(SDL_CONTROLLER_BUTTON_DPAD_DOWN)) 1f
         else 0f
         return Vec(x, y).clampMagnitude(1.0f)
     }
@@ -61,8 +92,8 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
         get() {
             // if(controller.RStickHorizontalAxis()!=0f || controller.RStickVerticalAxis()!=0f) singleStickMode=false
 
-            val analog = Vec(controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTX),
-                controller.getAxis(SDL.SDL_CONTROLLER_AXIS_RIGHTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
+            val analog = Vec(controller.getAxis(SDL_CONTROLLER_AXIS_RIGHTX),
+                controller.getAxis(SDL_CONTROLLER_AXIS_RIGHTY)).ignoreDeadzone(Prefs.NumPref.DEADZONE.asPercent())
                 .clampMagnitude(1.0f)
             if (analog.isMoreOrLessZero()) { // fixme this is unigame specific hack, should be moved there
                 if (rightBumper || A || B || X || Y) {
@@ -80,40 +111,40 @@ internal class GamepadInput(val controller: SDL2Controller) : InputDevice() {
 
     override val leftTrigger: Float
         get() {
-            return controller.getAxis(SDL.SDL_CONTROLLER_AXIS_TRIGGERLEFT)
+            return controller.getAxis(SDL_CONTROLLER_AXIS_TRIGGERLEFT)
         }
     override val rightTrigger: Float
         get() {
-            return controller.getAxis(SDL.SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+            return controller.getAxis(SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
         }
 
     override val A: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_A)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_A)
         }
 
     override val B: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_B)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_B)
         }
 
     override val X: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_X)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_X)
         }
 
     override val Y: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_Y)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_Y)
         }
 
     override val leftBumper: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
         }
 
     override val rightBumper: Boolean
         get() {
-            return controller.getButton(SDL.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
+            return controller.getButton(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
         }
 }

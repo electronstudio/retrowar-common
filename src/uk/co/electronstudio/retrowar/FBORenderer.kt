@@ -1,13 +1,10 @@
 package uk.co.electronstudio.retrowar
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.*
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.math.MathUtils
@@ -33,6 +30,10 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     private var scaledWidth = 0f
     private var scaledHeight = 0f
     private var m = 0f
+
+    private val parsecBuffer: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, WIDTH.toInt(), HEIGHT.toInt(), false)
+    private val parsecCam: OrthographicCamera = OrthographicCamera(WIDTH, HEIGHT)
+    private val parsecBatch = SpriteBatch(1000, createDefaultShader())
 
     fun dispose(){
         shape.dispose()
@@ -65,9 +66,30 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         fboBatch.end()
 
 
+        parsecCam.update()
+        parsecBatch.projectionMatrix = parsecCam.combined
+        parsecBuffer.begin()
+        parsecBatch.begin()
+        parsecBatch.draw(mFBO.texture, -WIDTH/2f, -HEIGHT/2f, 0f, 0f,
+                //      mFBO.width, mFBO.height,
+                WIDTH, HEIGHT, 1f, 1f, 0f, 0, 0, mFBO.width.toInt(), mFBO.height.toInt(),
+                //  WIDTH.toInt(), HEIGHT.toInt(),
+                false, true)
+        parsecBatch.end()
+        parsecBuffer.end()
+
+
+
+        App.app.parsec?.submitFrame(parsecBuffer.colorBufferTexture)
+
+
+
+       // App.app.parsec?.pollInput()
+
 
         drawScanlines(shape, cam)
     }
+
 
     fun beginFBO(): SpriteBatch {
         timer += Gdx.graphics.deltaTime
@@ -99,6 +121,7 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     fun resize(width: Int, height: Int) {
         log("FBOrenderer resize")
         // mFBO.resizeToScreenSize(WIDTH, HEIGHT, scaleFactor, m)
+        Prefs.BinPref.VSYNC.apply()
 
         cam = setupCam(width.toFloat(), height.toFloat())
     }
