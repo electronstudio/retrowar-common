@@ -341,7 +341,7 @@ open class GameSession(
             createPlayer(it, null)
         }
 
-        app.controllerMappings.forEach { controller, playerData ->
+        app.controllerMappings.forEach { (controller, playerData) ->
             createControllerPlayer(controller, playerData)
             usedControllers.add(controller)
         }
