@@ -31,8 +31,13 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
     private var scaledHeight = 0f
     private var m = 0f
 
-    private val parsecBuffer: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, WIDTH.toInt(), HEIGHT.toInt(), false)
-    private val parsecCam: OrthographicCamera = OrthographicCamera(WIDTH, HEIGHT)
+    val multiple = if(WIDTH<128f || HEIGHT < 128f) 2f else 1f
+    val parsecWidth = WIDTH * multiple
+    val parsecHeight = HEIGHT * multiple
+
+
+    private val parsecBuffer: FrameBuffer = FrameBuffer(Pixmap.Format.RGB888, parsecWidth.toInt(), parsecHeight.toInt(), false)
+    private val parsecCam: OrthographicCamera = OrthographicCamera(parsecWidth, parsecHeight)
     private val parsecBatch = SpriteBatch(1000, createDefaultShader())
 
     fun dispose(){
@@ -70,9 +75,9 @@ class FBORenderer(val WIDTH: Float, val HEIGHT: Float, val fadeInEffect: Boolean
         parsecBatch.projectionMatrix = parsecCam.combined
         parsecBuffer.begin()
         parsecBatch.begin()
-        parsecBatch.draw(mFBO.texture, -WIDTH/2f, -HEIGHT/2f, 0f, 0f,
+        parsecBatch.draw(mFBO.texture, -parsecWidth/2f, -parsecHeight/2f, 0f, 0f,
                 //      mFBO.width, mFBO.height,
-                WIDTH, HEIGHT, 1f, 1f, 0f, 0, 0, mFBO.width.toInt(), mFBO.height.toInt(),
+                parsecWidth, parsecHeight, 1f, 1f, 0f, 0, 0, mFBO.width.toInt(), mFBO.height.toInt(),
                 //  WIDTH.toInt(), HEIGHT.toInt(),
                 false, true)
         parsecBatch.end()
