@@ -35,10 +35,7 @@ import uk.co.electronstudio.retrowar.Resources.Companion.palette
  */
 object Prefs {
 
-    private var name = System.getProperty("sun.java.command")?.substringBefore(' ')
-    private var fileName = name ?: "uk.co.electronstudio.retrowar"
-
-    var prefs: Preferences = Gdx.app.getPreferences(fileName)
+    var prefs: Preferences = Gdx.app.getPreferences(System.getProperty("retrowar.name", "retrowar-unknown-game"))
 
     val shaders = makeShaderList()
 
@@ -51,7 +48,7 @@ object Prefs {
 
     /** @suppress */
     enum class MultiChoicePref(val pref: String, vararg val choices: String, val default: Int = 0) {
-        SERVER_MODE("serverMode","COMPATIBLE (DESKTOP CAPTURE)", "FULL INTEGRATION"),
+        SERVER_MODE("serverMode","COMPATIBLE (DESKTOP CAPTURE)", "FULL INTEGRATION", default = 1),
         PARTICLES("particles", "ON", "OFF", "EXCESSIVE"),
         RUMBLE("rumble", "HIGH", "LOW", "OFF"),
         INPUT("input", "RAW INPUT", "XINPUT", "DIRECT INPUT"),

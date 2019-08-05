@@ -19,6 +19,10 @@ class SimpleApp @JvmOverloads constructor(
 ) :
     App(callback, logger, manualGC) {
 
+    init {
+        System.setProperty("retrowar.name", name)
+    }
+
     override fun quit() {
         log("App", "Quit")
         Gdx.app.exit()
