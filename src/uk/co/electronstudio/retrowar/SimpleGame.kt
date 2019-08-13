@@ -24,7 +24,7 @@ abstract class SimpleGame @JvmOverloads constructor(
 
     private val controller = MenuController(session.standardMenu(), width, height, font, x = 0f, y = height - 4)
 
-
+    val playersInGame: ArrayList<Player> = ArrayList()
 
     init {
         font.data.markupEnabled = true
@@ -36,7 +36,12 @@ abstract class SimpleGame @JvmOverloads constructor(
     // render is called by libgdx once every frame (required)
     override fun render(deltaTime: Float) {
 
-
+        for(player in players){
+            if(!playersInGame.contains(player)){
+                playersInGame.add(player)
+                playerJoined(player)
+            }
+        }
 /**
         jump multipler
  coin multipler
@@ -46,7 +51,12 @@ abstract class SimpleGame @JvmOverloads constructor(
  all games to support disconnects/reconnects - session notify them directly?
  time speeds up after each player exits
         */
-
+        for(player in playersInGame){
+            if(!players.contains(player)){
+                playersInGame.remove(player)
+                playerLeft(player)
+            }
+        }
 
         doLogic(deltaTime)
 
@@ -67,10 +77,7 @@ abstract class SimpleGame @JvmOverloads constructor(
         renderer.renderFBOtoScreen()
     }
 
-    override fun playerJoined(player: Player) {
-    }
-
-    override fun playerLeft(player: Player) {
+    open fun playerJoined(player: Player) {
     }
 
     fun simpleHighScoreTable(): String = players.sortedDescending().joinToString("") {
