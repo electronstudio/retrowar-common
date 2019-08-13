@@ -297,6 +297,7 @@ open class GameSession(
 
         postMessage("${player.name} JOINED!")
 
+
         return player
     }
 
@@ -437,7 +438,8 @@ open class GameSession(
             if (readyTimer < 0f) {
                 state = GameSession.GameState.PLAY
             }
-        } else if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
+        }
+        if (state == GameSession.GameState.PLAY || state == GameSession.GameState.GETREADY) {
             if (input.isKeyJustPressed(Input.Keys.BACK)) {
                 app.showTitleScreen()
             }
