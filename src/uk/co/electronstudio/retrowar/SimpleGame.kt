@@ -24,6 +24,7 @@ abstract class SimpleGame @JvmOverloads constructor(
 
     private val controller = MenuController(session.standardMenu(), width, height, font, x = 0f, y = height - 4)
 
+    /** note that GameSession can last for multiple (Simple)Games so this is different from players in Session*/
     val playersInGame: ArrayList<Player> = ArrayList()
 
     init {
@@ -36,6 +37,7 @@ abstract class SimpleGame @JvmOverloads constructor(
     // render is called by libgdx once every frame (required)
     override fun render(deltaTime: Float) {
 
+        /* Bring the playersInGame up to sync with players in session */
         for(player in players){
             if(!playersInGame.contains(player)){
                 playersInGame.add(player)
@@ -51,12 +53,12 @@ abstract class SimpleGame @JvmOverloads constructor(
  all games to support disconnects/reconnects - session notify them directly?
  time speeds up after each player exits
         */
-        for(player in playersInGame){
-            if(!players.contains(player)){
-                playersInGame.remove(player)
-                playerLeft(player)
-            }
-        }
+
+        val deadPlayers = playersInGame.filter { !players.contains(it) }
+        deadPlayers.forEach {
+            playersInGame.remove(it)
+            playerLeft(it)
+        } // JDK 8 / Android 7: removeIf
 
         doLogic(deltaTime)
 
@@ -78,6 +80,9 @@ abstract class SimpleGame @JvmOverloads constructor(
     }
 
     open fun playerJoined(player: Player) {
+    }
+
+    open fun playerLeft(player: Player) {
     }
 
     fun simpleHighScoreTable(): String = players.sortedDescending().joinToString("") {
