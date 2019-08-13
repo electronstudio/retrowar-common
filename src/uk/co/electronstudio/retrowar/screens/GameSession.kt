@@ -296,7 +296,7 @@ open class GameSession(
         log("added player, players now ${players.size}")
 
         postMessage("${player.name} JOINED!")
-
+        game?.playerJoined(player)
 
         return player
     }
@@ -410,6 +410,7 @@ open class GameSession(
         for (player in removals) {
             players.remove(player)
             postMessage("${player.name} disconnected")
+            game?.playerLeft(player)
         }
         //players.removeAll { it.input is GamepadInput && !Controllers.getControllers().contains(it.input.controller) }
     }

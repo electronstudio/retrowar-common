@@ -56,6 +56,10 @@ abstract class Game(val session: GameSession) {
     /* Called to release resouces when we are done */
     abstract fun dispose()
 
+    abstract fun playerJoined(player: Player)
+
+    abstract open fun playerLeft(player: Player)
+
     /* Calls render but doesnt allow extreme framerates, i.e. physics will slow down rather than break and allow
     * players to walk through walls.
      */
