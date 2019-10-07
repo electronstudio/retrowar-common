@@ -429,6 +429,7 @@ open class GameSession(
         checkForPlayerDisconnects()
 
         val message = app.parsec?.pollMessages()
+
         if(message!=null) postMessage(message)
 
         game?.renderAndClampFramerate()
