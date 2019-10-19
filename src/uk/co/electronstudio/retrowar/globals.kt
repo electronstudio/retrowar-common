@@ -188,9 +188,24 @@ interface Callback {
     fun setBackgroundFPS(backgroundFPS: Int)
     fun FPSsupported(): Boolean
     // fun audio()
+    fun focus()
+
+    fun restore()
+    fun iconify()
 }
 
 class EmptyCallback : Callback {
+    override fun focus() {
+
+    }
+
+    override fun restore() {
+
+    }
+
+    override fun iconify() {
+
+    }
     //override fun audio() {
 //
   //  }
