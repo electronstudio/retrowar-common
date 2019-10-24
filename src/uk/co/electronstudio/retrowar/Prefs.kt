@@ -49,7 +49,7 @@ object Prefs {
     /** @suppress */
     enum class MultiChoicePref(val pref: String, vararg val choices: String, val default: Int = 0) {
         SERVER_MODE("serverMode","COMPATIBLE (DESKTOP CAPTURE)", "FULL INTEGRATION", default = 1),
-        SERVER_PUBLIC("serverPublic","PRIVATE", "PUBLIC", default = 0),
+        PARSEC_FPS("parsecFPS", "0", "30", "60"),
         PARTICLES("particles", "ON", "OFF", "EXCESSIVE"),
         RUMBLE("rumble", "HIGH", "LOW", "OFF"),
         INPUT("input", "RAW INPUT", "XINPUT", "DIRECT INPUT"),
@@ -222,6 +222,9 @@ object Prefs {
         FPS("fps", default = false) {
             override fun apply() {}
         },
+        PARSEC_PUBLIC("serverPublic",fText = "PRIVATE", tText = "PUBLIC", default = false),
+        PARSEC_H265("serverH265",fText = "H.264", tText = "H.265", default = false),
+
         FULLSCREEN("fullscreen", tText = TEXT["fullscreen"], fText = TEXT["windowed"]) {
             override fun apply() {
                 app.setScreenMode()
@@ -278,6 +281,8 @@ object Prefs {
         val default: Int = 50,
         val step: Int = 1
     ) {
+        PARSEC_PLAYERS("parsec_players", min = 1, max = 16, default = 8, step = 1),
+        PARSEC_BITRATE("parsec_rate", min = 0, max = 100, default = 10, step = 1),
         PARSEC_LAST_SERVER_ID("parsecserverid", default = 0),
         SCREEN_SHAKE("screenshake", min = 0, max = 100, default = 30, step = 10),
         SHIP_SPEED("shipspeed",
