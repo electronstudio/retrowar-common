@@ -31,7 +31,7 @@ abstract class InputDevice {
 
     val fire: Boolean
         get() {
-            return (A || B || X || Y) || rightBumper
+            return (A || B ) || rightBumper
         }
 
     var player: Player? = null
