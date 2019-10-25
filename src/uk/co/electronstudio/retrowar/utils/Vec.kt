@@ -103,4 +103,7 @@ class Vec(val x: Float, val y: Float) {
     }
 
     override fun toString() = "Vec($x, $y)"
+    operator fun plus(vec: Vec): Vec {
+        return Vec(x+vec.x, y+vec.y)
+    }
 }
