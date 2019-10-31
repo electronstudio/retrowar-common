@@ -335,7 +335,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
             Gdx.graphics.setTitle("RetroWar")
             Gdx.graphics.setResizable(true)
         }
-        Gdx.graphics.setVSync(BinPref.VSYNC.isEnabled())
+       Gdx.graphics.setVSync(BinPref.VSYNC.isEnabled())
     }
 
     open fun submitAnalytics(s: String) {
