@@ -314,29 +314,30 @@ internal class MappedController(val controller: Controller) {
     }
 
     init {
-        if (controller.name.startsWith("SDL")) {
-            setToSDLDefault()
-        } else if (isOSX) {
-            setToMacDefault()
-        } else if (isLinux) {
-            if (controller.name.contains("Sony")) {
-                setToLinuxDefault()
-            } else if (controller.name.contains("X-Box")) {
-                setToLinuxXbox()
-            } else {
-                setToLinuxDefault()
-            }
-        } else { // isWindows
-            if (controller.name.contains("F310")) {
-                setToF310()
-            } else if (controller.name.contains("Logitech Dual Action")) {
-                setToDirectX()
-            } else if (controller.name.contains("Wireless Controller")) {
-                setToDS4()
-            } else {
-                setToX360()
-            }
-        }
+        setToSDLDefault()
+//        if (controller.name.startsWith("SDL")) {
+//            setToSDLDefault()
+//        } else if (isOSX) {
+//            setToMacDefault()
+//        } else if (isLinux) {
+//            if (controller.name.contains("Sony")) {
+//                setToLinuxDefault()
+//            } else if (controller.name.contains("X-Box")) {
+//                setToLinuxXbox()
+//            } else {
+//                setToLinuxDefault()
+//            }
+//        } else { // isWindows
+//            if (controller.name.contains("F310")) {
+//                setToF310()
+//            } else if (controller.name.contains("Logitech Dual Action")) {
+//                setToDirectX()
+//            } else if (controller.name.contains("Wireless Controller")) {
+//                setToDS4()
+//            } else {
+//                setToX360()
+//            }
+//        }
     }
 
     fun b(): Boolean {

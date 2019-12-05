@@ -31,6 +31,7 @@ import com.badlogic.gdx.utils.Json
 
 
 import de.golfgl.gdxgameanalytics.GameAnalytics
+import uk.co.electronstudio.mobcontrol.MobControllerManager
 import uk.co.electronstudio.retrowar.Prefs.BinPref
 import uk.co.electronstudio.retrowar.input.GamepadInput
 import uk.co.electronstudio.retrowar.input.KeyboardMouseInput
@@ -86,6 +87,7 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
     //    return players.filter { it.input is GamepadInput && it.input.controller == c }.firstOrNull()
     //}
 
+
     companion object {
         /** A static reference to the singleton Application */
         @JvmStatic
@@ -102,11 +104,18 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
         findIPaddress()
     }
 
+    val mobControllerManager = MobControllerManager()
+
     var playerData = mutableListOf<PlayerData>()
     val controllerMappings = mutableMapOf<RumbleController, PlayerData>()
     val networkControllers = mutableMapOf<Int, NetworkController>()
 
-    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ networkControllers.values
+    fun getAllControllersIncludingParsec() = Controllers.getControllers()+ networkControllers.values +mobControllerManager.controllers
+
+    override fun render() {
+        super.render()
+        mobControllerManager.pollState()
+    }
 
     fun loadPlayerData() {
         try {
@@ -289,6 +298,23 @@ abstract class App(val callback: Callback, val logger: Logger, val manualGC: Man
                 statefulControllers.removeAll { it.mappedController.controller == controller }
             }
         })
+
+        mobControllerManager.addListener(object : ControllerAdapter() {
+            override fun connected(controller: Controller) {
+                val c = MappedController(controller)
+                // mappedControllers.add(c)
+                statefulControllers.add(StatefulController(c))
+                log("ADDED MOBILE CONTROLLER "+controller)
+            }
+
+            override fun disconnected(controller: Controller) {
+                // mappedControllers.removeAll { it.controller!=controller }
+                statefulControllers.removeAll { it.mappedController.controller == controller }
+                log("REMOVED MOBILE CONTROLLER "+controller)
+            }
+        })
+
+
     }
 
     protected fun initializeInput() {

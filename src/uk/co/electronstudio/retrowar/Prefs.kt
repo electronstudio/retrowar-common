@@ -188,6 +188,15 @@ object Prefs {
                 App.app.resize(Gdx.graphics.width, Gdx.graphics.height)
             }
         },
+        MOBCONTROL("mobcontrol", tText = "ON", fText = "OFF", default = false) {
+            override fun apply() {
+                if (isEnabled()){
+                    app.mobControllerManager.start()
+                }else{
+                    app.mobControllerManager.stop()
+                }
+            }
+        },
         SCANLINES("scanlines", default = true),
         SMOOTH("smooth",
             tText = "FAKE but SMOOTH",

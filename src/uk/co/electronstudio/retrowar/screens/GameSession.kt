@@ -392,6 +392,14 @@ open class GameSession(
                 }
             }
         }
+
+        val mobileControllers = app.mobControllerManager.controllers as com.badlogic.gdx.utils.Array<RumbleController>
+        mobileControllers.forEach{
+            if (!usedControllers.contains(it)) {
+                createControllerPlayer(it, null)
+                usedControllers.add(it)
+            }
+        }
     }
 
     private fun checkForParsecJoins() {
