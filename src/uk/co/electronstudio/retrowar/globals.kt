@@ -44,7 +44,9 @@ import uk.co.electronstudio.retrowar.input.NetworkInput
 import uk.co.electronstudio.retrowar.network.ClientPlayer
 import uk.co.electronstudio.retrowar.utils.sqrt
 import java.lang.RuntimeException
-import java.util.ArrayList
+import java.net.NetworkInterface
+import java.net.SocketException
+import java.util.*
 import kotlin.math.roundToInt
 
 /*
@@ -478,4 +480,21 @@ fun groovyCompilerConfig(): CompilerConfiguration{
 
     compilerConfiguration.addCompilationCustomizers(importCustomizer)
     return compilerConfiguration
+}
+
+fun getHostAddresses(): Array<String> {
+    val HostAddresses: MutableSet<String> = HashSet()
+    try {
+        for (ni in Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            if (!ni.isLoopback && ni.isUp && ni.hardwareAddress != null) {
+                for (ia in ni.interfaceAddresses) {
+                    if (ia.broadcast != null) { //If limited to IPV4
+                        HostAddresses.add(ia.address.hostAddress)
+                    }
+                }
+            }
+        }
+    } catch (e: SocketException) {
+    }
+    return HostAddresses.toTypedArray()
 }
