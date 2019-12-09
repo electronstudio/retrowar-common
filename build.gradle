@@ -36,7 +36,7 @@ task ktlintFormat(type: JavaExec) {
 dependencies {
     implementation 'io.sentry:sentry:1.7.3'
 
-    compile "uk.co.electronstudio.mobcontrol:mobcontrol:0.1.1"
+    compile "uk.co.electronstudio.mobcontrol:mobcontrol:0.1.4"
     //implementation group: 'uk.co.electronstudio.mobcontrol', name: 'mobcontrol', version: '0.1.0'
     implementation group: 'org.eclipse.jetty.websocket', name: 'websocket-api', version: '9.4.24.v20191120'
     implementation group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.24.v20191120'
