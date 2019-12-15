@@ -229,6 +229,10 @@ fun Color(r: Int, g: Int, b: Int): Color {
     return Color(r.toFloat() / 255f, g.toFloat() / 255f, b.toFloat() / 255f, 1.0f)
 }
 
+fun Color(awt: java.awt.Color): Color{
+    return Color(awt.red, awt.green, awt.blue)
+}
+
 /*
 FIXME in Java this would be a performance improvement over ArrayList; in Kotlin I don't know how to avoid
 autoboxing when I pull the ints out of the array so this might be what causes lots of Integers to be allocated!

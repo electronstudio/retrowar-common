@@ -9,6 +9,7 @@ import com.badlogic.gdx.controllers.Controllers
 
 import com.badlogic.gdx.graphics.Color
 import com.esotericsoftware.kryonet.Connection
+import uk.co.electronstudio.mobcontrol.MobController
 import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.App.Companion.app
 import uk.co.electronstudio.retrowar.input.GamepadInput
@@ -393,10 +394,11 @@ open class GameSession(
             }
         }
 
-        val mobileControllers = app.mobControllerManager.controllers as com.badlogic.gdx.utils.Array<RumbleController>
+        val mobileControllers = app.mobControllerManager.controllers as com.badlogic.gdx.utils.Array<MobController>
         mobileControllers.forEach{
             if (!usedControllers.contains(it)) {
-                createControllerPlayer(it, null)
+                val data = PlayerData(it.playerName, Color(it.colour1), Color(it.colour2))
+                createControllerPlayer(it, data)
                 usedControllers.add(it)
             }
         }
@@ -405,7 +407,7 @@ open class GameSession(
     private fun checkForParsecJoins() {
         app.networkControllers.values.forEach {
             if (!usedControllers.contains(it)) {
-                val playerData = PlayerData(it.guestName, color = Color.valueOf((nextPlayerColor())), color2 = Color.valueOf((nextPlayerColor2())))
+                val playerData = PlayerData(it.guestName, color = Color.valueOf(nextPlayerColor()), color2 = Color.valueOf(nextPlayerColor2()))
                 val player = createParsecPlayer(it, playerData)
                 usedControllers.add(it)
             }
