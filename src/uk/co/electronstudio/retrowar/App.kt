@@ -67,6 +67,7 @@ import kotlin.concurrent.thread
 abstract class App(val callback: Callback, val logger: Logger, val manualGC: ManualGC? = null) : Game() {
 
 
+
     var steam: Steam? = null
 
     /** Title screen */
