@@ -52,7 +52,7 @@ object Prefs {
         PARSEC_FPS("parsecFPS", "0", "30", "60"),
         PARTICLES("particles", "ON", "OFF", "EXCESSIVE"),
         RUMBLE("rumble", "HIGH", "LOW", "OFF"),
-        INPUT("input", "RAW INPUT", "XINPUT", "DIRECT INPUT"),
+        INPUT("input", "RAW INPUT", "XINPUT", "DIRECT INPUT", default = 1),
         GRAPHICS("graphics", "RETRO", "MODERN", "CRT") {
             override fun apply() {
                 when (getNum()) {
