@@ -1,5 +1,5 @@
 apply plugin: "kotlin"
-apply plugin: 'com.jfrog.bintray'
+
 apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
@@ -36,7 +36,8 @@ task ktlintFormat(type: JavaExec) {
 dependencies {
     implementation 'io.sentry:sentry:1.7.3'
 
-    compile "uk.co.electronstudio.mobcontrol:mobcontrol:0.1.8"
+    //compile "uk.co.electronstudio.mobcontrol:mobcontrol:0.1.8"
+    compile name: "MobControl-0.1.7"
     //implementation group: 'uk.co.electronstudio.mobcontrol', name: 'mobcontrol', version: '0.1.0'
     implementation group: 'org.eclipse.jetty.websocket', name: 'websocket-api', version: '9.4.24.v20191120'
     implementation group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.4.24.v20191120'
@@ -167,31 +168,3 @@ publishing {
     }
   publish.dependsOn jar, sourcesJar, javadocJar, generatePomFileForMavenPublicationPublication
 }
-
-String keyString = ''
-File file = new File(System.getProperty("user.home")+"/bintray.key")
-if(file.exists()){
-    keyString = file.text.trim()
-}
-bintray {
-    user = 'electronstudio' //System.getenv('BINTRAY_USER')
-    key = keyString //System.getenv('BINTRAY_KEY')
-    publications = ['mavenPublication']
-    publish = true
-    override = true
-  pkg {
-        repo = 'retrowar'
-        name = 'retrowar-common'
-     //   userOrg = 'electronstudio'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/electronstudio/retrowar-common.git'
-      version {
-          name = '1.4.0'
-          desc = '1.4.0'
-          released = new Date()
-          vcsTag = '1.4.0'
-      }
-    }
-}
-
-bintrayUpload.dependsOn publish
